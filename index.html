@@ -18,33 +18,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script>try { var t = localStorage.getItem('elevate-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
 </head>
-<body>
+<body class="is-loading">
   <div class="cursor" aria-hidden="true"><div class="cursor__ring"></div><div class="cursor__dot"></div></div>
 
-  <!-- Preloader -->
+  <!-- Preloader: a solid curtain. The arrow that fills + launches is the REAL #mark
+       (same arrow as the hero), raised above the curtain while loading. -->
   <div class="preloader" id="preloader">
-    <div class="preloader__inner">
-      <span class="preloader__mark" aria-hidden="true">
-        <svg viewBox="0 0 120 132"><path d="M60 5 C68 27 90 78 114 128 C95 104 70 84 60 72 C50 84 25 104 6 128 C30 78 52 27 60 5Z" fill="currentColor"/></svg>
-      </span>
-      <div class="preloader__bar"><span id="preloader-fill"></span></div>
-      <div class="preloader__meta" dir="ltr"><span>BUILD</span><span id="preloader-count">0</span></div>
-    </div>
-    <div class="preloader__wordmark" hidden></div>
+    <div class="preloader__meta" dir="ltr"><span>BUILD</span><span id="preloader-count">0</span></div>
   </div>
 
-  <!-- Bottom "light takeover" gradient (fades in behind the arrow near the end) -->
-  <div class="takeover" aria-hidden="true"></div>
+  <!-- Per-scene aura tints (crossfaded as the active section changes) -->
+  <div class="aura" aria-hidden="true">
+    <span class="aura__layer aura__layer--hero"></span>
+    <span class="aura__layer aura__layer--about"></span>
+    <span class="aura__layer aura__layer--services"></span>
+    <span class="aura__layer aura__layer--work"></span>
+    <span class="aura__layer aura__layer--process"></span>
+  </div>
+
+  <!-- Bottom "light takeover" gradient (blooms open behind the arrow near the end) -->
+  <div class="takeover" aria-hidden="true"><div class="takeover__flow"></div></div>
 
   <!-- Central living arrow — flowing liquid gradient clipped to the arrow shape -->
   <div class="mark" id="mark" aria-hidden="true">
     <div class="mark__shape">
-      <div class="mark__fluid">
-        <span class="blob blob--1"></span>
-        <span class="blob blob--2"></span>
-        <span class="blob blob--3"></span>
-        <span class="blob blob--4"></span>
-        <span class="mark__shine"></span>
+      <svg class="mark__outline" viewBox="0 0 120 132" aria-hidden="true"><path d="M60 5 C68 27 90 78 114 128 C95 104 70 84 60 72 C50 84 25 104 6 128 C30 78 52 27 60 5Z"/></svg>
+      <div class="mark__breathe">
+        <div class="mark__fluid">
+          <span class="blob blob--1"></span>
+          <span class="blob blob--2"></span>
+          <span class="blob blob--3"></span>
+          <span class="blob blob--4"></span>
+          <span class="mark__shine"></span>
+        </div>
       </div>
     </div>
     <span class="mark__dot"></span>
@@ -72,13 +78,29 @@
         <a href="#about">מניפסט<i dir="ltr">↗</i></a>
         <a href="#work">עבודות<i dir="ltr">↗</i></a>
       </nav>
-      <button class="theme-toggle" id="themeToggle" type="button" dir="ltr" aria-label="מצב כהה או בהיר" data-magnetic>
-        <span class="theme-toggle__track"><span class="theme-toggle__knob"></span></span>
-      </button>
       <a href="#contact" class="nav__cta" data-magnetic>צרו קשר<i dir="ltr">→</i></a>
     </div>
   </header>
-  <button class="menu-fab" aria-label="תפריט"><span></span><span></span></button>
+
+  <!-- Floating dock: section navigation + theme switch -->
+  <div class="dock" id="dock">
+    <nav class="dock__panel" id="dockPanel" aria-hidden="true">
+      <p class="dock__title" dir="ltr">NAVIGATE</p>
+      <a href="#hero" class="dock__link"><span class="dock__no" dir="ltr">00</span>ראשי</a>
+      <a href="#about" class="dock__link"><span class="dock__no" dir="ltr">01</span>מניפסט</a>
+      <a href="#services" class="dock__link"><span class="dock__no" dir="ltr">02</span>שירותים</a>
+      <a href="#work" class="dock__link"><span class="dock__no" dir="ltr">03</span>עבודות</a>
+      <a href="#process" class="dock__link"><span class="dock__no" dir="ltr">04</span>תהליך</a>
+      <a href="#contact" class="dock__link"><span class="dock__no" dir="ltr">05</span>צור קשר</a>
+      <div class="dock__theme">
+        <span class="dock__theme-label">מצב תצוגה</span>
+        <button class="theme-toggle" id="themeToggle" type="button" dir="ltr" aria-label="מצב כהה או בהיר">
+          <span class="theme-toggle__track"><span class="theme-toggle__knob"></span></span>
+        </button>
+      </div>
+    </nav>
+    <button class="menu-fab" id="menuFab" type="button" aria-label="תפריט ניווט" aria-expanded="false" aria-controls="dockPanel"><span></span><span></span></button>
+  </div>
 
   <main id="top">
     <!-- HERO -->
@@ -109,10 +131,50 @@
       </div>
     </section>
 
+    <!-- SERVICES / WHAT WE DO -->
+    <section class="section services" id="services">
+      <div class="services__head">
+        <p class="mono-label" dir="ltr">(02) — WHAT WE DO</p>
+        <p class="services__intro">מהאסטרטגיה ועד ההשקה — כל מה שצריך כדי לבנות נוכחות דיגיטלית שמובילה, תחת קורת גג אחת.</p>
+      </div>
+      <ul class="services__list">
+        <li class="service">
+          <span class="service__no" dir="ltr">01</span>
+          <h3 class="service__name">אסטרטגיה ומיתוג</h3>
+          <p class="service__desc">מזקקים את הסיפור, השפה והבידול שהופכים אתכם לבלתי נשכחים.</p>
+          <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
+        </li>
+        <li class="service">
+          <span class="service__no" dir="ltr">02</span>
+          <h3 class="service__name">עיצוב חוויה — UX/UI</h3>
+          <p class="service__desc">ממשקים יפים שמרגישים טבעיים, מנחים את העין וממירים מבקרים ללקוחות.</p>
+          <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
+        </li>
+        <li class="service">
+          <span class="service__no" dir="ltr">03</span>
+          <h3 class="service__name">פיתוח Web פרימיום</h3>
+          <p class="service__desc">קוד נקי, מהיר ומדויק — אתרים חיים עם אנימציות שמרגישות יקרות.</p>
+          <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
+        </li>
+        <li class="service">
+          <span class="service__no" dir="ltr">04</span>
+          <h3 class="service__name">מושן, 3D ואינטראקציה</h3>
+          <p class="service__desc">תנועה שמספרת סיפור, מושכת תשומת לב ומשאירה חותם רגשי.</p>
+          <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
+        </li>
+        <li class="service">
+          <span class="service__no" dir="ltr">05</span>
+          <h3 class="service__name">השקה ואופטימיזציה</h3>
+          <p class="service__desc">SEO, ביצועים ומדידה — שתמשיכו לעלות גם אחרי שעולים לאוויר.</p>
+          <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
+        </li>
+      </ul>
+    </section>
+
     <!-- FEATURED WORK -->
     <section class="section work" id="work">
       <div class="work__head">
-        <p class="mono-label" dir="ltr">(02) — FEATURED WORK</p>
+        <p class="mono-label" dir="ltr">(03) — FEATURED WORK</p>
         <a href="#contact" class="pill" data-magnetic>כל העבודות <i dir="ltr">→</i></a>
       </div>
       <div class="bento">
@@ -140,6 +202,39 @@
       <p class="work__note">* עבודות לדוגמה — תיק העבודות יתעדכן בפרויקטים אמיתיים בקרוב.</p>
     </section>
 
+    <!-- PROCESS / HOW WE WORK -->
+    <section class="section process" id="process">
+      <div class="process__head">
+        <p class="mono-label" dir="ltr">(04) — HOW WE WORK</p>
+        <p class="big blend">
+          <span class="line"><span>תהליך מדויק,</span></span>
+          <span class="line"><span>תוצאה שמרימה.</span></span>
+        </p>
+      </div>
+      <ol class="process__steps">
+        <li class="step" data-reveal>
+          <span class="step__no" dir="ltr">01</span>
+          <h3 class="step__name">גילוי</h3>
+          <p class="step__desc">צוללים לעומק העסק, הקהל והמטרות — ומבינים מה באמת מבדל אתכם.</p>
+        </li>
+        <li class="step" data-reveal>
+          <span class="step__no" dir="ltr">02</span>
+          <h3 class="step__name">אסטרטגיה</h3>
+          <p class="step__desc">בונים כיוון, מסר וארכיטקטורת חוויה שמדברים בדיוק בשפה שלכם.</p>
+        </li>
+        <li class="step" data-reveal>
+          <span class="step__no" dir="ltr">03</span>
+          <h3 class="step__name">עיצוב ופיתוח</h3>
+          <p class="step__desc">מעצבים שפה ויזואלית ומקודדים אתר מהיר, חי ומונפש עד הפיקסל האחרון.</p>
+        </li>
+        <li class="step" data-reveal>
+          <span class="step__no" dir="ltr">04</span>
+          <h3 class="step__name">השקה ועלייה</h3>
+          <p class="step__desc">עולים לאוויר, מודדים, מחדדים — וממשיכים להזניק אתכם קדימה.</p>
+        </li>
+      </ol>
+    </section>
+
     <!-- CTA gradient marquee -->
     <section class="cta-band" aria-label="בואו נעלה שלב">
       <div class="cta-band__track">
@@ -149,7 +244,7 @@
 
     <!-- CONTACT -->
     <section class="section contact" id="contact">
-      <p class="mono-label" dir="ltr">(03) — LET'S TALK</p>
+      <p class="mono-label" dir="ltr">(05) — LET'S TALK</p>
       <h2 class="big blend">
         <span class="line"><span>מוכנים</span></span>
         <span class="line"><span>לעלות שלב?</span></span>
