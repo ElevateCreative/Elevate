@@ -16,6 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>try { var t = localStorage.getItem('elevate-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
 </head>
 <body>
   <div class="cursor" aria-hidden="true"><div class="cursor__ring"></div><div class="cursor__dot"></div></div>
@@ -24,7 +25,7 @@
   <div class="preloader" id="preloader">
     <div class="preloader__inner">
       <span class="preloader__mark" aria-hidden="true">
-        <svg viewBox="0 0 120 132"><path d="M60 6 C71 33 95 86 116 126 C94 104 71 87 60 80 C49 87 26 104 4 126 C25 86 49 33 60 6 Z" fill="#eae6dd"/></svg>
+        <svg viewBox="0 0 120 132"><path d="M60 5 C68 27 90 78 114 128 C95 104 70 84 60 72 C50 84 25 104 6 128 C30 78 52 27 60 5Z" fill="currentColor"/></svg>
       </span>
       <div class="preloader__bar"><span id="preloader-fill"></span></div>
       <div class="preloader__meta" dir="ltr"><span>BUILD</span><span id="preloader-count">0</span></div>
@@ -35,21 +36,25 @@
   <!-- Bottom "light takeover" gradient (fades in behind the arrow near the end) -->
   <div class="takeover" aria-hidden="true"></div>
 
-  <!-- Central 2D arrow mark — colourful gradient + glow, reacts to the mouse -->
+  <!-- Central living arrow — flowing liquid gradient clipped to the arrow shape -->
   <div class="mark" id="mark" aria-hidden="true">
-    <span class="mark__shine"></span>
-    <svg class="mark__svg" viewBox="0 0 120 132">
-      <defs>
-        <linearGradient id="markGrad" x1="2%" y1="0%" x2="98%" y2="100%">
-          <stop offset="0%" stop-color="#46d6ff" />
-          <stop offset="34%" stop-color="#1f7bff" />
-          <stop offset="66%" stop-color="#5b4bff" />
-          <stop offset="100%" stop-color="#a64bff" />
-        </linearGradient>
-      </defs>
-      <path d="M60 6 C71 33 95 86 116 126 C94 104 71 87 60 80 C49 87 26 104 4 126 C25 86 49 33 60 6 Z" fill="url(#markGrad)" />
-    </svg>
+    <div class="mark__shape">
+      <div class="mark__fluid">
+        <span class="blob blob--1"></span>
+        <span class="blob blob--2"></span>
+        <span class="blob blob--3"></span>
+        <span class="blob blob--4"></span>
+        <span class="mark__shine"></span>
+      </div>
+    </div>
     <span class="mark__dot"></span>
+    <svg class="mark__clip" width="0" height="0" aria-hidden="true">
+      <defs>
+        <clipPath id="arrowClip" clipPathUnits="objectBoundingBox">
+          <path d="M0.5 0.038 C0.567 0.205 0.75 0.591 0.95 0.97 C0.792 0.788 0.583 0.636 0.5 0.545 C0.417 0.636 0.208 0.788 0.05 0.97 C0.25 0.591 0.433 0.205 0.5 0.038Z" />
+        </clipPath>
+      </defs>
+    </svg>
   </div>
   <svg class="orbits" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <circle cx="500" cy="500" r="240" /><circle cx="500" cy="500" r="360" /><circle cx="500" cy="500" r="480" />
@@ -59,7 +64,7 @@
   <!-- Navigation -->
   <header class="nav" id="nav">
     <a href="#top" class="nav__brand" data-magnetic dir="ltr">
-      <span class="nav__elevate">ELEV<span class="nav__mark" aria-hidden="true"><svg viewBox="0 0 120 132"><path d="M60 6 C71 33 95 86 116 126 C94 104 71 87 60 80 C49 87 26 104 4 126 C25 86 49 33 60 6 Z" fill="#0088ff"/></svg></span>TE</span>
+      <span class="nav__elevate">ELEV<span class="nav__mark" aria-hidden="true"><svg viewBox="0 0 120 132"><path d="M60 5 C68 27 90 78 114 128 C95 104 70 84 60 72 C50 84 25 104 6 128 C30 78 52 27 60 5Z" fill="#0088ff"/></svg></span>TE</span>
       <span class="nav__creative">Creative</span>
     </a>
     <div class="nav__right">

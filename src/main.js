@@ -14,13 +14,13 @@ window.scrollTo(0, 0);
 
 /* ---------- central 2D arrow mark (gradient + glow, mouse-reactive) ---------- */
 const mark = document.getElementById('mark');
-const markSvg = mark && mark.querySelector('.mark__svg');
+const markShape = mark && mark.querySelector('.mark__shape');
 const shine = mark && mark.querySelector('.mark__shine');
-if (markSvg && !reduced) {
-  gsap.set(markSvg, { transformPerspective: 900, transformOrigin: '50% 50%' });
-  gsap.to(markSvg, { scale: 1.05, duration: 4.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-  const rotY = gsap.quickTo(markSvg, 'rotationY', { duration: 0.9, ease: 'power3' });
-  const rotX = gsap.quickTo(markSvg, 'rotationX', { duration: 0.9, ease: 'power3' });
+if (markShape && !reduced) {
+  gsap.set(markShape, { transformPerspective: 900, transformOrigin: '50% 50%' });
+  gsap.to(markShape, { scale: 1.05, duration: 4.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+  const rotY = gsap.quickTo(markShape, 'rotationY', { duration: 0.9, ease: 'power3' });
+  const rotX = gsap.quickTo(markShape, 'rotationX', { duration: 0.9, ease: 'power3' });
   const shX = gsap.quickTo(shine, 'x', { duration: 0.7, ease: 'power3' });
   const shY = gsap.quickTo(shine, 'y', { duration: 0.7, ease: 'power3' });
   window.addEventListener('pointermove', (e) => {
@@ -161,11 +161,11 @@ function story() {
   animateText();
 
   // the central mark glides across the page (centre → right → left → centre)
-  if (markSvg) {
+  if (markShape) {
     gsap.timeline({ scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 1 } })
-      .to(markSvg, { x: () => window.innerWidth * 0.14, ease: 'sine.inOut' })
-      .to(markSvg, { x: () => -window.innerWidth * 0.14, ease: 'sine.inOut' })
-      .to(markSvg, { x: 0, ease: 'sine.inOut' });
+      .to(markShape, { x: () => window.innerWidth * 0.14, ease: 'sine.inOut' })
+      .to(markShape, { x: () => -window.innerWidth * 0.14, ease: 'sine.inOut' })
+      .to(markShape, { x: 0, ease: 'sine.inOut' });
   }
 
   // bottom takeover: the gradient WIPES open from a centre line to full screen; the mark fades out
