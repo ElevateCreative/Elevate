@@ -293,7 +293,7 @@ main { position: static; }
 .tile:hover .tile__plus { transform: rotate(90deg); }
 
 /* featured real project (Job Power) — recreates their purple-aurora hero with the real logo */
-.tile--feature { grid-column: 1 / -1; aspect-ratio: 16 / 7; cursor: none; }
+.tile--feature { grid-column: 1 / -1; aspect-ratio: 16 / 8.2; cursor: none; }
 .tile--feature .tile__media--jp {
   background:
     radial-gradient(55% 75% at 16% 14%, rgba(126, 77, 255, 0.5), transparent 60%),
@@ -306,15 +306,13 @@ main { position: static; }
   background: conic-gradient(from 130deg at 42% 48%, transparent, rgba(150, 100, 255, 0.4) 18%, transparent 40%, rgba(110, 60, 230, 0.3) 70%, transparent 88%);
   filter: blur(34px); opacity: 0.65;
 }
-.jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-content: center; justify-items: center; gap: 0.7rem; padding-bottom: 2.5rem; pointer-events: none; }
-.jp-hero__logo { width: clamp(64px, 11vw, 124px); aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 10px 34px rgba(126, 77, 255, 0.55)); }
-.jp-hero__tag { font-weight: 600; font-size: clamp(0.95rem, 1.7vw, 1.45rem); color: #fff; letter-spacing: 0.01em; }
+.jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-content: center; justify-items: center; gap: 1rem; padding-bottom: 3rem; pointer-events: none; }
+.jp-hero__logo { width: clamp(130px, 22vw, 280px); aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 12px 40px rgba(126, 77, 255, 0.6)); }
+.jp-hero__tag { font-weight: 600; font-size: clamp(1.3rem, 2.8vw, 2.4rem); color: #fff; letter-spacing: 0.01em; }
 .jp-hero__tag b { color: #a98bff; font-weight: 600; }
-.tile__sub { display: block; font-size: 0.46em; font-weight: 400; color: rgba(255, 255, 255, 0.72); margin-top: 0.25em; letter-spacing: 0; }
+.tile--feature h3 { font-size: clamp(1.9rem, 4.2vw, 3.4rem); }
+.tile__sub { display: block; font-size: 0.4em; font-weight: 400; color: rgba(255, 255, 255, 0.74); margin-top: 0.3em; letter-spacing: 0; }
 .tile--feature:hover { box-shadow: 0 26px 64px rgba(28, 67, 196, 0.34); border-color: rgba(91, 155, 255, 0.5); }
-.tile__live { position: absolute; top: clamp(1rem, 2vw, 1.5rem); inset-inline-start: clamp(1.2rem, 2vw, 1.8rem); z-index: 1; display: inline-flex; align-items: center; gap: 0.5em; font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.14em; color: #fff; padding: 0.32em 0.75em; border-radius: 999px; background: rgba(0, 0, 0, 0.32); backdrop-filter: blur(6px); }
-.tile__live i { width: 7px; height: 7px; border-radius: 50%; background: #36e06f; animation: liveBlink 1.8s ease-out infinite; }
-@keyframes liveBlink { 0% { box-shadow: 0 0 0 0 rgba(54, 224, 111, 0.7); } 70%, 100% { box-shadow: 0 0 0 7px rgba(54, 224, 111, 0); } }
 .work__note { margin-top: 1.6rem; font-size: 0.82rem; color: var(--ink-dim); }
 
 /* ---------- CTA gradient marquee ---------- */
@@ -340,13 +338,13 @@ main { position: static; }
 .wa-btn {
   position: relative; display: inline-flex; align-items: center; gap: 1rem;
   padding: 0.85rem 1.5rem 0.85rem 0.85rem; border-radius: 999px;
-  background: #0c0d10; color: #fff; overflow: hidden; cursor: none;
-  box-shadow: 0 16px 38px rgba(12, 13, 16, 0.28);
+  background: linear-gradient(135deg, #1f9bff, #0a6ff0); color: #fff; overflow: hidden; cursor: none;
+  box-shadow: 0 16px 38px rgba(0, 110, 240, 0.32);
   transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 .wa-btn::before { content: ""; position: absolute; top: 0; bottom: 0; width: 38%; left: -55%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.22), transparent); transform: skewX(-18deg); animation: waShine 4.8s ease-in-out infinite; }
 @keyframes waShine { 0%, 55% { left: -55%; } 82%, 100% { left: 155%; } }
-.wa-btn:hover { transform: translateY(-3px) scale(1.015); box-shadow: 0 22px 54px rgba(37, 211, 102, 0.42); }
+.wa-btn:hover { transform: translateY(-3px) scale(1.015); box-shadow: 0 22px 54px rgba(0, 136, 255, 0.5); }
 .wa-btn__icon { position: relative; flex: none; width: 48px; height: 48px; border-radius: 50%; background: #25d366; display: grid; place-items: center; }
 .wa-btn__icon svg { width: 28px; height: 28px; fill: #fff; }
 .wa-btn__icon::after { content: ""; position: absolute; inset: 0; border-radius: 50%; animation: waPulse 2.4s ease-out infinite; }
@@ -354,21 +352,21 @@ main { position: static; }
 .wa-btn__text { display: grid; gap: 0.12rem; text-align: start; }
 .wa-btn__title { font-weight: 600; font-size: clamp(1rem, 1.7vw, 1.25rem); line-height: 1.1; }
 .wa-btn__sub { font-size: 0.78rem; color: rgba(255, 255, 255, 0.62); }
-.wa-btn__arrow { font-style: normal; color: #25d366; font-size: 1.25rem; margin-inline-start: 0.3rem; transition: transform 0.4s var(--ease); }
+.wa-btn__arrow { font-style: normal; color: #fff; font-size: 1.25rem; margin-inline-start: 0.3rem; transition: transform 0.4s var(--ease); }
 .wa-btn:hover .wa-btn__arrow { transform: translateX(-7px); }
 
 .phones { position: relative; }
-.phones__toggle { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.95rem 1.4rem; border-radius: 999px; border: 1px solid rgba(20, 20, 26, 0.28); background: transparent; color: #16161a; font: inherit; font-weight: 500; font-size: clamp(0.95rem, 1.4vw, 1.1rem); cursor: none; transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease); }
-.phones__toggle:hover { background: #16161a; color: #fff; border-color: #16161a; }
+.phones__toggle { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.95rem 1.4rem; border-radius: 999px; border: 1.5px solid var(--blue); background: rgba(255, 255, 255, 0.55); color: #075ec9; font: inherit; font-weight: 600; font-size: clamp(0.95rem, 1.4vw, 1.1rem); cursor: none; transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease); }
+.phones__toggle:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
 .phones__icon { display: inline-flex; }
 .phones__icon svg { width: 19px; height: 19px; fill: currentColor; }
 .phones__chev { font-style: normal; transition: transform 0.4s var(--ease); }
 .phones.is-open .phones__chev { transform: rotate(180deg); }
 .phones__list { display: grid; gap: 0.4rem; overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.5s var(--ease), opacity 0.4s var(--ease), margin-top 0.4s var(--ease); }
 .phones.is-open .phones__list { max-height: 220px; opacity: 1; margin-top: 0.6rem; }
-.phones__item { display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; padding: 0.72rem 1.3rem; border-radius: 14px; border: 1px solid rgba(20, 20, 26, 0.22); color: #16161a; font-weight: 500; cursor: none; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
-.phones__item:hover { background: #16161a; color: #fff; }
-.phones__num { font-family: var(--f-mono); font-size: 0.86em; opacity: 0.72; }
+.phones__item { display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; padding: 0.72rem 1.3rem; border-radius: 14px; border: 1px solid rgba(0, 136, 255, 0.4); background: rgba(255, 255, 255, 0.45); color: #075ec9; font-weight: 600; cursor: none; transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease); }
+.phones__item:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+.phones__num { font-family: var(--f-mono); font-size: 0.86em; opacity: 0.78; }
 
 /* ---------- footer ---------- */
 .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: clamp(2rem, 5vw, 3rem) var(--gutter); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em; }
