@@ -58,7 +58,7 @@ html.lenis, html.lenis body { height: auto; }
 body.is-loading .mark__outline { opacity: 1; }
 body.is-loading .mark__breathe { clip-path: inset(100% 0% 0% 0%); }
 body.is-loading .mark { z-index: 101; }   /* lift the real arrow above the preloader curtain */
-body.is-loading .mark__dot, body.is-loading .orbits { opacity: 0; }
+body.is-loading .orbits { opacity: 0; }
 .mark__fluid { position: relative; width: 100%; height: 100%; overflow: hidden; clip-path: url(#arrowClip); -webkit-clip-path: url(#arrowClip); background: radial-gradient(120% 120% at 50% 28%, #2f6dff, #0a2f9e 68%, #061d66); filter: hue-rotate(var(--arrow-hue, 0deg)); transition: filter 0.9s var(--ease); }
 .blob { position: absolute; border-radius: 50%; filter: blur(22px); mix-blend-mode: screen; will-change: transform; }
 .blob--1 { width: 72%; height: 72%; left: -6%; top: -2%; background: radial-gradient(circle, #5fe0ff, transparent 68%); animation: blobA 9s ease-in-out infinite alternate; }
@@ -70,17 +70,6 @@ body.is-loading .mark__dot, body.is-loading .orbits { opacity: 0; }
 @keyframes blobC { from { transform: translate(0, 0) scale(1); } to { transform: translate(16%, -22%) scale(1.16); } }
 @keyframes blobD { from { transform: translate(0, 0) scale(0.85); opacity: 0.65; } to { transform: translate(34%, 18%) scale(1.25); opacity: 1; } }
 .mark__shine { position: absolute; left: 50%; top: 50%; width: 240px; height: 240px; margin: -120px 0 0 -120px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 60%); mix-blend-mode: screen; will-change: transform; }
-.mark__dot {
-  position: absolute; width: var(--dot-size, 17px); height: var(--dot-size, 17px); border-radius: 50%;
-  background: radial-gradient(circle at 34% 30%, #fff, #b9b9c2 55%, #74747e);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  animation: markorbit var(--orbit-dur, 16s) linear infinite;
-  transition: width 0.8s var(--ease), height 0.8s var(--ease);
-}
-@keyframes markorbit {
-  from { transform: rotate(0deg) translateX(var(--orbit-r, 195px)) rotate(0deg); }
-  to   { transform: rotate(360deg) translateX(var(--orbit-r, 195px)) rotate(-360deg); }
-}
 .orbits { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; animation: orbitspin var(--orbit-spin, 90s) linear infinite; transform-origin: 50% 50%; }
 @keyframes orbitspin { to { transform: rotate(360deg); } }
 
@@ -93,15 +82,15 @@ body.is-loading .mark__dot, body.is-loading .orbits { opacity: 0; }
 .aura__layer--work     { background: radial-gradient(60% 60% at 64% 56%, rgba(255, 90, 140, 0.18), transparent 70%); }
 .aura__layer--process  { background: radial-gradient(60% 55% at 38% 40%, rgba(60, 210, 150, 0.20), transparent 70%); }
 
-/* ---------- scene tuning (arrow glow, hue, orbiting dot) ---------- */
-:root { --orbit-r: 195px; --orbit-dur: 16s; --orbit-spin: 90s; --dot-size: 17px; --arrow-hue: 0deg; }
-body[data-scene="about"]    { --orbit-r: 250px; --orbit-dur: 22s; --dot-size: 12px; --arrow-hue: 28deg; }
+/* ---------- scene tuning (arrow glow + hue, orbit-ring speed) ---------- */
+:root { --orbit-spin: 90s; --arrow-hue: 0deg; }
+body[data-scene="about"]    { --arrow-hue: 28deg; }
 body[data-scene="about"]    .mark__shape { --glow1: rgba(120, 90, 255, 0.55); --glow2: rgba(80, 60, 220, 0.3); }
-body[data-scene="services"] { --orbit-r: 150px; --orbit-dur: 9s;  --dot-size: 22px; --arrow-hue: -24deg; }
+body[data-scene="services"] { --arrow-hue: -24deg; }
 body[data-scene="services"] .mark__shape { --glow1: rgba(40, 200, 210, 0.5); --glow2: rgba(40, 120, 255, 0.28); }
-body[data-scene="work"]     { --orbit-r: 300px; --orbit-dur: 14s; --dot-size: 14px; --arrow-hue: 14deg; --orbit-spin: 60s; }
+body[data-scene="work"]     { --arrow-hue: 14deg; --orbit-spin: 60s; }
 body[data-scene="work"]     .mark__shape { --glow1: rgba(255, 90, 140, 0.42); --glow2: rgba(150, 60, 255, 0.3); }
-body[data-scene="process"]  { --orbit-r: 210px; --orbit-dur: 7s;  --dot-size: 16px; --arrow-hue: -40deg; }
+body[data-scene="process"]  { --arrow-hue: -40deg; --orbit-spin: 50s; }
 body[data-scene="process"]  .mark__shape { --glow1: rgba(60, 210, 150, 0.5); --glow2: rgba(40, 160, 255, 0.26); }
 
 /* bottom light-takeover: a premium drifting mesh that blooms open as a circle
@@ -194,7 +183,7 @@ main { position: static; }
 .dock__title { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.22em; color: var(--ink-dim); padding: 0.4rem 0.7rem 0.55rem; }
 .dock__link { position: relative; display: flex; align-items: center; gap: 0.7rem; padding: 0.62rem 0.7rem; border-radius: 11px; color: var(--ink); font-weight: 500; font-size: 0.98rem; cursor: none; transition: background 0.3s var(--ease), color 0.3s var(--ease), padding-inline-start 0.3s var(--ease); }
 .dock__link:hover { background: rgba(255, 255, 255, 0.06); color: #fff; padding-inline-start: 1rem; }
-.dock__link.is-active { color: #fff; }
+.dock__link.is-active { color: #fff; background: rgba(255, 255, 255, 0.08); }
 .dock__no { font-family: var(--f-mono); font-size: 0.66rem; color: var(--ink-dim); transition: color 0.3s var(--ease); }
 .dock__link.is-active .dock__no { color: var(--blue); }
 .dock__theme { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-top: 0.4rem; padding: 0.75rem 0.7rem 0.4rem; border-top: 1px solid var(--line); }
@@ -202,6 +191,7 @@ main { position: static; }
 [data-theme="light"] .dock__panel { background: rgba(248, 246, 242, 0.82); }
 [data-theme="light"] .dock.is-open .menu-fab { background: rgba(255, 255, 255, 0.85); }
 [data-theme="light"] .dock__link:hover { background: rgba(28, 28, 30, 0.06); color: #111; }
+[data-theme="light"] .dock__link.is-active { color: #111; background: rgba(28, 28, 30, 0.07); }   /* was white-on-white before */
 
 /* ---------- shared type ---------- */
 .big {
@@ -315,6 +305,7 @@ main { position: static; }
 .contact__link i { font-style: normal; color: var(--blue); transition: transform 0.4s var(--ease); }
 .contact__link:hover { color: #fff; padding-inline-start: 0.6rem; }
 .contact__link:hover i { transform: translate(-6px, -6px); }
+.contact__hint { color: var(--ink-dim); font-size: 0.55em; font-weight: 400; margin-inline-start: 0.6em; letter-spacing: 0.02em; }
 
 /* ---------- footer ---------- */
 .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: clamp(2rem, 5vw, 3rem) var(--gutter); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em; }
@@ -393,9 +384,31 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .hero__w--3 { inset-inline-start: 8vw; }
 }
 
+/* ---------- mobile / touch: shed the GPU-heavy compositing so phones don't crash ----------
+   We drop the full-screen grain, the per-frame mix-blend over the arrow, the big blurred
+   drop-shadows, the animated blobs and backdrop-filters — keeping the look, losing the load. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .grain { display: none; }
+  .orbits { display: none; }
+  /* readable solid headings instead of difference-blend recomputed every frame */
+  .blend { mix-blend-mode: normal; }
+  .big, .hero__w .line > span { color: var(--ink); }
+  /* lighter arrow: one modest shadow, static blobs, no shine */
+  .mark__shape { filter: drop-shadow(0 0 26px var(--glow1)); }
+  .blob { filter: blur(13px); animation: none; }
+  .mark__shine { display: none; }
+  .takeover__flow { animation: none; filter: blur(4px); }
+  /* backdrop-filter is very costly on mobile → solid panels instead */
+  .menu-fab, .dock__panel { backdrop-filter: none; }
+  .menu-fab { background: rgba(20, 19, 22, 0.92); }
+  .dock__panel { background: rgba(20, 19, 22, 0.96); }
+  [data-theme="light"] .menu-fab { background: rgba(255, 255, 255, 0.94); }
+  [data-theme="light"] .dock__panel { background: rgba(248, 246, 242, 0.97); }
+}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .cta-band__track, .hero__scroll i, .orbits, .mark__dot, .blob { animation: none; }
+  .cta-band__track, .hero__scroll i, .orbits, .blob { animation: none; }
   .cursor { display: none; }
   body { cursor: auto; }
 }

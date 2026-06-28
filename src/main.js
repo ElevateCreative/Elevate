@@ -7,6 +7,9 @@ import { initCursor } from './modules/cursor.js';
 
 gsap.registerPlugin(ScrollTrigger);
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// phones/tablets can't afford the per-frame blend + heavy-filter compositing, so we
+// run a lighter path there (no smooth-scroll hijack, no scroll-driven arrow work).
+const isMobile = window.matchMedia('(max-width: 760px), (hover: none) and (pointer: coarse)').matches;
 
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
@@ -26,7 +29,10 @@ if (markShape && !reduced) {
   // continuous "breath" lives on its own layer so it never fights the scroll journey
   // (held until the intro launch lands, so it stays aligned with the outline while filling)
   breatheTween = gsap.to(markBreathe, { scale: 1.06, duration: 4.5, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true });
+}
 
+/* heavy, per-frame arrow interactions — desktop only */
+if (markShape && !reduced && !isMobile) {
   // the whole mark drifts toward the cursor — it "comes out" to meet the user
   const followX = gsap.quickTo(mark, 'x', { duration: 1.1, ease: 'power3' });
   const followY = gsap.quickTo(mark, 'y', { duration: 1.1, ease: 'power3' });
@@ -67,7 +73,7 @@ if (markShape && !reduced) {
 }
 
 /* ---------- smooth scroll + cursor ---------- */
-const lenis = reduced ? null : initSmoothScroll();
+const lenis = (reduced || isMobile) ? null : initSmoothScroll();
 if (lenis) window.lenis = lenis;
 initCursor();
 
@@ -268,7 +274,8 @@ function story() {
   // the central mark takes a richer journey: it glides, scales and rotates through
   // the sections (centre → right → left → centre). It lives on .mark__shape so the
   // cursor-follow (on .mark) and breath (on .mark__breathe) compose on top of it.
-  if (markShape) {
+  // Skipped on mobile — transforming a heavily-filtered element each frame crashes phones.
+  if (markShape && !isMobile) {
     gsap.timeline({ scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 1 } })
       .to(markShape, { x: () => window.innerWidth * 0.18, y: () => window.innerHeight * 0.05, scale: 0.8, rotation: 10, ease: 'sine.inOut' })
       .to(markShape, { x: () => -window.innerWidth * 0.19, y: () => -window.innerHeight * 0.04, scale: 0.66, rotation: -12, ease: 'sine.inOut' })
@@ -282,6 +289,15 @@ function story() {
         onUpdate: (self) => velSquash(gsap.utils.clamp(-1, 1, self.getVelocity() / 2600)),
       });
     }
+  }
+
+  // mobile: the arrow owns the hero, then fades aside so content stays clean (cheap one-shot)
+  if (isMobile && markShape) {
+    ScrollTrigger.create({
+      trigger: '#hero', start: 'bottom 80%',
+      onEnter: () => gsap.to('#mark', { autoAlpha: 0, duration: 0.5 }),
+      onLeaveBack: () => gsap.to('#mark', { autoAlpha: 1, duration: 0.5 }),
+    });
   }
 
   setupScenes();
@@ -338,8 +354,9 @@ function runIntro() {
 
     gsap.timeline()
       // 1) blue floods the arrow from the bottom up
-      .to(markBreathe, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'power1.inOut' }, 0)
-      .to(counter, { v: 100, duration: 1.5, ease: 'power1.inOut', onUpdate: () => { if (countEl) countEl.textContent = Math.round(counter.v); } }, 0)
+      .to(markBreathe, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.9, ease: 'power1.inOut' }, 0)
+      .to(counter, { v: 100, duration: 1.9, ease: 'power1.inOut', onUpdate: () => { if (countEl) countEl.textContent = Math.round(counter.v); } }, 0)
+      .to({}, { duration: 0.25 }) // a beat at full before it takes off
       // 2) a tiny crouch, the outline lets go
       .to(markShape, { y: 16, scaleY: 0.9, scaleX: 1.06, duration: 0.2, ease: 'power2.in' })
       .to('.mark__outline', { opacity: 0, duration: 0.2 }, '<')
