@@ -105,6 +105,15 @@ dock?.querySelectorAll('.dock__link').forEach((a) => a.addEventListener('click',
 document.addEventListener('click', (e) => { if (dock?.classList.contains('is-open') && !dock.contains(e.target)) setDock(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setDock(false); });
 
+/* ---------- contact: tap to reveal the phone numbers ---------- */
+document.querySelectorAll('[data-phones]').forEach((p) => {
+  const t = p.querySelector('.phones__toggle');
+  t?.addEventListener('click', () => {
+    const open = p.classList.toggle('is-open');
+    t.setAttribute('aria-expanded', String(open));
+  });
+});
+
 /* ---------- dark / light theme toggle ---------- */
 const root = document.documentElement;
 const savedTheme = localStorage.getItem('elevate-theme');
@@ -190,7 +199,7 @@ function animateText() {
   });
 
   // LABELS · LINKS · CARDS · FOOTER — bold slide + fade as units
-  const sel = '.mono-label, .textlink, .pill, .tile, .work__note, .contact__link, .footer span, .services__intro, .service, .step';
+  const sel = '.mono-label, .textlink, .pill, .tile, .work__note, .wa-btn, .phones, .footer span, .services__intro, .service, .step';
   gsap.set(sel, { y: 50, autoAlpha: 0 });
   ScrollTrigger.batch(sel, {
     start: 'top 86%',
