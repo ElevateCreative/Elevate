@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#161517" />
+  <title>Elevate Creative — סוכנות דיגיטל וקריאייטיב</title>
+  <meta name="description" content="Elevate Creative — סוכנות דיגיטל וקריאייטיב שמרימה ומזניקה עסקים לשלב הבא. אתרי פרימיום וחוויות דיגיטליות שמשאירות חותם." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Elevate Creative — סוכנות דיגיטל וקריאייטיב" />
+  <meta property="og:description" content="חוויות דיגיטליות שמרימות. אתרי פרימיום שמזניקים מותגים מעל המתחרים." />
+  <meta property="og:locale" content="he_IL" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 132'%3E%3Cpath d='M60 6 C71 33 95 86 116 126 C94 104 71 87 60 80 C49 87 26 104 4 126 C25 86 49 33 60 6 Z' fill='%230088ff'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="cursor" aria-hidden="true"><div class="cursor__ring"></div><div class="cursor__dot"></div></div>
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader__inner">
+      <span class="preloader__mark" aria-hidden="true">
+        <svg viewBox="0 0 120 132"><path d="M60 6 C71 33 95 86 116 126 C94 104 71 87 60 80 C49 87 26 104 4 126 C25 86 49 33 60 6 Z" fill="#eae6dd"/></svg>
+      </span>
+      <div class="preloader__bar"><span id="preloader-fill"></span></div>
+      <div class="preloader__meta" dir="ltr"><span>BUILD</span><span id="preloader-count">0</span></div>
+    </div>
+    <div class="preloader__wordmark" hidden></div>
+  </div>
+
+  <!-- Bottom "light takeover" gradient (fades in behind the arrow near the end) -->
+  <div class="takeover" aria-hidden="true"></div>
+
+  <!-- Fixed WebGL stage with the central arrow -->
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <svg class="orbits" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <circle cx="500" cy="500" r="240" /><circle cx="500" cy="500" r="360" /><circle cx="500" cy="500" r="480" />
+  </svg>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <a href="#top" class="nav__brand" data-magnetic dir="ltr">
+      <span class="nav__elevate">ELEV<span class="nav__mark" aria-hidden="true"><svg viewBox="0 0 120 132"><path d="M60 6 C71 33 95 86 116 126 C94 104 71 87 60 80 C49 87 26 104 4 126 C25 86 49 33 60 6 Z" fill="#0088ff"/></svg></span>TE</span>
+      <span class="nav__creative">Creative</span>
+    </a>
+    <div class="nav__right">
+      <nav class="nav__links">
+        <a href="#about">מניפסט<i dir="ltr">↗</i></a>
+        <a href="#work">עבודות<i dir="ltr">↗</i></a>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" type="button" dir="ltr" aria-label="מצב כהה או בהיר" data-magnetic>
+        <span class="theme-toggle__track"><span class="theme-toggle__knob"></span></span>
+      </button>
+      <a href="#contact" class="nav__cta" data-magnetic>צרו קשר<i dir="ltr">→</i></a>
+    </div>
+  </header>
+  <button class="menu-fab" aria-label="תפריט"><span></span><span></span></button>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <h1 class="hero__head blend" aria-label="חוויות דיגיטליות שמרימות">
+        <span class="hero__w hero__w--1"><span class="line"><span>חוויות</span></span></span>
+        <span class="hero__w hero__w--2"><span class="line"><span>דיגיטליות</span></span></span>
+        <span class="hero__w hero__w--3"><span class="line"><span>שמרימות.</span></span></span>
+      </h1>
+      <span class="hero__audio" aria-hidden="true"></span>
+      <span class="hero__scroll" aria-hidden="true">גלול <i dir="ltr">↓</i></span>
+    </section>
+
+    <!-- MANIFESTO / ABOUT -->
+    <section class="section manifesto" id="about">
+      <p class="big blend">
+        <span class="line"><span>ברגש, אסטרטגיה ועיצוב —</span></span>
+        <span class="line"><span>אנחנו דוחפים את גבולות</span></span>
+        <span class="line"><span>היצירה הדיגיטלית.</span></span>
+      </p>
+      <div class="manifesto__foot">
+        <div class="manifesto__col">
+          <p class="mono-label" dir="ltr">(01) — WHO WE ARE</p>
+          <p class="upper">סוכנות דיגיטל וקריאייטיב שיוצרת אתרי פרימיום וחוויות בלתי נשכחות.</p>
+          <a href="#contact" class="textlink" data-magnetic>עלינו <i dir="ltr">→</i></a>
+        </div>
+        <p class="manifesto__lead" data-reveal>Elevate Creative נולדה כדי לקחת עסקים, להרים ולהזניק אותם לשלב הבא. אנחנו מזקקים את הזהות של כל מותג ותופרים לו אתר פרימיום מרהיב — כזה שמתקשר בדיוק בשפה שלו, ודוחף אותו מעל המתחרים.</p>
+      </div>
+    </section>
+
+    <!-- FEATURED WORK -->
+    <section class="section work" id="work">
+      <div class="work__head">
+        <p class="mono-label" dir="ltr">(02) — FEATURED WORK</p>
+        <a href="#contact" class="pill" data-magnetic>כל העבודות <i dir="ltr">→</i></a>
+      </div>
+      <div class="bento">
+        <article class="tile tile--a" data-reveal>
+          <span class="tile__media tile__media--1"></span>
+          <div class="tile__row"><h3>מותג אופנה</h3><span class="tile__plus" aria-hidden="true">+</span></div>
+          <p class="tile__tags" dir="ltr">BRANDING · WEB · 3D</p>
+        </article>
+        <article class="tile tile--b" data-reveal>
+          <span class="tile__media tile__media--2"></span>
+          <div class="tile__row"><h3>סטארטאפ טכנולוגי</h3><span class="tile__plus" aria-hidden="true">+</span></div>
+          <p class="tile__tags" dir="ltr">PRODUCT · WEBGL · MOTION</p>
+        </article>
+        <article class="tile tile--c" data-reveal>
+          <span class="tile__media tile__media--3"></span>
+          <div class="tile__row"><h3>מסעדה יוקרתית</h3><span class="tile__plus" aria-hidden="true">+</span></div>
+          <p class="tile__tags" dir="ltr">EXPERIENCE · 3D</p>
+        </article>
+        <article class="tile tile--d" data-reveal>
+          <span class="tile__media tile__media--4"></span>
+          <div class="tile__row"><h3>חנות אונליין</h3><span class="tile__plus" aria-hidden="true">+</span></div>
+          <p class="tile__tags" dir="ltr">E-COMMERCE · DESIGN</p>
+        </article>
+      </div>
+      <p class="work__note">* עבודות לדוגמה — תיק העבודות יתעדכן בפרויקטים אמיתיים בקרוב.</p>
+    </section>
+
+    <!-- CTA gradient marquee -->
+    <section class="cta-band" aria-label="בואו נעלה שלב">
+      <div class="cta-band__track">
+        <span>כאן השונה הוא הסטנדרט.</span><i>✦</i><span>בואו נעלה שלב.</span><i>✦</i><span>כאן השונה הוא הסטנדרט.</span><i>✦</i><span>בואו נעלה שלב.</span><i>✦</i>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section contact" id="contact">
+      <p class="mono-label" dir="ltr">(03) — LET'S TALK</p>
+      <h2 class="big blend">
+        <span class="line"><span>מוכנים</span></span>
+        <span class="line"><span>לעלות שלב?</span></span>
+      </h2>
+      <p class="contact__sub" data-reveal>ספרו לנו על העסק — ונחזיר לכם חזון דיגיטלי שמרים אתכם מעל כולם.</p>
+      <!-- TODO: עדכנו לפרטי הקשר האמיתיים של Elevate Creative -->
+      <div class="contact__links" data-reveal>
+        <a href="mailto:hello@elevatecreative.co.il" class="contact__link" data-magnetic><span dir="ltr">hello@elevatecreative.co.il</span><i dir="ltr">↗</i></a>
+        <a href="https://wa.me/972500000000" target="_blank" rel="noopener" class="contact__link" data-magnetic><span>WhatsApp</span><i dir="ltr">↗</i></a>
+        <a href="https://instagram.com/" target="_blank" rel="noopener" class="contact__link" data-magnetic><span>Instagram</span><i dir="ltr">↗</i></a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span dir="ltr">ELEVATE Creative</span>
+      <span dir="ltr">© 2026 — ALL RIGHTS RESERVED</span>
+      <span>נבנה באהבה, בישראל.</span>
+    </footer>
+  </main>
+
+  <noscript>
+    <p style="position:fixed;inset:0;display:grid;place-items:center;background:#161517;color:#e8e6e0;text-align:center;padding:2rem;font-family:sans-serif">לחוויה המלאה יש להפעיל JavaScript בדפדפן.</p>
+  </noscript>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
