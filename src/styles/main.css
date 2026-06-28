@@ -292,9 +292,24 @@ main { position: static; }
 .tile:hover .tile__media { transform: scale(1.06); }
 .tile:hover .tile__plus { transform: rotate(90deg); }
 
-/* featured real project (Job Power) — wide, clickable, "live" */
+/* featured real project (Job Power) — recreates their purple-aurora hero with the real logo */
 .tile--feature { grid-column: 1 / -1; aspect-ratio: 16 / 7; cursor: none; }
-.tile--feature .tile__media--jp { background: radial-gradient(120% 130% at 28% 22%, #5b9bff, #1c43c4 52%, #0a1640 92%); }
+.tile--feature .tile__media--jp {
+  background:
+    radial-gradient(55% 75% at 16% 14%, rgba(126, 77, 255, 0.5), transparent 60%),
+    radial-gradient(50% 70% at 86% 26%, rgba(158, 74, 230, 0.38), transparent 60%),
+    radial-gradient(75% 95% at 72% 96%, rgba(96, 42, 205, 0.42), transparent 62%),
+    radial-gradient(130% 120% at 50% 45%, #1a1033 0%, #0b0717 78%);
+}
+.tile--feature .tile__media--jp::after {
+  content: ""; position: absolute; inset: -25%;
+  background: conic-gradient(from 130deg at 42% 48%, transparent, rgba(150, 100, 255, 0.4) 18%, transparent 40%, rgba(110, 60, 230, 0.3) 70%, transparent 88%);
+  filter: blur(34px); opacity: 0.65;
+}
+.jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-content: center; justify-items: center; gap: 0.7rem; padding-bottom: 2.5rem; pointer-events: none; }
+.jp-hero__logo { width: clamp(64px, 11vw, 124px); aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 10px 34px rgba(126, 77, 255, 0.55)); }
+.jp-hero__tag { font-weight: 600; font-size: clamp(0.95rem, 1.7vw, 1.45rem); color: #fff; letter-spacing: 0.01em; }
+.jp-hero__tag b { color: #a98bff; font-weight: 600; }
 .tile__sub { display: block; font-size: 0.46em; font-weight: 400; color: rgba(255, 255, 255, 0.72); margin-top: 0.25em; letter-spacing: 0; }
 .tile--feature:hover { box-shadow: 0 26px 64px rgba(28, 67, 196, 0.34); border-color: rgba(91, 155, 255, 0.5); }
 .tile__live { position: absolute; top: clamp(1rem, 2vw, 1.5rem); inset-inline-start: clamp(1.2rem, 2vw, 1.8rem); z-index: 1; display: inline-flex; align-items: center; gap: 0.5em; font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.14em; color: #fff; padding: 0.32em 0.75em; border-radius: 999px; background: rgba(0, 0, 0, 0.32); backdrop-filter: blur(6px); }
