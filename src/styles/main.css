@@ -158,12 +158,12 @@ main { position: static; }
 /* ---------- floating dock (section nav + theme switch) ---------- */
 /* anchored to the physical bottom-RIGHT; `direction:ltr` keeps flex-end on the right,
    while the panel's own content stays RTL (see .dock__panel). */
-.dock { position: fixed; z-index: 40; bottom: clamp(1rem, 3vw, 2rem); right: clamp(1rem, 3vw, 2rem); direction: ltr; display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem; }
+.dock { position: fixed; z-index: 40; bottom: clamp(1rem, 3vw, 2rem); right: clamp(1rem, 3vw, 2rem); direction: ltr; display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem; pointer-events: none; /* container must NOT eat clicks — only the fab + open panel do */ }
 .dock__panel { direction: rtl; }
 .menu-fab {
   position: relative; width: 54px; height: 54px; border-radius: 16px; border: 1px solid var(--line);
   background: rgba(20, 19, 22, 0.6); backdrop-filter: blur(12px);
-  display: grid; place-content: center; gap: 5px; cursor: none;
+  display: grid; place-content: center; gap: 5px; cursor: none; pointer-events: auto;
   transition: background 0.4s var(--ease), border-color 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .menu-fab span { display: block; width: 20px; height: 1.5px; background: var(--cream); transition: transform 0.4s var(--ease), opacity 0.3s var(--ease); }
@@ -345,10 +345,10 @@ main { position: static; }
 .wa-btn::before { content: ""; position: absolute; top: 0; bottom: 0; width: 38%; left: -55%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.22), transparent); transform: skewX(-18deg); animation: waShine 4.8s ease-in-out infinite; }
 @keyframes waShine { 0%, 55% { left: -55%; } 82%, 100% { left: 155%; } }
 .wa-btn:hover { transform: translateY(-3px) scale(1.015); box-shadow: 0 22px 54px rgba(0, 136, 255, 0.5); }
-.wa-btn__icon { position: relative; flex: none; width: 48px; height: 48px; border-radius: 50%; background: #25d366; display: grid; place-items: center; }
+.wa-btn__icon { position: relative; flex: none; width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, 0.18); display: grid; place-items: center; }
 .wa-btn__icon svg { width: 28px; height: 28px; fill: #fff; }
 .wa-btn__icon::after { content: ""; position: absolute; inset: 0; border-radius: 50%; animation: waPulse 2.4s ease-out infinite; }
-@keyframes waPulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); } 70%, 100% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); } }
+@keyframes waPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); } 70%, 100% { box-shadow: 0 0 0 18px rgba(255, 255, 255, 0); } }
 .wa-btn__text { display: grid; gap: 0.12rem; text-align: start; }
 .wa-btn__title { font-weight: 600; font-size: clamp(1rem, 1.7vw, 1.25rem); line-height: 1.1; }
 .wa-btn__sub { font-size: 0.78rem; color: rgba(255, 255, 255, 0.62); }
@@ -447,6 +447,8 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .phones__toggle { justify-content: center; }
   .hero__w--2 { inset-inline-end: 4vw; }
   .hero__w--3 { inset-inline-start: 8vw; }
+  /* no forced full-height sections on mobile → no dead space between them */
+  .section { min-height: auto; padding-block: clamp(3rem, 9vw, 4.5rem); }
 }
 
 /* ---------- mobile / touch: shed the GPU-heavy compositing so phones don't crash ----------
