@@ -2,7 +2,6 @@ import './styles/main.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import { createArrow } from './three/world.js';
 import { initSmoothScroll } from './modules/smoothScroll.js';
 import { runPreloader } from './modules/preloader.js';
 import { initCursor } from './modules/cursor.js';
@@ -13,27 +12,29 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
 
-/* ---------- WebGL central arrow ---------- */
-const canvas = document.getElementById('gl');
-let world = null;
-try {
-  world = createArrow(canvas, { reduced });
-  gsap.ticker.add((t) => world.update(t));
-} catch (err) {
-  console.error('WebGL failed:', err);
-  document.body.classList.add('no-webgl');
+/* ---------- central 2D arrow mark (gradient + glow, mouse-reactive) ---------- */
+const mark = document.getElementById('mark');
+const markSvg = mark && mark.querySelector('.mark__svg');
+const shine = mark && mark.querySelector('.mark__shine');
+if (markSvg && !reduced) {
+  gsap.set(markSvg, { transformPerspective: 900, transformOrigin: '50% 50%' });
+  gsap.to(markSvg, { scale: 1.05, duration: 4.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+  const rotY = gsap.quickTo(markSvg, 'rotationY', { duration: 0.9, ease: 'power3' });
+  const rotX = gsap.quickTo(markSvg, 'rotationX', { duration: 0.9, ease: 'power3' });
+  const shX = gsap.quickTo(shine, 'x', { duration: 0.7, ease: 'power3' });
+  const shY = gsap.quickTo(shine, 'y', { duration: 0.7, ease: 'power3' });
+  window.addEventListener('pointermove', (e) => {
+    rotY(((e.clientX / window.innerWidth) * 2 - 1) * 14);
+    rotX(-((e.clientY / window.innerHeight) * 2 - 1) * 11);
+    shX(e.clientX - window.innerWidth / 2);
+    shY(e.clientY - window.innerHeight / 2);
+  }, { passive: true });
 }
 
 /* ---------- smooth scroll + cursor ---------- */
 const lenis = reduced ? null : initSmoothScroll();
 if (lenis) window.lenis = lenis;
 initCursor();
-
-if (world && !reduced) {
-  window.addEventListener('pointermove', (e) => {
-    world.setMouse((e.clientX / window.innerWidth) * 2 - 1, -((e.clientY / window.innerHeight) * 2 - 1));
-  }, { passive: true });
-}
 
 /* ---------- anchors + menu fab ---------- */
 function goTo(sel) {
@@ -159,19 +160,17 @@ function story() {
 
   animateText();
 
-  if (!world) return;
+  // the central mark glides across the page (centre → right → left → centre)
+  if (markSvg) {
+    gsap.timeline({ scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+      .to(markSvg, { x: () => window.innerWidth * 0.14, ease: 'sine.inOut' })
+      .to(markSvg, { x: () => -window.innerWidth * 0.14, ease: 'sine.inOut' })
+      .to(markSvg, { x: 0, ease: 'sine.inOut' });
+  }
 
-  // ONE continuous, eased path — the arrow glides (no teleporting)
-  gsap.timeline({ scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 1 } })
-    .to(world.arrowGroup.position, { x: 3.2, ease: 'sine.inOut' })
-    .to(world.arrowGroup.position, { x: -3.2, ease: 'sine.inOut' })
-    .to(world.arrowGroup.position, { x: 0, ease: 'sine.inOut' });
-
-  // bottom takeover: the gradient WIPES open from a centre line to full screen; arrow + satellite fade out
-  if (world.satellite) world.satellite.material.transparent = true;
-  const fadeMats = [world.arrowMat, world.satellite && world.satellite.material].filter(Boolean);
+  // bottom takeover: the gradient WIPES open from a centre line to full screen; the mark fades out
   gsap.fromTo('.takeover', { clipPath: 'inset(50% 0% 50% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 92%', end: 'top 24%', scrub: true } });
-  gsap.fromTo(fadeMats, { opacity: 1 }, { opacity: 0, ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 90%', end: 'top 58%', scrub: true } });
+  gsap.fromTo('#mark', { autoAlpha: 1 }, { autoAlpha: 0, ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 90%', end: 'top 58%', scrub: true } });
   ScrollTrigger.create({ trigger: '.cta-band', start: 'top 48%', onEnter: () => document.body.classList.add('is-takeover'), onLeaveBack: () => document.body.classList.remove('is-takeover') });
 }
 

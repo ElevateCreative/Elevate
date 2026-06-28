@@ -35,8 +35,22 @@
   <!-- Bottom "light takeover" gradient (fades in behind the arrow near the end) -->
   <div class="takeover" aria-hidden="true"></div>
 
-  <!-- Fixed WebGL stage with the central arrow -->
-  <canvas id="gl" aria-hidden="true"></canvas>
+  <!-- Central 2D arrow mark — colourful gradient + glow, reacts to the mouse -->
+  <div class="mark" id="mark" aria-hidden="true">
+    <span class="mark__shine"></span>
+    <svg class="mark__svg" viewBox="0 0 120 132">
+      <defs>
+        <linearGradient id="markGrad" x1="2%" y1="0%" x2="98%" y2="100%">
+          <stop offset="0%" stop-color="#46d6ff" />
+          <stop offset="34%" stop-color="#1f7bff" />
+          <stop offset="66%" stop-color="#5b4bff" />
+          <stop offset="100%" stop-color="#a64bff" />
+        </linearGradient>
+      </defs>
+      <path d="M60 6 C71 33 95 86 116 126 C94 104 71 87 60 80 C49 87 26 104 4 126 C25 86 49 33 60 6 Z" fill="url(#markGrad)" />
+    </svg>
+    <span class="mark__dot"></span>
+  </div>
   <svg class="orbits" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <circle cx="500" cy="500" r="240" /><circle cx="500" cy="500" r="360" /><circle cx="500" cy="500" r="480" />
   </svg>
