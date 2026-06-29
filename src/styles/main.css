@@ -295,8 +295,8 @@ main { position: static; }
 .tile:hover .tile__media { transform: scale(1.06); }
 .tile:hover .tile__plus { transform: rotate(90deg); }
 
-/* featured real project (Job Power) — recreates their purple-aurora hero with the real logo */
-.tile--feature { grid-column: 1 / -1; aspect-ratio: 16 / 8.2; cursor: none; }
+/* real project (Job Power) — same size as the other tiles; real video bg + logo */
+.tile--feature { cursor: none; }
 .tile--feature .tile__media--jp {
   background:
     radial-gradient(55% 75% at 16% 14%, rgba(126, 77, 255, 0.5), transparent 60%),
@@ -312,9 +312,8 @@ main { position: static; }
 .jp-vid { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.9s var(--ease); }
 .jp-vid.is-ready { opacity: 1; }
 .jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; pointer-events: none; }
-.jp-hero__logo { width: clamp(150px, 26vw, 340px); aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 14px 44px rgba(60, 30, 120, 0.7)); }
-.tile--feature h3 { font-size: clamp(1.9rem, 4.2vw, 3.4rem); }
-.tile__sub { display: block; font-size: 0.4em; font-weight: 400; color: rgba(255, 255, 255, 0.74); margin-top: 0.3em; letter-spacing: 0; }
+.jp-hero__logo { width: 46%; max-width: 240px; aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 12px 36px rgba(60, 30, 120, 0.7)); transform: translateY(-8%); }
+.tile__sub { display: block; font-size: 0.5em; font-weight: 400; color: rgba(255, 255, 255, 0.74); margin-top: 0.25em; letter-spacing: 0; }
 .tile--feature:hover { box-shadow: 0 26px 64px rgba(28, 67, 196, 0.34); border-color: rgba(91, 155, 255, 0.5); }
 .work__note { margin-top: 1.6rem; font-size: 0.82rem; color: var(--ink-dim); }
 
@@ -444,7 +443,6 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
 @media (max-width: 720px) {
   .nav__links { display: none; }
   .bento { grid-template-columns: 1fr; }
-  .tile--feature { aspect-ratio: 4 / 3; }
   .contact__cta { width: 100%; }
   .wa-btn, .phones, .phones__toggle { width: 100%; }
   .phones__toggle { justify-content: center; }

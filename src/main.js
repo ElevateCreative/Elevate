@@ -278,8 +278,22 @@ function animateText() {
     tl.to('.hero__wordmark .line > span', { yPercent: 0, duration: 0.9, ease: 'power4.out', stagger: 0.12 }, 0.2)
       .to('.hero__scroll', { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.3')
       .add(() => {
-        if (isMobile || !markPos || markPos.dataset.wired) return;
+        if (!markPos || markPos.dataset.wired) return;
         markPos.dataset.wired = '1';
+
+        if (isMobile) {
+          // mobile: the arrow grows and settles in as a faint background element (stays put)
+          gsap.fromTo(markPos, { scale: HERO_A, x: () => slotOffset() }, {
+            scale: 1.18, x: 0, ease: 'none',
+            scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 35%', scrub: true, invalidateOnRefresh: true },
+          });
+          gsap.fromTo('#mark', { autoAlpha: 1 }, {
+            autoAlpha: 0.13, ease: 'none',
+            scrollTrigger: { trigger: '#hero', start: 'top 25%', end: 'bottom 45%', scrub: true },
+          });
+          return;
+        }
+
         // GROW + RECENTRE: as the word leaves, the arrow grows to full size back at centre
         gsap.fromTo(markPos, { scale: HERO_A, x: () => slotOffset() }, {
           scale: 1, x: 0, ease: 'none',
@@ -289,9 +303,11 @@ function animateText() {
         gsap.to('.wm .line > span', { yPercent: -145, ease: 'power3.in', stagger: 0.12,
           scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 74%', scrub: true } });
 
-        // PASS-THROUGH words zoom out through the centre, OVER the arrow (blend → colour shift)
+        // PASS-THROUGH words zoom out through the centre, OVER the arrow (blend → colour shift).
+        // Tight range — they all appear AND vanish within the first ~half of the descent,
+        // long before section 2 comes into view.
         gsap.set('.pw', { autoAlpha: 0, scale: 0.5 });
-        gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 6%', scrub: true } })
+        gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'center top', scrub: true } })
           .fromTo('.pw--1', { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, ease: 'sine.out' })
           .to('.pw--1', { autoAlpha: 0, scale: 1.7, ease: 'sine.in' })
           .fromTo('.pw--2', { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, ease: 'sine.out' }, '-=0.2')
@@ -389,15 +405,6 @@ function story() {
     }
   }
 
-  // mobile: the arrow owns the hero, then fades aside so content stays clean (cheap one-shot)
-  if (isMobile && markShape) {
-    ScrollTrigger.create({
-      trigger: '#hero', start: 'bottom 80%',
-      onEnter: () => gsap.to('#mark', { autoAlpha: 0, duration: 0.5 }),
-      onLeaveBack: () => gsap.to('#mark', { autoAlpha: 1, duration: 0.5 }),
-    });
-  }
-
   setupScenes();
   setupSnap();
 
@@ -423,7 +430,7 @@ function story() {
   gsap.fromTo('.takeover',
     { clipPath: 'circle(0% at 50% 78%)' },
     { clipPath: 'circle(150% at 50% 78%)', ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 95%', end: 'top 18%', scrub: true } });
-  gsap.fromTo('#mark', { autoAlpha: 1 }, { autoAlpha: 0, ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 90%', end: 'top 58%', scrub: true } });
+  gsap.to('#mark', { autoAlpha: 0, ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 90%', end: 'top 58%', scrub: true } });
   ScrollTrigger.create({ trigger: '.cta-band', start: 'top 48%', onEnter: () => document.body.classList.add('is-takeover'), onLeaveBack: () => document.body.classList.remove('is-takeover') });
 }
 
