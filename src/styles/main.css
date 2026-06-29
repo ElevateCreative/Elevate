@@ -70,7 +70,7 @@ body.is-loading .orbits { opacity: 0; }
 @keyframes blobC { from { transform: translate(0, 0) scale(1); } to { transform: translate(16%, -22%) scale(1.16); } }
 @keyframes blobD { from { transform: translate(0, 0) scale(0.85); opacity: 0.65; } to { transform: translate(34%, 18%) scale(1.25); opacity: 1; } }
 .mark__shine { position: absolute; left: 50%; top: 50%; width: 240px; height: 240px; margin: -120px 0 0 -120px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 60%); mix-blend-mode: screen; will-change: transform; }
-.orbits { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; animation: orbitspin var(--orbit-spin, 90s) linear infinite; transform-origin: 50% 50%; }
+.orbits { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; transform-origin: 50% 50%; }
 @keyframes orbitspin { to { transform: rotate(360deg); } }
 
 /* ---------- per-scene aura tints (crossfaded behind the arrow) ---------- */
@@ -204,16 +204,18 @@ main { position: static; }
 
 /* ---------- HERO ---------- */
 .hero { position: relative; height: 100vh; height: 100svh; }
-.hero__head { position: absolute; inset: 0; }
-.hero__w { position: absolute; }
-.hero__w .line > span { font-weight: 500; font-size: clamp(2.6rem, 11vw, 11rem); line-height: 0.86; letter-spacing: -0.02em; color: var(--blend-ink); }
-.hero__w--1 { top: 15vh; inset-inline-start: 7vw; }
-.hero__w--2 { top: 38vh; inset-inline-end: 7vw; }
-.hero__w--3 { top: 60vh; inset-inline-start: 17vw; }
+/* giant ELEVATE wordmark — the centred arrow stands in as the "A". The two halves
+   flex equally around the slot so the slot (and the arrow) sit dead-centre. */
+.hero__wordmark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.wm { font-weight: 500; line-height: 0.86; letter-spacing: -0.03em; color: var(--blend-ink); }
+.wm .line > span { font-size: clamp(3rem, 18vw, 15rem); font-weight: 500; line-height: 0.86; letter-spacing: -0.04em; color: var(--blend-ink); display: block; }
+.wm--l { flex: 1; text-align: right; }
+.wm--r { flex: 1; text-align: left; }
+.wm--slot { flex: none; width: clamp(140px, 23vw, 340px); }
+.hero__tagline { position: absolute; inset-inline: 0; bottom: 15vh; text-align: center; font-family: var(--f-mono); font-size: clamp(0.74rem, 1.3vw, 0.95rem); letter-spacing: 0.18em; color: var(--ink-dim); }
 .hero__scroll { position: absolute; inset-block-end: clamp(1.4rem, 4vh, 2.6rem); inset-inline-end: clamp(1.4rem, 4vw, 3rem); font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--ink-dim); display: inline-flex; align-items: center; gap: 0.5em; }
 .hero__scroll i { font-style: normal; animation: bob 1.8s var(--ease) infinite; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
-.hero__audio { position: absolute; inset-block-end: clamp(1.4rem, 4vh, 2.6rem); inset-inline-start: clamp(1.4rem, 4vw, 3rem); width: 12px; height: 12px; border-radius: 50%; background: var(--ink-dim); }
 
 /* ---------- sections ---------- */
 .section { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: clamp(5rem, 11vh, 8rem) var(--gutter); max-width: var(--maxw); margin-inline: auto; }
@@ -240,7 +242,7 @@ main { position: static; }
 }
 .service::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--ink); opacity: 0; transform: scaleY(0.3); transform-origin: bottom; transition: opacity 0.45s var(--ease), transform 0.45s var(--ease); }
 .service__no { grid-area: no; font-family: var(--f-mono); font-size: 0.8rem; color: var(--ink-dim); padding-top: 0.4em; transition: color 0.4s var(--ease); }
-.service__name { grid-area: name; font-size: clamp(1.7rem, 5vw, 3.6rem); font-weight: 500; line-height: 1; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s var(--ease); }
+.service__name { grid-area: name; min-width: 0; overflow-wrap: break-word; font-size: clamp(1.6rem, 4.4vw, 3.1rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s var(--ease); }
 .service__desc { grid-area: desc; color: var(--ink-dim); font-size: clamp(0.95rem, 1.4vw, 1.15rem); max-width: 46ch; transition: color 0.4s var(--ease); }
 .service__cta { position: absolute; inset-inline-end: clamp(0.4rem, 1.5vw, 1.4rem); top: 50%; font-style: normal; font-size: clamp(1.4rem, 3vw, 2.2rem); color: var(--blue); transform: translateY(-50%) translateX(0.4em); opacity: 0; transition: opacity 0.4s var(--ease), transform 0.5s var(--ease); }
 .service:hover { padding-inline-start: clamp(1.2rem, 3vw, 2.4rem); }
@@ -250,7 +252,7 @@ main { position: static; }
 .service:hover .service__desc { color: rgba(150, 150, 160, 0.85); }
 .service:hover .service__cta { opacity: 1; transform: translateY(-50%) translateX(0); }
 @media (min-width: 760px) {
-  .service { grid-template-columns: 5rem minmax(auto, 22ch) 1fr; grid-template-areas: "no name desc"; align-items: center; gap: 1.4rem 2.4rem; }
+  .service { grid-template-columns: 4.5rem minmax(15rem, 26rem) 1fr; grid-template-areas: "no name desc"; align-items: center; gap: 1.4rem 2.4rem; }
   .service__desc { padding-inline-end: 4rem; }
 }
 
@@ -445,8 +447,9 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .contact__cta { width: 100%; }
   .wa-btn, .phones, .phones__toggle { width: 100%; }
   .phones__toggle { justify-content: center; }
-  .hero__w--2 { inset-inline-end: 4vw; }
-  .hero__w--3 { inset-inline-start: 8vw; }
+  /* keep the ELEVATE wordmark inside the screen on phones */
+  .wm .line > span { font-size: clamp(2.4rem, 15vw, 5.5rem); letter-spacing: -0.03em; }
+  .wm--slot { width: clamp(82px, 27vw, 150px); }
   /* no forced full-height sections on mobile → no dead space between them */
   .section { min-height: auto; padding-block: clamp(3rem, 9vw, 4.5rem); }
 }
@@ -459,7 +462,7 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .orbits { display: none; }
   /* readable solid headings instead of difference-blend recomputed every frame */
   .blend { mix-blend-mode: normal; }
-  .big, .hero__w .line > span { color: var(--ink); }
+  .big, .wm .line > span { color: var(--ink); }
   /* lighter arrow: one modest shadow, static blobs, no shine */
   .mark__shape { filter: drop-shadow(0 0 26px var(--glow1)); }
   .blob { filter: blur(13px); animation: none; }

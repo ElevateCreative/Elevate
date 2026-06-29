@@ -41,6 +41,18 @@ if (markShape && !reduced && !isMobile) {
   const rotX = gsap.quickTo(markShape, 'rotationX', { duration: 0.8, ease: 'power3' });
   const shX = gsap.quickTo(shine, 'x', { duration: 0.7, ease: 'power3' });
   const shY = gsap.quickTo(shine, 'y', { duration: 0.7, ease: 'power3' });
+  // in the SERVICES scene only, the arrow swings to point its tip at the cursor
+  const aimRot = gsap.quickTo(markShape, 'rotation', { duration: 0.5, ease: 'power3' });
+
+  // background orbit rings: gentle mouse parallax (spin moved to GSAP so it composes)
+  const orbits = document.querySelector('.orbits');
+  let oX = null, oY = null;
+  if (orbits) {
+    gsap.to(orbits, { rotation: 360, duration: 140, ease: 'none', repeat: -1 });
+    oX = gsap.quickTo(orbits, 'x', { duration: 1.6, ease: 'power3' });
+    oY = gsap.quickTo(orbits, 'y', { duration: 1.6, ease: 'power3' });
+  }
+
   let followScale = 1; // scaled per-scene so the pull is stronger in some scenes
   window.addEventListener('pointermove', (e) => {
     if (document.body.classList.contains('is-loading')) return; // arrow stays steady while it fills
@@ -52,6 +64,12 @@ if (markShape && !reduced && !isMobile) {
     rotX(-ny * 17);
     shX(e.clientX - window.innerWidth / 2);
     shY(e.clientY - window.innerHeight / 2);
+    if (oX) { oX(nx * 42); oY(ny * 42); }
+    if (document.body.dataset.scene === 'services') {
+      const r = markShape.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      aimRot(Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180 / Math.PI);
+    }
   }, { passive: true });
   // let scenes dial the magnetism up/down
   mark.dataset.follow = '1';
@@ -207,12 +225,21 @@ function animateText() {
     onLeaveBack: (els) => gsap.to(els, { y: 50, autoAlpha: 0, duration: 0.45, ease: 'power2.in', overwrite: true }),
   });
 
-  // HERO — hidden now; lines rise once the preloader lifts
-  gsap.set('.hero__head .line > span', { yPercent: 130 });
-  gsap.set('.hero__scroll', { autoAlpha: 0, y: 14 });
+  // HERO — the ELEVATE wordmark rises once the preloader lifts; tagline + hint follow
+  gsap.set('.hero__wordmark .line > span', { yPercent: 130 });
+  gsap.set(['.hero__tagline', '.hero__scroll'], { autoAlpha: 0, y: 14 });
   heroIntro = () => gsap.timeline()
-    .to('.hero__head .line > span', { yPercent: 0, duration: 1.05, ease: 'power4.out', stagger: 0.14 })
-    .to('.hero__scroll', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.3');
+    .to('.hero__wordmark .line > span', { yPercent: 0, duration: 1.05, ease: 'power4.out', stagger: 0.14 })
+    .to('.hero__tagline', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
+    .to('.hero__scroll', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.45');
+
+  // RELEASE: as you scroll the hero, the letters part from the arrow and dissolve,
+  // leaving just the living arrow behind.
+  if (!isMobile) {
+    const rel = { trigger: '#hero', start: 'top top', end: 'bottom 55%', scrub: true };
+    gsap.to('.wm--l', { xPercent: -60, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
+    gsap.to('.wm--r', { xPercent: 60, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
+  }
 }
 
 /* ---------- scene system: each section is its own "world" ---------- */
@@ -362,21 +389,20 @@ function runIntro() {
     gsap.set(markBreathe, { clipPath: 'inset(100% 0% 0% 0%)' });
 
     gsap.timeline()
-      // 1) blue floods the arrow from the bottom up
-      .to(markBreathe, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.9, ease: 'power1.inOut' }, 0)
-      .to(counter, { v: 100, duration: 1.9, ease: 'power1.inOut', onUpdate: () => { if (countEl) countEl.textContent = Math.round(counter.v); } }, 0)
-      .to({}, { duration: 0.25 }) // a beat at full before it takes off
+      // 1) blue floods the arrow from the bottom up (slow enough to actually watch)
+      .to(markBreathe, { clipPath: 'inset(0% 0% 0% 0%)', duration: 2.1, ease: 'power1.inOut' }, 0)
+      .to(counter, { v: 100, duration: 2.1, ease: 'power1.inOut', onUpdate: () => { if (countEl) countEl.textContent = Math.round(counter.v); } }, 0)
+      .to({}, { duration: 0.3 }) // a beat at full before it takes off
       // 2) a tiny crouch, the outline lets go
-      .to(markShape, { y: 16, scaleY: 0.9, scaleX: 1.06, duration: 0.2, ease: 'power2.in' })
-      .to('.mark__outline', { opacity: 0, duration: 0.2 }, '<')
-      // 3) LAUNCH — it stretches and flies up off the top while the curtain lifts
-      .to(markShape, { y: () => -vh() * 0.92, scaleY: 1.32, scaleX: 0.82, duration: 0.62, ease: 'power3.in' })
-      .to(pre, { autoAlpha: 0, duration: 0.55, ease: 'power2.inOut', onStart: reveal }, '<0.04')
+      .to(markShape, { y: 18, scaleY: 0.88, scaleX: 1.08, duration: 0.22, ease: 'power2.in' })
+      .to('.mark__outline', { opacity: 0, duration: 0.22 }, '<')
+      // 3) LAUNCH — it stretches and flies clean off the TOP while the curtain lifts
+      .to(markShape, { y: () => -vh() * 1.25, scaleY: 1.36, scaleX: 0.8, duration: 0.6, ease: 'power3.in' })
+      .to(pre, { autoAlpha: 0, duration: 0.5, ease: 'power2.inOut', onStart: reveal }, '<0.05')
       .add(() => { done(); }) // hand the arrow back to z-index:-1 so the blend works
-      // 4) it swoops back down and plants itself in the hero centre
-      .fromTo(markShape,
-        { y: () => -vh() * 0.92, scaleY: 1.18, scaleX: 0.9 },
-        { y: 0, scaleY: 1, scaleX: 1, duration: 0.95, ease: 'power3.out', onComplete: () => { if (breatheTween) breatheTween.play(); } });
+      // 4) it re-enters from the BOTTOM and rises into the hero centre (as the "A")
+      .set(markShape, { y: () => vh() * 1.25, scaleY: 1.2, scaleX: 0.88 })
+      .to(markShape, { y: 0, scaleY: 1, scaleX: 1, duration: 1.05, ease: 'power3.out', onComplete: () => { if (breatheTween) breatheTween.play(); } });
   });
 }
 
