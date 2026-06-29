@@ -51,6 +51,7 @@ html.lenis, html.lenis body { height: auto; }
   filter: drop-shadow(0 0 46px var(--glow1)) drop-shadow(0 0 110px var(--glow2));
   transition: filter 0.9s var(--ease);
 }
+.mark__pos { will-change: transform; transform-origin: 50% 50%; }
 .mark__breathe { position: absolute; inset: 0; will-change: transform; }
 /* arrow outline — the empty vessel seen while the blue "fills" it during load */
 .mark__outline { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.5s var(--ease); overflow: visible; }
@@ -206,21 +207,13 @@ main { position: static; }
 .hero { position: relative; height: 100vh; height: 100svh; }
 /* giant ELEVATE wordmark — the centred arrow stands in as the "A". The two halves
    flex equally around the slot so the slot (and the arrow) sit dead-centre. */
-.hero__wordmark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.wm { font-weight: 500; line-height: 0.86; letter-spacing: -0.04em; color: var(--blend-ink); }
-.wm .line > span { font-size: clamp(2.6rem, 17vw, 12rem); font-weight: 500; line-height: 0.86; letter-spacing: -0.04em; color: var(--blend-ink); display: block; }
-.wm--l { flex: 1; text-align: right; padding-inline-end: 0.06em; }
-.wm--r { flex: 1; text-align: left; padding-inline-start: 0.06em; }
-.wm--slot { flex: none; width: clamp(44px, 11.5vw, 150px); } /* gap for the text-sized arrow "A" */
-.hero__creative { position: absolute; inset-inline: 0; top: calc(50% + clamp(5.5rem, 14vw, 11rem)); text-align: center; font-weight: 500; font-size: clamp(1.05rem, 2.6vw, 2rem); letter-spacing: 0.04em; color: var(--blue); }
-.hero__tagline { position: absolute; inset-inline: 0; bottom: 13vh; text-align: center; font-family: var(--f-mono); font-size: clamp(0.74rem, 1.3vw, 0.95rem); letter-spacing: 0.18em; color: var(--ink-dim); }
-
-/* phrases you "pass through" while leaving the hero */
-.passwords { position: fixed; inset: 0; z-index: 4; pointer-events: none; }
-.pw { position: absolute; font-weight: 600; font-size: clamp(1.3rem, 3.6vw, 2.8rem); letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; opacity: 0; will-change: transform, opacity; }
-.pw--1 { top: 24%; inset-inline-end: 9%; }
-.pw--2 { top: 50%; inset-inline-start: 8%; }
-.pw--3 { top: 74%; inset-inline-end: 13%; }
+.hero__wordmark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; perspective: 1100px; will-change: transform; }
+.wm { font-weight: 500; line-height: 0.86; letter-spacing: -0.05em; color: var(--blend-ink); flex: none; }
+.wm .line > span { font-size: clamp(2.6rem, 20vw, 14rem); font-weight: 500; line-height: 0.86; letter-spacing: -0.05em; color: var(--blend-ink); display: block; }
+.wm--slot { flex: none; width: clamp(46px, 13vw, 180px); } /* the arrow "A" sits here — the whole word stays centred */
+/* phrases you "pass through" — centred over the arrow so they shift colour (blend) */
+.passwords { position: fixed; inset: 0; z-index: 4; display: grid; place-items: center; pointer-events: none; }
+.pw { grid-area: 1 / 1; font-weight: 600; font-size: clamp(1.6rem, 5.5vw, 4.5rem); letter-spacing: -0.02em; color: var(--blend-ink); white-space: nowrap; opacity: 0; will-change: transform, opacity; }
 .hero__scroll { position: absolute; inset-block-end: clamp(1.4rem, 4vh, 2.6rem); inset-inline-end: clamp(1.4rem, 4vw, 3rem); font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--ink-dim); display: inline-flex; align-items: center; gap: 0.5em; }
 .hero__scroll i { font-style: normal; animation: bob 1.8s var(--ease) infinite; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
@@ -316,10 +309,10 @@ main { position: static; }
   background: conic-gradient(from 130deg at 42% 48%, transparent, rgba(150, 100, 255, 0.4) 18%, transparent 40%, rgba(110, 60, 230, 0.3) 70%, transparent 88%);
   filter: blur(34px); opacity: 0.65;
 }
-.jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-content: center; justify-items: center; gap: 1rem; padding-bottom: 3rem; pointer-events: none; }
-.jp-hero__logo { width: clamp(130px, 22vw, 280px); aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 12px 40px rgba(126, 77, 255, 0.6)); }
-.jp-hero__tag { font-weight: 600; font-size: clamp(1.3rem, 2.8vw, 2.4rem); color: #fff; letter-spacing: 0.01em; }
-.jp-hero__tag b { color: #a98bff; font-weight: 600; }
+.jp-vid { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.9s var(--ease); }
+.jp-vid.is-ready { opacity: 1; }
+.jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; pointer-events: none; }
+.jp-hero__logo { width: clamp(150px, 26vw, 340px); aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 14px 44px rgba(60, 30, 120, 0.7)); }
 .tile--feature h3 { font-size: clamp(1.9rem, 4.2vw, 3.4rem); }
 .tile__sub { display: block; font-size: 0.4em; font-weight: 400; color: rgba(255, 255, 255, 0.74); margin-top: 0.3em; letter-spacing: 0; }
 .tile--feature:hover { box-shadow: 0 26px 64px rgba(28, 67, 196, 0.34); border-color: rgba(91, 155, 255, 0.5); }

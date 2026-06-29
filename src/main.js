@@ -16,6 +16,7 @@ window.scrollTo(0, 0);
 
 /* ---------- central 2D arrow mark — alive: follows the cursor, leans, breathes ---------- */
 const mark = document.getElementById('mark');
+const markPos = mark && mark.querySelector('.mark__pos');
 const markShape = mark && mark.querySelector('.mark__shape');
 const markBreathe = mark && mark.querySelector('.mark__breathe');
 const markFluid = mark && mark.querySelector('.mark__fluid');
@@ -43,6 +44,10 @@ if (markShape && !reduced && !isMobile) {
   const shY = gsap.quickTo(shine, 'y', { duration: 0.7, ease: 'power3' });
   // in the SERVICES scene only, the arrow swings to point its tip at the cursor
   const aimRot = gsap.quickTo(markShape, 'rotation', { duration: 0.5, ease: 'power3' });
+  // HERO hover: the whole ELEVATE word tilts in 3D toward the cursor (arrow tilts with it)
+  gsap.set('.hero__wordmark', { transformPerspective: 1100, transformOrigin: '50% 50%' });
+  const wmRotY = gsap.quickTo('.hero__wordmark', 'rotationY', { duration: 0.9, ease: 'power3' });
+  const wmRotX = gsap.quickTo('.hero__wordmark', 'rotationX', { duration: 0.9, ease: 'power3' });
 
   // background orbit rings: gentle mouse parallax (spin moved to GSAP so it composes)
   const orbits = document.querySelector('.orbits');
@@ -58,10 +63,14 @@ if (markShape && !reduced && !isMobile) {
     if (document.body.classList.contains('is-loading')) return; // arrow stays steady while it fills
     const nx = (e.clientX / window.innerWidth) * 2 - 1;   // -1 … 1
     const ny = (e.clientY / window.innerHeight) * 2 - 1;
-    followX(nx * 60 * followScale);
-    followY(ny * 46 * followScale);
+    const inHero = document.body.dataset.scene === 'hero';
+    // in the hero the arrow is the "A" — keep it planted; elsewhere it drifts to the cursor
+    followX(inHero ? 0 : nx * 60 * followScale);
+    followY(inHero ? 0 : ny * 46 * followScale);
     rotY(nx * 22);
     rotX(-ny * 17);
+    wmRotY(nx * 12);
+    wmRotX(-ny * 9);
     shX(e.clientX - window.innerWidth / 2);
     shY(e.clientY - window.innerHeight / 2);
     if (oX) { oX(nx * 42); oY(ny * 42); }
@@ -132,6 +141,32 @@ document.querySelectorAll('[data-phones]').forEach((p) => {
   });
 });
 
+/* ---------- Job Power tile: stream their real hero video as the background ---------- */
+(() => {
+  const vid = document.querySelector('.jp-vid');
+  if (!vid || reduced) return;
+  const src = vid.dataset.hls;
+  const start = () => vid.play().then(() => vid.classList.add('is-ready')).catch(() => {});
+  let attached = false;
+  const attach = async () => {
+    if (attached) return; attached = true;
+    if (vid.canPlayType('application/vnd.apple.mpegurl')) { vid.src = src; start(); return; }
+    try {
+      const { default: Hls } = await import('hls.js');
+      if (Hls.isSupported()) {
+        const hls = new Hls({ capLevelToPlayerSize: true });
+        hls.loadSource(src); hls.attachMedia(vid);
+        hls.on(Hls.Events.MANIFEST_PARSED, start);
+      }
+    } catch (e) { /* leave the gradient fallback */ }
+  };
+  // only load + play while the tile is near the viewport (saves data/battery)
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (en.isIntersecting) { attach(); vid.play().catch(() => {}); } else { vid.pause(); }
+  }), { rootMargin: '250px' });
+  io.observe(vid);
+})();
+
 /* ---------- dark / light theme toggle ---------- */
 const root = document.documentElement;
 const savedTheme = localStorage.getItem('elevate-theme');
@@ -159,7 +194,7 @@ if (!reduced) {
 
 /* ---------- scroll choreography ---------- */
 let heroIntro = null;
-const HERO_A = 0.26; // the arrow's scale when it stands in as the "A" in ELEVATE
+const HERO_A = 0.3; // the arrow's scale when it stands in as the "A" in ELEVATE
 
 /* ---------- text splitters: wrap each word/char in an overflow mask ---------- */
 function splitWords(el) {
@@ -226,46 +261,46 @@ function animateText() {
     onLeaveBack: (els) => gsap.to(els, { y: 50, autoAlpha: 0, duration: 0.45, ease: 'power2.in', overwrite: true }),
   });
 
-  // HERO — the big arrow shrinks into the "A" as ELEVATE + Creative rise into place.
+  // the arrow sits in the empty "A" slot of the centred word; this is its offset from centre
+  const slotEl = document.querySelector('.wm--slot');
+  const slotOffset = () => {
+    if (!slotEl) return 0;
+    const r = slotEl.getBoundingClientRect();
+    return (r.left + r.width / 2) - window.innerWidth / 2;
+  };
+
+  // HERO — the big arrow shrinks + slides into the "A" of ELEVATE as the word rises in.
   gsap.set('.hero__wordmark .line > span', { yPercent: 130 });
-  gsap.set(['.hero__creative', '.hero__tagline', '.hero__scroll'], { autoAlpha: 0, y: 14 });
+  gsap.set('.hero__scroll', { autoAlpha: 0, y: 14 });
   heroIntro = () => {
     const tl = gsap.timeline();
-    if (mark) tl.to(mark, { scale: HERO_A, duration: 0.9, ease: 'power3.inOut' }, 0); // arrow → text-sized "A"
-    tl.to('.hero__wordmark .line > span', { yPercent: 0, duration: 1.0, ease: 'power4.out', stagger: 0.13 }, 0.15)
-      .to('.hero__creative', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.5')
-      .to('.hero__tagline', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.42')
-      .to('.hero__scroll', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.45')
+    if (markPos) tl.to(markPos, { scale: HERO_A, x: () => slotOffset(), duration: 0.9, ease: 'power3.inOut' }, 0);
+    tl.to('.hero__wordmark .line > span', { yPercent: 0, duration: 0.9, ease: 'power4.out', stagger: 0.12 }, 0.2)
+      .to('.hero__scroll', { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.3')
       .add(() => {
-        // wire the scroll-driven GROW only after the shrink settled (so there's no pop)
-        if (mark && !isMobile && !mark.dataset.grew) {
-          mark.dataset.grew = '1';
-          gsap.fromTo(mark, { scale: HERO_A }, {
-            scale: 1, ease: 'none',
-            scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 45%', scrub: true },
-          });
-        }
+        if (isMobile || !markPos || markPos.dataset.wired) return;
+        markPos.dataset.wired = '1';
+        // GROW + RECENTRE: as the word leaves, the arrow grows to full size back at centre
+        gsap.fromTo(markPos, { scale: HERO_A, x: () => slotOffset() }, {
+          scale: 1, x: 0, ease: 'none',
+          scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 58%', scrub: true, invalidateOnRefresh: true },
+        });
+        // EXIT: the ELEV / TE letters lift up out of their masks (staggered) — clean + contained
+        gsap.to('.wm .line > span', { yPercent: -145, ease: 'power3.in', stagger: 0.12,
+          scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 74%', scrub: true } });
+
+        // PASS-THROUGH words zoom out through the centre, OVER the arrow (blend → colour shift)
+        gsap.set('.pw', { autoAlpha: 0, scale: 0.5 });
+        gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 6%', scrub: true } })
+          .fromTo('.pw--1', { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, ease: 'sine.out' })
+          .to('.pw--1', { autoAlpha: 0, scale: 1.7, ease: 'sine.in' })
+          .fromTo('.pw--2', { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, ease: 'sine.out' }, '-=0.2')
+          .to('.pw--2', { autoAlpha: 0, scale: 1.7, ease: 'sine.in' })
+          .fromTo('.pw--3', { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, ease: 'sine.out' }, '-=0.2')
+          .to('.pw--3', { autoAlpha: 0, scale: 1.7, ease: 'sine.in' });
       });
     return tl;
   };
-
-  // RELEASE: scrolling parts the ELEV/TE halves and dissolves them — the arrow stays,
-  // grows back to centre (above) and journeys on.
-  if (!isMobile) {
-    const rel = { trigger: '#hero', start: 'top top', end: 'bottom 55%', scrub: true };
-    gsap.to('.wm--l', { xPercent: -65, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
-    gsap.to('.wm--r', { xPercent: 65, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
-
-    // PASS-THROUGH words appear on the sides as you head to the next section
-    gsap.set('.pw', { autoAlpha: 0 });
-    gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } })
-      .fromTo('.pw--1', { autoAlpha: 0, xPercent: 40, scale: 0.82 }, { autoAlpha: 1, xPercent: 0, scale: 1, ease: 'power1.out' })
-      .to('.pw--1', { autoAlpha: 0, xPercent: -22, scale: 1.12, ease: 'power1.in' })
-      .fromTo('.pw--2', { autoAlpha: 0, xPercent: -40, scale: 0.82 }, { autoAlpha: 1, xPercent: 0, scale: 1, ease: 'power1.out' }, '-=0.35')
-      .to('.pw--2', { autoAlpha: 0, xPercent: 22, scale: 1.12, ease: 'power1.in' })
-      .fromTo('.pw--3', { autoAlpha: 0, xPercent: 40, scale: 0.82 }, { autoAlpha: 1, xPercent: 0, scale: 1, ease: 'power1.out' }, '-=0.35')
-      .to('.pw--3', { autoAlpha: 0, xPercent: -22, scale: 1.12, ease: 'power1.in' });
-  }
 }
 
 /* ---------- scene system: each section is its own "world" ---------- */

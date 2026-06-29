@@ -41,6 +41,7 @@
 
   <!-- Central living arrow — flowing liquid gradient clipped to the arrow shape -->
   <div class="mark" id="mark" aria-hidden="true">
+    <div class="mark__pos">
     <div class="mark__shape">
       <svg class="mark__outline" viewBox="0 0 120 132" aria-hidden="true"><path d="M60 5 C68 27 90 78 114 128 C95 104 70 84 60 72 C50 84 25 104 6 128 C30 78 52 27 60 5Z"/></svg>
       <div class="mark__breathe">
@@ -52,6 +53,7 @@
           <span class="mark__shine"></span>
         </div>
       </div>
+    </div>
     </div>
     <svg class="mark__clip" width="0" height="0" aria-hidden="true">
       <defs>
@@ -109,11 +111,9 @@
         <span class="wm wm--slot" aria-hidden="true"></span>
         <span class="wm wm--r"><span class="line"><span>TE</span></span></span>
       </h1>
-      <span class="hero__creative" dir="ltr">Creative</span>
-      <p class="hero__tagline">חוויות דיגיטליות שמרימות.</p>
       <span class="hero__scroll" aria-hidden="true">גלול <i dir="ltr">↓</i></span>
-      <!-- words you "pass through" on the way to the next section -->
-      <div class="passwords" aria-hidden="true">
+      <!-- words you "pass through" (over the arrow, so they shift colour) on the way down -->
+      <div class="passwords blend" aria-hidden="true">
         <span class="pw pw--1">אתרי פרימיום</span>
         <span class="pw pw--2">עיצוב בלתי נשכח</span>
         <span class="pw pw--3">נוכחות שמרימה</span>
@@ -186,9 +186,9 @@
       <div class="bento">
         <a class="tile tile--feature" href="https://job-power.github.io/JobPower/" target="_blank" rel="noopener" data-reveal>
           <span class="tile__media tile__media--jp"></span>
+          <video class="jp-vid" data-hls="https://stream.mux.com/4IMYGcL01xjs7ek5ANO17JC4VQVUTsojZlnw4fXzwSxc.m3u8" muted loop playsinline preload="none" aria-hidden="true"></video>
           <span class="jp-hero" aria-hidden="true">
             <span class="jp-hero__logo"></span>
-            <span class="jp-hero__tag" dir="ltr">Find Your <b>Next Job.</b></span>
           </span>
           <div class="tile__row"><h3>Job Power <span class="tile__sub">משרד גיוס והשמה</span></h3><span class="tile__plus" aria-hidden="true">↗</span></div>
           <p class="tile__tags" dir="ltr">RECRUITMENT · WEB · BRANDING</p>
