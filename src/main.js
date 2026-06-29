@@ -159,6 +159,7 @@ if (!reduced) {
 
 /* ---------- scroll choreography ---------- */
 let heroIntro = null;
+const HERO_A = 0.26; // the arrow's scale when it stands in as the "A" in ELEVATE
 
 /* ---------- text splitters: wrap each word/char in an overflow mask ---------- */
 function splitWords(el) {
@@ -225,20 +226,45 @@ function animateText() {
     onLeaveBack: (els) => gsap.to(els, { y: 50, autoAlpha: 0, duration: 0.45, ease: 'power2.in', overwrite: true }),
   });
 
-  // HERO — the ELEVATE wordmark rises once the preloader lifts; tagline + hint follow
+  // HERO — the big arrow shrinks into the "A" as ELEVATE + Creative rise into place.
   gsap.set('.hero__wordmark .line > span', { yPercent: 130 });
-  gsap.set(['.hero__tagline', '.hero__scroll'], { autoAlpha: 0, y: 14 });
-  heroIntro = () => gsap.timeline()
-    .to('.hero__wordmark .line > span', { yPercent: 0, duration: 1.05, ease: 'power4.out', stagger: 0.14 })
-    .to('.hero__tagline', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
-    .to('.hero__scroll', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.45');
+  gsap.set(['.hero__creative', '.hero__tagline', '.hero__scroll'], { autoAlpha: 0, y: 14 });
+  heroIntro = () => {
+    const tl = gsap.timeline();
+    if (mark) tl.to(mark, { scale: HERO_A, duration: 0.9, ease: 'power3.inOut' }, 0); // arrow → text-sized "A"
+    tl.to('.hero__wordmark .line > span', { yPercent: 0, duration: 1.0, ease: 'power4.out', stagger: 0.13 }, 0.15)
+      .to('.hero__creative', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.5')
+      .to('.hero__tagline', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.42')
+      .to('.hero__scroll', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.45')
+      .add(() => {
+        // wire the scroll-driven GROW only after the shrink settled (so there's no pop)
+        if (mark && !isMobile && !mark.dataset.grew) {
+          mark.dataset.grew = '1';
+          gsap.fromTo(mark, { scale: HERO_A }, {
+            scale: 1, ease: 'none',
+            scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 45%', scrub: true },
+          });
+        }
+      });
+    return tl;
+  };
 
-  // RELEASE: as you scroll the hero, the letters part from the arrow and dissolve,
-  // leaving just the living arrow behind.
+  // RELEASE: scrolling parts the ELEV/TE halves and dissolves them — the arrow stays,
+  // grows back to centre (above) and journeys on.
   if (!isMobile) {
     const rel = { trigger: '#hero', start: 'top top', end: 'bottom 55%', scrub: true };
-    gsap.to('.wm--l', { xPercent: -60, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
-    gsap.to('.wm--r', { xPercent: 60, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
+    gsap.to('.wm--l', { xPercent: -65, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
+    gsap.to('.wm--r', { xPercent: 65, autoAlpha: 0, ease: 'none', scrollTrigger: rel });
+
+    // PASS-THROUGH words appear on the sides as you head to the next section
+    gsap.set('.pw', { autoAlpha: 0 });
+    gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } })
+      .fromTo('.pw--1', { autoAlpha: 0, xPercent: 40, scale: 0.82 }, { autoAlpha: 1, xPercent: 0, scale: 1, ease: 'power1.out' })
+      .to('.pw--1', { autoAlpha: 0, xPercent: -22, scale: 1.12, ease: 'power1.in' })
+      .fromTo('.pw--2', { autoAlpha: 0, xPercent: -40, scale: 0.82 }, { autoAlpha: 1, xPercent: 0, scale: 1, ease: 'power1.out' }, '-=0.35')
+      .to('.pw--2', { autoAlpha: 0, xPercent: 22, scale: 1.12, ease: 'power1.in' })
+      .fromTo('.pw--3', { autoAlpha: 0, xPercent: 40, scale: 0.82 }, { autoAlpha: 1, xPercent: 0, scale: 1, ease: 'power1.out' }, '-=0.35')
+      .to('.pw--3', { autoAlpha: 0, xPercent: -22, scale: 1.12, ease: 'power1.in' });
   }
 }
 
@@ -312,7 +338,8 @@ function story() {
   // cursor-follow (on .mark) and breath (on .mark__breathe) compose on top of it.
   // Skipped on mobile — transforming a heavily-filtered element each frame crashes phones.
   if (markShape && !isMobile) {
-    gsap.timeline({ scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 1 } })
+    // starts at #about so the hero exit just GROWS the centred arrow; the drift begins after
+    gsap.timeline({ scrollTrigger: { trigger: '#about', start: 'top top', end: 'max', scrub: 1 } })
       .to(markShape, { x: () => window.innerWidth * 0.18, y: () => window.innerHeight * 0.05, scale: 0.8, rotation: 10, ease: 'sine.inOut' })
       .to(markShape, { x: () => -window.innerWidth * 0.19, y: () => -window.innerHeight * 0.04, scale: 0.66, rotation: -12, ease: 'sine.inOut' })
       .to(markShape, { x: () => window.innerWidth * 0.06, y: 0, scale: 0.9, rotation: 5, ease: 'sine.inOut' })

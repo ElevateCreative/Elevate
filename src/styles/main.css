@@ -207,12 +207,20 @@ main { position: static; }
 /* giant ELEVATE wordmark — the centred arrow stands in as the "A". The two halves
    flex equally around the slot so the slot (and the arrow) sit dead-centre. */
 .hero__wordmark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.wm { font-weight: 500; line-height: 0.86; letter-spacing: -0.03em; color: var(--blend-ink); }
-.wm .line > span { font-size: clamp(3rem, 18vw, 15rem); font-weight: 500; line-height: 0.86; letter-spacing: -0.04em; color: var(--blend-ink); display: block; }
-.wm--l { flex: 1; text-align: right; }
-.wm--r { flex: 1; text-align: left; }
-.wm--slot { flex: none; width: clamp(140px, 23vw, 340px); }
-.hero__tagline { position: absolute; inset-inline: 0; bottom: 15vh; text-align: center; font-family: var(--f-mono); font-size: clamp(0.74rem, 1.3vw, 0.95rem); letter-spacing: 0.18em; color: var(--ink-dim); }
+.wm { font-weight: 500; line-height: 0.86; letter-spacing: -0.04em; color: var(--blend-ink); }
+.wm .line > span { font-size: clamp(2.6rem, 17vw, 12rem); font-weight: 500; line-height: 0.86; letter-spacing: -0.04em; color: var(--blend-ink); display: block; }
+.wm--l { flex: 1; text-align: right; padding-inline-end: 0.06em; }
+.wm--r { flex: 1; text-align: left; padding-inline-start: 0.06em; }
+.wm--slot { flex: none; width: clamp(44px, 11.5vw, 150px); } /* gap for the text-sized arrow "A" */
+.hero__creative { position: absolute; inset-inline: 0; top: calc(50% + clamp(5.5rem, 14vw, 11rem)); text-align: center; font-weight: 500; font-size: clamp(1.05rem, 2.6vw, 2rem); letter-spacing: 0.04em; color: var(--blue); }
+.hero__tagline { position: absolute; inset-inline: 0; bottom: 13vh; text-align: center; font-family: var(--f-mono); font-size: clamp(0.74rem, 1.3vw, 0.95rem); letter-spacing: 0.18em; color: var(--ink-dim); }
+
+/* phrases you "pass through" while leaving the hero */
+.passwords { position: fixed; inset: 0; z-index: 4; pointer-events: none; }
+.pw { position: absolute; font-weight: 600; font-size: clamp(1.3rem, 3.6vw, 2.8rem); letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; opacity: 0; will-change: transform, opacity; }
+.pw--1 { top: 24%; inset-inline-end: 9%; }
+.pw--2 { top: 50%; inset-inline-start: 8%; }
+.pw--3 { top: 74%; inset-inline-end: 13%; }
 .hero__scroll { position: absolute; inset-block-end: clamp(1.4rem, 4vh, 2.6rem); inset-inline-end: clamp(1.4rem, 4vw, 3rem); font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--ink-dim); display: inline-flex; align-items: center; gap: 0.5em; }
 .hero__scroll i { font-style: normal; animation: bob 1.8s var(--ease) infinite; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
@@ -447,9 +455,6 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .contact__cta { width: 100%; }
   .wa-btn, .phones, .phones__toggle { width: 100%; }
   .phones__toggle { justify-content: center; }
-  /* keep the ELEVATE wordmark inside the screen on phones */
-  .wm .line > span { font-size: clamp(2.4rem, 15vw, 5.5rem); letter-spacing: -0.03em; }
-  .wm--slot { width: clamp(82px, 27vw, 150px); }
   /* no forced full-height sections on mobile → no dead space between them */
   .section { min-height: auto; padding-block: clamp(3rem, 9vw, 4.5rem); }
 }
