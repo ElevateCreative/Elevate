@@ -282,19 +282,18 @@ function animateText() {
         markPos.dataset.wired = '1';
 
         if (isMobile) {
-          // mobile: the arrow grows and settles in as a faint background element (stays put)
-          gsap.fromTo(markPos, { scale: HERO_A, x: () => slotOffset() }, {
-            scale: 1.18, x: 0, ease: 'none',
-            scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 35%', scrub: true, invalidateOnRefresh: true },
-          });
-          gsap.fromTo('#mark', { autoAlpha: 1 }, {
-            autoAlpha: 0.13, ease: 'none',
-            scrollTrigger: { trigger: '#hero', start: 'top 25%', end: 'bottom 45%', scrub: true },
-          });
-          // gentle parallax so the background arrow drifts as you scroll the page
-          gsap.fromTo(markShape, { y: 0 }, {
-            y: () => -window.innerHeight * 0.14, ease: 'none',
-            scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 1, invalidateOnRefresh: true },
+          // smooth, TIMED transition (not scroll-scrubbed): leaving the hero, the arrow
+          // grows, recentres and settles in as a faint background element
+          ScrollTrigger.create({
+            trigger: '#hero', start: 'bottom 72%',
+            onEnter: () => {
+              gsap.to(markPos, { scale: 1.18, x: 0, duration: 1.0, ease: 'power3.inOut', overwrite: true });
+              gsap.to('#mark', { autoAlpha: 0.13, duration: 1.0, ease: 'power2.out', overwrite: true });
+            },
+            onLeaveBack: () => {
+              gsap.to(markPos, { scale: HERO_A, x: () => slotOffset(), duration: 0.8, ease: 'power3.inOut', overwrite: true });
+              gsap.to('#mark', { autoAlpha: 1, duration: 0.6, overwrite: true });
+            },
           });
           return;
         }
