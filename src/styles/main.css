@@ -353,7 +353,8 @@ main { position: static; }
 @keyframes marquee { to { transform: translateX(50%); } }
 
 /* ---------- contact ---------- */
-.contact__sub { color: var(--ink-dim); font-size: clamp(1.05rem, 1.8vw, 1.4rem); max-width: 44ch; margin: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(2.4rem, 6vw, 4rem); }
+.contact__sub { color: var(--ink-dim); font-size: clamp(1.05rem, 1.8vw, 1.4rem); max-width: 44ch; margin: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(1.2rem, 2.5vw, 1.8rem); }
+.contact__about { color: var(--takeover-dim); font-size: clamp(0.92rem, 1.4vw, 1.1rem); line-height: 1.65; max-width: 56ch; margin: 0 0 clamp(2.2rem, 5vw, 3.5rem); }
 .contact__links { display: grid; gap: 0; border-top: 1px solid var(--line); }
 .contact__link { display: flex; align-items: center; justify-content: space-between; padding: clamp(1rem, 2.4vw, 1.7rem) 0; border-bottom: 1px solid var(--line); font-size: clamp(1.1rem, 2.6vw, 1.9rem); font-weight: 500; transition: color 0.35s var(--ease), padding-inline 0.4s var(--ease); }
 .contact__link i { font-style: normal; color: var(--blue); transition: transform 0.4s var(--ease); }
