@@ -14,6 +14,10 @@
   --blend-ink: #dcdcdc;
   --blue: #0088ff;
   --line: rgba(234, 230, 221, 0.14);
+  /* ink used over the bottom takeover gradient (dark theme = dark field → light ink) */
+  --takeover-ink: #f1efe9;
+  --takeover-dim: rgba(241, 239, 233, 0.6);
+  --takeover-line: rgba(241, 239, 233, 0.2);
 
   --f-sans: "Heebo", system-ui, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -100,6 +104,14 @@ body[data-scene="process"]  .mark__shape { --glow1: rgba(60, 210, 150, 0.5); --g
   position: fixed; inset: 0; z-index: -2; pointer-events: none;
   clip-path: circle(0% at 50% 78%); -webkit-clip-path: circle(0% at 50% 78%);
   will-change: clip-path;
+  /* dark theme (default): a deep, rich blue→violet field */
+  background:
+    radial-gradient(62% 70% at 18% 10%, rgba(64, 112, 255, 0.55), transparent 60%),
+    radial-gradient(56% 62% at 86% 16%, rgba(140, 80, 245, 0.5), transparent 60%),
+    radial-gradient(72% 72% at 80% 94%, rgba(40, 120, 255, 0.42), transparent 62%),
+    linear-gradient(160deg, #0a1030 0%, #150b30 52%, #0a1740 100%);
+}
+[data-theme="light"] .takeover {
   background:
     radial-gradient(62% 70% at 18% 8%, rgba(70, 132, 255, 0.92), transparent 60%),
     radial-gradient(54% 64% at 86% 14%, rgba(150, 130, 255, 0.72), transparent 60%),
@@ -110,11 +122,17 @@ body[data-scene="process"]  .mark__shape { --glow1: rgba(60, 210, 150, 0.5); --g
 .takeover__flow {
   position: absolute; inset: -20%;
   background:
+    radial-gradient(38% 44% at 30% 30%, rgba(90, 150, 255, 0.5), transparent 60%),
+    radial-gradient(34% 40% at 72% 64%, rgba(150, 110, 255, 0.45), transparent 60%),
+    radial-gradient(40% 46% at 56% 88%, rgba(60, 160, 255, 0.42), transparent 60%);
+  mix-blend-mode: screen; filter: blur(8px);
+  animation: takeoverDrift 22s ease-in-out infinite alternate;
+}
+[data-theme="light"] .takeover__flow {
+  background:
     radial-gradient(38% 44% at 30% 30%, rgba(90, 150, 255, 0.55), transparent 60%),
     radial-gradient(34% 40% at 72% 64%, rgba(180, 150, 255, 0.5), transparent 60%),
     radial-gradient(40% 46% at 56% 88%, rgba(255, 210, 170, 0.55), transparent 60%);
-  mix-blend-mode: screen; filter: blur(8px);
-  animation: takeoverDrift 22s ease-in-out infinite alternate;
 }
 @keyframes takeoverDrift {
   from { transform: translate3d(-3%, -2%, 0) scale(1.05) rotate(0deg); }
@@ -246,12 +264,12 @@ main { position: static; }
 .service__name { grid-area: name; min-width: 0; overflow-wrap: break-word; font-size: clamp(1.6rem, 4.4vw, 3.1rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s var(--ease); }
 .service__desc { grid-area: desc; color: var(--ink-dim); font-size: clamp(0.95rem, 1.4vw, 1.15rem); max-width: 46ch; transition: color 0.4s var(--ease); }
 .service__cta { position: absolute; inset-inline-end: clamp(0.4rem, 1.5vw, 1.4rem); top: 50%; font-style: normal; font-size: clamp(1.4rem, 3vw, 2.2rem); color: var(--blue); transform: translateY(-50%) translateX(0.4em); opacity: 0; transition: opacity 0.4s var(--ease), transform 0.5s var(--ease); }
-.service:hover { padding-inline-start: clamp(1.2rem, 3vw, 2.4rem); }
-.service:hover::before { opacity: 1; transform: scaleY(1); }
-.service:hover .service__name { color: var(--bg); }
-.service:hover .service__no { color: rgba(150, 150, 160, 0.8); }
-.service:hover .service__desc { color: rgba(150, 150, 160, 0.85); }
-.service:hover .service__cta { opacity: 1; transform: translateY(-50%) translateX(0); }
+.service:hover, .service.is-active { padding-inline-start: clamp(1.2rem, 3vw, 2.4rem); }
+.service:hover::before, .service.is-active::before { opacity: 1; transform: scaleY(1); }
+.service:hover .service__name, .service.is-active .service__name { color: var(--bg); }
+.service:hover .service__no, .service.is-active .service__no { color: rgba(150, 150, 160, 0.8); }
+.service:hover .service__desc, .service.is-active .service__desc { color: rgba(150, 150, 160, 0.85); }
+.service:hover .service__cta, .service.is-active .service__cta { opacity: 1; transform: translateY(-50%) translateX(0); }
 @media (min-width: 760px) {
   .service { grid-template-columns: 4.5rem minmax(15rem, 26rem) 1fr; grid-template-areas: "no name desc"; align-items: center; gap: 1.4rem 2.4rem; }
   .service__desc { padding-inline-end: 4rem; }
@@ -373,25 +391,20 @@ main { position: static; }
 /* ---------- footer ---------- */
 .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: clamp(2rem, 5vw, 3rem) var(--gutter); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em; }
 
-/* ---------- bottom takeover: flip UI to dark over the bright gradient ---------- */
-body.is-takeover .nav__elevate { color: #16161a; }
-body.is-takeover .nav__links a { color: #16161a; }
-body.is-takeover .nav__links a i { color: rgba(22, 22, 26, 0.55); }
-body.is-takeover .nav__cta { color: #16161a; border-color: rgba(22, 22, 26, 0.3); }
-body.is-takeover .nav__cta:hover { background: #16161a; color: #fff; }
-body.is-takeover .cta-band__track span { color: #141417; }
-body.is-takeover .cta-band__track i { color: rgba(20, 20, 24, 0.5); }
-body.is-takeover .contact .mono-label { color: rgba(22, 22, 26, 0.6); }
-body.is-takeover .contact__sub { color: rgba(22, 22, 26, 0.74); }
-body.is-takeover .contact__links { border-color: rgba(22, 22, 26, 0.18); }
-body.is-takeover .contact__link { color: #16161a; border-color: rgba(22, 22, 26, 0.18); }
-body.is-takeover .contact__link i { color: #16161a; }
-body.is-takeover .footer { color: rgba(22, 22, 26, 0.62); border-color: rgba(22, 22, 26, 0.16); }
-body.is-takeover .footer span { color: rgba(22, 22, 26, 0.62); }
-body.is-takeover .menu-fab { background: rgba(255, 255, 255, 0.4); border-color: rgba(22, 22, 26, 0.2); }
-body.is-takeover .menu-fab span { background: #16161a; }
-body.is-takeover .cursor__dot { background: #16161a; }
-body.is-takeover .cursor__ring { border-color: rgba(22, 22, 26, 0.45); }
+/* ---------- bottom takeover: ink adapts to the gradient (dark→light ink, light→dark ink) ---------- */
+body.is-takeover .nav__elevate { color: var(--takeover-ink); }
+body.is-takeover .nav__links a { color: var(--takeover-ink); }
+body.is-takeover .nav__links a i { color: var(--takeover-dim); }
+body.is-takeover .nav__cta { color: var(--takeover-ink); border-color: var(--takeover-line); }
+body.is-takeover .nav__cta:hover { background: var(--takeover-ink); color: var(--bg); }
+body.is-takeover .cta-band__track span { color: var(--takeover-ink); }
+body.is-takeover .cta-band__track i { color: var(--takeover-dim); }
+body.is-takeover .contact .mono-label { color: var(--takeover-dim); }
+body.is-takeover .contact__sub { color: var(--takeover-ink); }
+body.is-takeover .footer { color: var(--takeover-dim); border-color: var(--takeover-line); }
+body.is-takeover .footer span { color: var(--takeover-dim); }
+body.is-takeover .cursor__dot { background: var(--takeover-ink); }
+body.is-takeover .cursor__ring { border-color: var(--takeover-line); }
 
 /* ---------- cursor ---------- */
 .cursor { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
@@ -422,6 +435,9 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   --ink-dim: rgba(28, 28, 30, 0.55);
   --cream: #1c1c1e;
   --line: rgba(28, 28, 30, 0.16);
+  --takeover-ink: #16161a;
+  --takeover-dim: rgba(22, 22, 26, 0.62);
+  --takeover-line: rgba(22, 22, 26, 0.18);
 }
 /* the headline blend stays `difference` with light ink in BOTH themes:
    over the light bg it renders dark (readable); over the colourful arrow it shifts hue. */

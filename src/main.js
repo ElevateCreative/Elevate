@@ -430,13 +430,32 @@ function story() {
     onLeaveBack: (els) => els.forEach((el) => el.classList.remove('is-in')),
   });
 
-  // bottom takeover: the premium gradient BLOOMS open as a circle from the arrow,
-  // the mark dissolves, and the UI flips to dark ink over the bright field.
-  gsap.fromTo('.takeover',
-    { clipPath: 'circle(0% at 50% 78%)' },
-    { clipPath: 'circle(150% at 50% 78%)', ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 95%', end: 'top 18%', scrub: true } });
-  gsap.to('#mark', { autoAlpha: 0, ease: 'none', scrollTrigger: { trigger: '.cta-band', start: 'top 90%', end: 'top 58%', scrub: true } });
-  ScrollTrigger.create({ trigger: '.cta-band', start: 'top 48%', onEnter: () => document.body.classList.add('is-takeover'), onLeaveBack: () => document.body.classList.remove('is-takeover') });
+  // mobile: a service row "lights up" on its own when centred (no hover on touch)
+  if (isMobile) {
+    gsap.utils.toArray('.service').forEach((el) => {
+      ScrollTrigger.create({
+        trigger: el, start: 'center 62%', end: 'center 38%',
+        onToggle: (self) => el.classList.toggle('is-active', self.isActive),
+      });
+    });
+  }
+
+  // bottom takeover: a timed WASH (not scroll-scrubbed → smooth on mobile). On reaching the
+  // CTA band the gradient sweeps the screen open, the arrow fades, and the UI ink flips.
+  const markRest = isMobile ? 0.13 : 1;
+  ScrollTrigger.create({
+    trigger: '.cta-band', start: 'top 72%',
+    onEnter: () => {
+      gsap.to('.takeover', { clipPath: 'circle(155% at 50% 78%)', duration: 1.1, ease: 'power2.inOut' });
+      gsap.to('#mark', { autoAlpha: 0, duration: 0.7, ease: 'power2.in' });
+      document.body.classList.add('is-takeover');
+    },
+    onLeaveBack: () => {
+      gsap.to('.takeover', { clipPath: 'circle(0% at 50% 78%)', duration: 0.6, ease: 'power2.in' });
+      gsap.to('#mark', { autoAlpha: markRest, duration: 0.6 });
+      document.body.classList.remove('is-takeover');
+    },
+  });
 }
 
 /* ---------- intro: the hero arrow fills with blue, then launches up into the page ---------- */
