@@ -506,3 +506,12 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .cursor { display: none; }
   body { cursor: auto; }
 }
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 5px; }
+::-webkit-scrollbar-track        { background: var(--bg); }
+::-webkit-scrollbar-thumb        { background: var(--blue); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover  { background: #3399ff; }
+[data-theme="light"] ::-webkit-scrollbar-track { background: #f0ede6; }
+* { scrollbar-width: thin; scrollbar-color: var(--blue) var(--bg); }
+[data-theme="light"] * { scrollbar-color: var(--blue) #f0ede6; }
