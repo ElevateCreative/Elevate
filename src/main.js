@@ -291,6 +291,11 @@ function animateText() {
             autoAlpha: 0.13, ease: 'none',
             scrollTrigger: { trigger: '#hero', start: 'top 25%', end: 'bottom 45%', scrub: true },
           });
+          // gentle parallax so the background arrow drifts as you scroll the page
+          gsap.fromTo(markShape, { y: 0 }, {
+            y: () => -window.innerHeight * 0.14, ease: 'none',
+            scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 1, invalidateOnRefresh: true },
+          });
           return;
         }
 

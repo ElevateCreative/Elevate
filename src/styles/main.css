@@ -461,9 +461,10 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .big, .wm .line > span { color: var(--ink); }
   /* lighter arrow: one modest shadow, static blobs, no shine */
   .mark__shape { filter: drop-shadow(0 0 26px var(--glow1)); }
-  .blob { filter: blur(13px); animation: none; }
+  /* keep the liquid motion, but drop the costly screen-blend compositing */
+  .blob { filter: blur(13px); mix-blend-mode: normal; }
   .mark__shine { display: none; }
-  .takeover__flow { animation: none; filter: blur(4px); }
+  .takeover__flow { filter: blur(4px); }
   /* backdrop-filter is very costly on mobile → solid panels instead */
   .menu-fab, .dock__panel { backdrop-filter: none; }
   .menu-fab { background: rgba(20, 19, 22, 0.92); }
