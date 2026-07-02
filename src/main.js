@@ -4,9 +4,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { initSmoothScroll } from './modules/smoothScroll.js';
 import { initCursor } from './modules/cursor.js';
+import { initA11y, loadA11yPrefs } from './modules/a11y.js';
 
 gsap.registerPlugin(ScrollTrigger);
-const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// "stop animations" from the accessibility widget rides the same path as the OS setting
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || !!loadA11yPrefs().motion;
 // phones/tablets can't afford the per-frame blend + heavy-filter compositing, so we
 // run a lighter path there (no smooth-scroll hijack, no scroll-driven arrow work).
 const isMobile = window.matchMedia('(max-width: 760px), (hover: none) and (pointer: coarse)').matches;
@@ -99,9 +101,10 @@ if (markShape && !reduced && !isMobile) {
   };
 }
 
-/* ---------- smooth scroll + cursor ---------- */
+/* ---------- smooth scroll + cursor + accessibility widget ---------- */
 const lenis = (reduced || isMobile) ? null : initSmoothScroll();
 if (lenis) window.lenis = lenis;
+initA11y(); // before initCursor so the widget's buttons get the hover-ring binding
 initCursor();
 
 /* ---------- anchors + menu fab ---------- */

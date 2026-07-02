@@ -16,9 +16,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <script>try { var t = localStorage.getItem('elevate-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
+  <script>
+    try { var t = localStorage.getItem('elevate-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+    /* re-apply saved accessibility settings before first paint (the widget itself boots in main.js) */
+    try {
+      var a = JSON.parse(localStorage.getItem('elevate-a11y') || '{}');
+      var c = document.documentElement.classList;
+      if (a.contrast) c.add('a11y-contrast');
+      if (a.links) c.add('a11y-links');
+      if (a.font) c.add('a11y-font');
+      if (a.cursor) c.add('a11y-cursor');
+      if (a.motion) c.add('a11y-no-motion');
+      if (a.fs) document.documentElement.style.fontSize = (100 + a.fs * 12.5) + '%';
+    } catch (e) {}
+  </script>
 </head>
 <body class="is-loading">
+  <a class="skip-link" href="#about">דילוג לתוכן</a>
   <div class="cursor" aria-hidden="true"><div class="cursor__ring"></div><div class="cursor__dot"></div></div>
 
   <!-- Preloader: a solid curtain. The arrow that fills + launches is the REAL #mark
