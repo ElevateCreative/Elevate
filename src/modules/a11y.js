@@ -68,7 +68,6 @@ export function initA11y() {
           <li>מבנה כותרות תקין, טקסט חלופי ותיוג ARIA לרכיבים אינטראקטיביים.</li>
         </ul>
         <p><strong>נתקלתם בקושי?</strong> נשמח לשמוע ולתקן במהירות.</p>
-        <p>רכז נגישות: אגם · <a href="tel:+972543904753" dir="ltr">054-390-4753</a> · <a href="mailto:agamvigp@gmail.com" dir="ltr">agamvigp@gmail.com</a></p>
         <p class="a11y-modal__date">עדכון אחרון: יולי 2026</p>
       </div>
     </div>`;
