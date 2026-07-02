@@ -507,6 +507,22 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   body { cursor: auto; }
 }
 
+/* ---------- ascent layer: rising dust canvas + altimeter ---------- */
+.ascent { position: fixed; inset: 0; z-index: -2; width: 100%; height: 100%; pointer-events: none; }
+.altimeter {
+  position: fixed; left: clamp(0.85rem, 1.8vw, 1.5rem); top: 50%; z-index: 30;
+  transform: translateY(-50%) rotate(180deg); writing-mode: vertical-rl;
+  display: flex; align-items: center; gap: 0.7em;
+  font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.22em;
+  color: var(--ink-dim); font-variant-numeric: tabular-nums; pointer-events: none;
+}
+.altimeter::before, .altimeter::after { content: ""; width: 1px; height: 26px; background: var(--line); }
+.altimeter__value { color: var(--ink); min-height: 3.4em; }
+body.is-takeover .altimeter { color: var(--takeover-dim); }
+body.is-takeover .altimeter__value { color: var(--takeover-ink); }
+body.is-takeover .altimeter::before, body.is-takeover .altimeter::after { background: var(--takeover-line); }
+@media (max-width: 760px), (hover: none) and (pointer: coarse) { .altimeter { display: none; } }
+
 /* ---------- accessibility widget (תוסף נגישות) ---------- */
 /* skip link — hidden until keyboard focus */
 .skip-link { position: fixed; top: 0.9rem; left: 50%; z-index: 120; padding: 0.7rem 1.4rem; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 600; font-size: 0.9rem; transform: translate(-50%, -300%); transition: transform 0.35s var(--ease); }

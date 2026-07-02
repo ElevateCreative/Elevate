@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initSmoothScroll } from './modules/smoothScroll.js';
 import { initCursor } from './modules/cursor.js';
 import { initA11y, loadA11yPrefs } from './modules/a11y.js';
+import { initAscent } from './modules/ascent.js';
 
 gsap.registerPlugin(ScrollTrigger);
 // "stop animations" from the accessibility widget rides the same path as the OS setting
@@ -106,6 +107,22 @@ const lenis = (reduced || isMobile) ? null : initSmoothScroll();
 if (lenis) window.lenis = lenis;
 initA11y(); // before initCursor so the widget's buttons get the hover-ring binding
 initCursor();
+if (!reduced) initAscent({ isMobile }); // rising dust + click sparks + comets
+
+/* ---------- altimeter: your altitude climbs as you scroll (the footer is the summit) ---------- */
+const altValue = document.getElementById('altimeterValue');
+if (altValue && !isMobile) {
+  let cur = 0, shown = -1;
+  const climb = () => {
+    requestAnimationFrame(climb);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const target = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) * 8848 : 0; // Everest
+    cur += (target - cur) * 0.09;
+    const alt = Math.round(cur);
+    if (alt !== shown) { shown = alt; altValue.textContent = alt.toLocaleString('en-US'); }
+  };
+  climb();
+}
 
 /* ---------- anchors + menu fab ---------- */
 function goTo(sel) {
