@@ -345,6 +345,57 @@ main { position: static; }
 .tile--feature:hover { box-shadow: 0 26px 64px rgba(28, 67, 196, 0.34); border-color: rgba(91, 155, 255, 0.5); }
 .work__note { margin-top: 1.6rem; font-size: 0.82rem; color: var(--ink-dim); }
 
+/* concept project · VIGDER — void black, icy volt blue, eclipse + Stardom wordmark */
+@font-face {
+  font-family: "Stardom";
+  src: url(../assets/Stardom-Regular.woff2) format("woff2");
+  font-display: swap;
+}
+.tile--vg .tile__media--vg {
+  background:
+    radial-gradient(60% 80% at 18% 12%, rgba(77, 159, 255, 0.34), transparent 60%),
+    radial-gradient(46% 64% at 86% 26%, rgba(159, 199, 255, 0.2), transparent 64%),
+    radial-gradient(130% 120% at 50% 55%, #0a0a14 0%, #050508 82%);
+}
+.vg-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; align-content: center; gap: 0.55rem; pointer-events: none; }
+.vg-hero::before {
+  content: ""; position: absolute; left: 50%; top: 44%;
+  width: min(52%, 190px); aspect-ratio: 1; transform: translate(-50%, -50%);
+  border-radius: 50%; background: #050508;
+  box-shadow: 0 0 44px 8px rgba(107, 170, 255, 0.42), inset 0 0 26px rgba(159, 199, 255, 0.22);
+}
+.vg-hero__logo {
+  position: relative; font-family: "Stardom", var(--f-mono); font-weight: 400;
+  font-size: clamp(1.5rem, 3.4vw, 2.7rem); letter-spacing: 0.14em; text-indent: 0.14em;
+  color: #eef1f6; text-shadow: 0 0 26px rgba(159, 199, 255, 0.55);
+  transform: translateY(-14%);
+}
+.vg-hero__sub {
+  position: relative; font-family: var(--f-mono); font-size: 0.58rem;
+  letter-spacing: 0.52em; text-indent: 0.52em; color: rgba(159, 199, 255, 0.85);
+  transform: translateY(-14%);
+}
+.tile--vg:hover { box-shadow: 0 26px 64px rgba(77, 159, 255, 0.22); border-color: rgba(159, 199, 255, 0.45); }
+
+/* concept project · UMBRAS — sun-washed cream, amber disc, crisp diagonal shadow */
+.tile--um .tile__media--um {
+  background:
+    linear-gradient(24deg, rgba(88, 52, 18, 0.10) 0 37%, transparent 37.5%),
+    radial-gradient(46% 52% at 50% 30%, rgba(240, 176, 74, 0.75), rgba(232, 163, 61, 0) 68%),
+    linear-gradient(180deg, #f7f0e3, #ead8c6);
+}
+.tile--um::after { background: linear-gradient(180deg, transparent 35%, rgba(50, 32, 12, 0.82)); }
+.um-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; align-content: center; gap: 0.7rem; pointer-events: none; }
+.um-hero__mark { width: clamp(52px, 22%, 88px); filter: drop-shadow(0 10px 26px rgba(180, 110, 30, 0.45)); transform: translateY(-10%); }
+.um-hero__mark circle { fill: #e8a33d; }
+.um-hero__mark path { fill: #241e16; opacity: 0.82; }
+.um-hero__logo {
+  font-family: var(--f-mono); font-weight: 500;
+  font-size: clamp(0.95rem, 2vw, 1.35rem); letter-spacing: 0.5em; text-indent: 0.5em;
+  color: #241e16; transform: translateY(-10%);
+}
+.tile--um:hover { box-shadow: 0 26px 64px rgba(232, 163, 61, 0.28); border-color: rgba(232, 163, 61, 0.55); }
+
 /* ---------- CTA gradient marquee ---------- */
 .cta-band { position: relative; overflow: hidden; padding: clamp(3rem, 9vw, 6rem) 0; background: transparent; }
 .cta-band__track { display: inline-flex; align-items: center; gap: 1.4rem; white-space: nowrap; animation: marquee 26s linear infinite; }
