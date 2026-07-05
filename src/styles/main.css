@@ -489,7 +489,12 @@ main { position: static; }
 .phones__num { font-family: var(--f-mono); font-size: 0.86em; opacity: 0.78; }
 
 /* ---------- footer ---------- */
-.footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: clamp(2rem, 5vw, 3rem) var(--gutter); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em; }
+.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: clamp(2rem, 5vw, 3rem) var(--gutter); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em; }
+.footer__legal { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; }
+.footer__legal a { position: relative; color: var(--ink-dim); transition: color 0.3s var(--ease); }
+.footer__legal a::after { content: ""; position: absolute; inset-inline: 0; bottom: -3px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.35s var(--ease); }
+.footer__legal a:hover { color: var(--cream); }
+.footer__legal a:hover::after { transform: scaleX(1); }
 
 /* ---------- bottom takeover: ink adapts to the gradient (dark→light ink, light→dark ink) ---------- */
 body.is-takeover .nav__elevate { color: var(--takeover-ink); }
@@ -503,6 +508,8 @@ body.is-takeover .contact .mono-label { color: var(--takeover-dim); }
 body.is-takeover .contact__sub { color: var(--takeover-ink); }
 body.is-takeover .footer { color: var(--takeover-dim); border-color: var(--takeover-line); }
 body.is-takeover .footer span { color: var(--takeover-dim); }
+body.is-takeover .footer__legal a { color: var(--takeover-dim); }
+body.is-takeover .footer__legal a:hover { color: var(--takeover-ink); }
 body.is-takeover .cursor__dot { background: var(--takeover-ink); }
 body.is-takeover .cursor__ring { border-color: var(--takeover-line); }
 
