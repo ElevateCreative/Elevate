@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIGDER · OBSCURITÉ | אתר קונספט מאת Elevate Creative</title>
+  <meta name="description" content="VIGDER · בית אופנה טכני. קולקציית OBSCURITÉ. אתר קונספט שעוצב ונבנה על ידי Elevate Creative.">
+  <meta name="theme-color" content="#050508">
+  <meta property="og:title" content="VIGDER · OBSCURITÉ">
+  <meta property="og:description" content="תדר, לא טרנד. אתר קונספט מאת Elevate Creative.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/vest-black.jpg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050508'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%239fc7ff' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%234d9fff' stroke-width='2.5' stroke-dasharray='30 200'/%3E%3C/svg%3E">
+
+  <link rel="preload" href="assets/fonts/Stardom-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@200;300;400;600;800;900&family=IBM+Plex+Sans+Hebrew:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <noscript><style>.boot{display:none}.sig-line{opacity:1}.dark-veil{display:none}</style></noscript>
+</head>
+<body data-scene="00">
+
+  <!-- SVG channel-split filters for the zap effect -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="chanR"><feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/></filter>
+      <filter id="chanC"><feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter>
+    </defs>
+  </svg>
+
+  <!-- ═══ BOOT ═══ -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot-core">
+      <p class="boot-word ltr" id="bootWord">▮▮▮▮▮▮</p>
+      <div class="boot-bar"><span id="bootBar"></span></div>
+      <div class="boot-meta">
+        <span>מכייל תדרים</span>
+        <b class="ltr" id="bootPct">000</b>
+      </div>
+    </div>
+    <div class="boot-flash" id="bootFlash"></div>
+  </div>
+
+  <!-- ═══ fixed chrome ═══ -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <div class="cursor" aria-hidden="true">
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-box" id="cursorBox"></div>
+  </div>
+
+  <!-- ═══ HUD ═══ -->
+  <header class="hud">
+    <span class="hud-tick hud-tick-tl" aria-hidden="true"></span>
+    <span class="hud-tick hud-tick-tr" aria-hidden="true"></span>
+    <span class="hud-tick hud-tick-bl" aria-hidden="true"></span>
+    <span class="hud-tick hud-tick-br" aria-hidden="true"></span>
+
+    <a class="hud-logo ltr" href="#eclipse" data-goto>VIGDER</a>
+
+    <div class="hud-tools">
+      <button class="hud-btn" id="indexBtn" aria-haspopup="true" aria-expanded="false">אינדקס ▦</button>
+      <button class="hud-btn hud-buy" data-buy>לרכישה</button>
+      <button class="hud-btn hud-sound" id="soundBtn" aria-pressed="false" aria-label="הפעלת מוזיקת רקע"><i></i><i></i><i></i></button>
+    </div>
+
+    <div class="hud-tele" aria-hidden="true">
+      <span class="ltr" id="teleSec">SEC 01</span>
+      <span id="teleName">ליקוי</span>
+      <b class="ltr" id="telePct">000%</b>
+    </div>
+
+    <a class="hud-credit" href="https://elevatecreative.com/" target="_blank" rel="noopener">
+      <i>✦</i> קונספט מאת ELEVATE
+    </a>
+  </header>
+
+  <!-- ═══ INDEX overlay ═══ -->
+  <div class="idx" id="idx" aria-hidden="true">
+    <p class="idx-head">VIGDER · OBSCURITÉ · אינדקס שידור</p>
+    <div class="idx-grid">
+      <button class="idx-tile" data-goto-id="eclipse"><b class="ltr">01</b><span>הליקוי</span></button>
+      <button class="idx-tile" data-goto-id="signal"><b class="ltr">02</b><span>שידור</span></button>
+      <button class="idx-tile" data-goto-id="looks"><b class="ltr">03</b><span>הקולקציה</span></button>
+      <button class="idx-tile" data-goto-id="darkroom"><b class="ltr">04</b><span>חדר חושך</span></button>
+      <button class="idx-tile" data-goto-id="noir"><b class="ltr">05</b><span>NOIR</span></button>
+      <button class="idx-tile" data-goto-id="finale"><b class="ltr">06</b><span>שידור חוזר</span></button>
+    </div>
+    <button class="idx-close" id="idxClose">סגירה ✕</button>
+  </div>
+
+  <main id="main">
+
+    <!-- ═══ 01 · ECLIPSE ═══ -->
+    <section class="eclipse scene" id="eclipse" data-scene-name="ליקוי" data-scene-num="01">
+      <canvas class="bg-canvas" id="bgCanvas" aria-hidden="true"></canvas>
+      <div class="horizon" aria-hidden="true"></div>
+
+      <div class="ring-wrap" id="ringWrap" data-vel>
+        <div class="ring">
+          <div class="ring-glare" aria-hidden="true"></div>
+          <div class="ring-disc" aria-hidden="true"></div>
+        </div>
+        <svg class="orbit" id="orbit" viewBox="0 0 100 100" aria-hidden="true">
+          <defs>
+            <path id="orbPath" d="M50,50 m-46.5,0 a46.5,46.5 0 1,1 93,0 a46.5,46.5 0 1,1 -93,0"/>
+          </defs>
+          <g id="orbitG">
+            <text class="orbit-text"><textPath href="#orbPath">VIGDER · OBSCURITÉ · MAISON DE COUTURE TECHNIQUE · TEL AVIV · PARIS · VIGDER · OBSCURITÉ · 2026/2027 ·&#160;</textPath></text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="ec-center">
+        <p class="ec-eyebrow"><span class="ltr">Maison de Couture Technique</span></p>
+        <p class="ec-brand ltr" id="ecBrand">VIGDER</p>
+        <h1 class="ec-title">DARKER THAN DARKNESS</h1>
+        <p class="ec-sub">קולקציית <span class="ltr">Obscurité</span></p>
+      </div>
+
+      <p class="ec-hint">גללו אל תוך הליקוי<i></i></p>
+    </section>
+
+    <!-- ═══ 02 · SIGNAL ═══ -->
+    <section class="signal scene" id="signal" data-scene-name="שידור" data-scene-num="02">
+      <div class="signal-pin">
+        <p class="sig-tag ltr">SIGNAL // 02</p>
+        <div class="sig-stack">
+          <p class="sig-line" data-vel><span class="sig-base">האישונים מתרחבים למקסימום, הרשתית נלחמת על פוטון אחרון של אור.</span><span class="sig-ghost sig-ghost-r" aria-hidden="true">האישונים מתרחבים למקסימום, הרשתית נלחמת על פוטון אחרון של אור.</span><span class="sig-ghost sig-ghost-c" aria-hidden="true">האישונים מתרחבים למקסימום, הרשתית נלחמת על פוטון אחרון של אור.</span></p>
+          <p class="sig-line" data-vel><span class="sig-base">בדים שנתפרים בחושך מוחלט. בגדים העשויים חושך טהור.</span><span class="sig-ghost sig-ghost-r" aria-hidden="true">בדים שנתפרים בחושך מוחלט. בגדים העשויים חושך טהור.</span><span class="sig-ghost sig-ghost-c" aria-hidden="true">בדים שנתפרים בחושך מוחלט. בגדים העשויים חושך טהור.</span></p>
+          <p class="sig-line sig-brand" data-vel><span class="sig-base"><span class="sig-vig ltr">VIGDER</span><span class="sig-acro ltr">Visions In Gloom: Darkness Elixir Rendered</span></span><span class="sig-ghost sig-ghost-r" aria-hidden="true"><span class="sig-vig ltr">VIGDER</span><span class="sig-acro ltr">Visions In Gloom: Darkness Elixir Rendered</span></span><span class="sig-ghost sig-ghost-c" aria-hidden="true"><span class="sig-vig ltr">VIGDER</span><span class="sig-acro ltr">Visions In Gloom: Darkness Elixir Rendered</span></span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 03 · LOOKS · channel theater ═══ -->
+    <section class="looks scene" id="looks" data-scene-name="הקולקציה" data-scene-num="03">
+      <div class="looks-pin">
+        <span class="ch-bignum ltr" id="chBig" aria-hidden="true">01</span>
+
+        <div class="ch-frame" data-vel>
+          <div class="ch-stage" id="chStage">
+            <figure class="ch-look is-on" data-name="הווסט" data-latin="LE GILET" data-desc="ווסט רשת דו־שכבתית עם רצועות עור, רוכסני עומק וסגירה צולבת. שלושה גוונים.">
+              <img class="ch-var is-active" src="assets/vest-black.jpg" data-cname="שחור" data-chex="#141419" alt="ווסט VIGDER שחור: רשת טכנית, רצועות עור ורוכסנים">
+              <img class="ch-var" src="assets/vest-white.jpg" data-cname="לבן" data-chex="#e9eaec" alt="ווסט VIGDER לבן" loading="lazy">
+              <img class="ch-var" src="assets/vest-blue.jpg" data-cname="כחול רויאל" data-chex="#2b4bc9" alt="ווסט VIGDER כחול רויאל עם פסים מחזירי אור" loading="lazy">
+              <img class="ch-ghost ch-ghost-r" src="assets/vest-black.jpg" alt="" aria-hidden="true">
+              <img class="ch-ghost ch-ghost-c" src="assets/vest-black.jpg" alt="" aria-hidden="true">
+            </figure>
+            <figure class="ch-look" data-name="השמלה" data-latin="LA ROBE" data-desc="שמלת קוטור מרשת מולחמת: מחוך רצועות, שרוולים נתיקים וזנב שנפרש בתנועה.">
+              <img class="ch-var is-active" src="assets/dress-white.jpg" data-cname="לבן" data-chex="#e9eaec" alt="שמלת VIGDER לבנה מרשת עם שרוולים נתיקים" loading="lazy">
+              <img class="ch-var" src="assets/dress-blue.jpg" data-cname="כחול רויאל" data-chex="#2b4bc9" alt="שמלת VIGDER כחולה מרשת עם רצועות" loading="lazy">
+              <img class="ch-ghost ch-ghost-r" src="assets/dress-white.jpg" alt="" aria-hidden="true" loading="lazy">
+              <img class="ch-ghost ch-ghost-c" src="assets/dress-white.jpg" alt="" aria-hidden="true" loading="lazy">
+            </figure>
+          </div>
+          <div class="ch-mesh" aria-hidden="true"></div>
+          <div class="ch-flash" id="chFlash" aria-hidden="true"></div>
+        </div>
+
+        <div class="ch-side">
+          <p class="ch-tag ltr">TRANSMISSION // 03</p>
+          <span class="ch-count ltr"><b id="chNum">01</b> / 02</span>
+          <h2 class="ch-name" id="chName">הווסט</h2>
+          <p class="ch-latin ltr" id="chLatin">LE GILET</p>
+          <p class="ch-desc" id="chDesc">ווסט רשת דו־שכבתית עם רצועות עור, רוכסני עומק וסגירה צולבת. שלושה גוונים.</p>
+          <div class="ch-colors">
+            <span class="ch-colors-label">גוון · <b id="chColorName">שחור</b></span>
+            <div class="ch-swatches" id="chSwatches"></div>
+          </div>
+          <div class="ch-row">
+            <button class="btn" data-buy>לרכישה</button>
+          </div>
+          <p class="ch-foot">לחצו על גוון להחלפת צבע · גללו למעבר בין הפריטים</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ diagonal marquee ═══ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" data-marquee>
+        <span>OBSCURITÉ // 2026/2027 // VIGDER // OBSCURITÉ // 2026/2027 // VIGDER //&#160;</span><span>OBSCURITÉ // 2026/2027 // VIGDER // OBSCURITÉ // 2026/2027 // VIGDER //&#160;</span>
+      </div>
+    </div>
+
+    <!-- ═══ 04 · DARKROOM ═══ -->
+    <section class="darkroom scene" id="darkroom" data-scene-name="חדר חושך" data-scene-num="04">
+      <div class="dark-sticky">
+        <div class="dark-scene" id="darkScene">
+          <figure class="dark-media">
+            <img src="assets/camp-vest.jpg" alt="דוגמן כורע בתוך אלומת אור בחדר חשוך, לובש את ווסט הרשת השחור של VIGDER">
+          </figure>
+          <div class="dark-info">
+            <span class="dark-lk ltr">CAMPAGNE · LE GILET NOIR</span>
+            <h2>הווסט השחור</h2>
+            <p>צולם בחדר הזה בדיוק. אלומת אור אחת, בגד אחד, אפס פשרות.</p>
+          </div>
+        </div>
+        <div class="dark-veil" id="darkVeil" aria-hidden="true"></div>
+        <div class="dark-head">
+          <p class="dark-title">חדר חושך.</p>
+          <p class="dark-sub">הסמן שלכם הוא פנס. <b>מצאו את הקמפיין שצולם כאן.</b></p>
+          <p class="dark-fr" aria-hidden="true">Ce qu'on ne voit pas, on le sent.</p>
+        </div>
+        <p class="dark-hint" id="darkHint">קולקציית <span class="ltr">OBSCURITÉ</span> · צולם באטלייה תל אביב</p>
+      </div>
+    </section>
+
+    <!-- ═══ 05 · NOIR ═══ -->
+    <section class="noir scene" id="noir" data-scene-name="NOIR" data-scene-num="05">
+      <span class="noir-ghost ltr" aria-hidden="true">NOIR</span>
+      <div class="noir-glow" aria-hidden="true"></div>
+      <div class="noir-stage">
+        <canvas id="noirCanvas" aria-label="בקבוק הבושם VIGDER NOIR בתלת ממד"></canvas>
+        <div class="noir-fallback" aria-hidden="true"><span class="ltr">NOIR</span></div>
+        <span class="noir-hint">גללו לסיבוב · גררו לשליטה</span>
+      </div>
+      <div class="noir-copy">
+        <p class="noir-tag ltr">OBJECT // 05</p>
+        <h2 class="noir-title ltr">VIGDER<br>NOIR</h2>
+        <p class="noir-text">הבושם הראשון של הבית. עוד, ענבר שחור וזעפרן, קפואים בזכוכית שחורה שנחתמת ביד. ריח שנכנס לחדר לפניכם.</p>
+        <ul class="noir-specs">
+          <li><span class="ltr">Extrait de Parfum · 50 ml</span></li>
+          <li>מהדורה ממוספרת · 500 בקבוקים</li>
+          <li><span class="ltr">Atelier Tel Aviv · Édition Nocturne</span></li>
+        </ul>
+        <div class="noir-row">
+          <button class="btn btn-volt" data-buy>לרכישה</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 06 · FINALE ═══ -->
+    <section class="finale scene" id="finale" data-scene-name="שידור חוזר" data-scene-num="06">
+      <figure class="fin-media" aria-hidden="true">
+        <img src="assets/camp-dance-white.jpg" alt="" loading="lazy">
+      </figure>
+      <div class="fin-ring" id="finRing" aria-hidden="true"></div>
+      <div class="fin-inner">
+        <p class="fin-kicker">גילוי נאות, באהבה</p>
+        <h2 class="fin-title" data-vel>נעים להכיר.<br>אנחנו לא באמת קיימים.</h2>
+        <p class="fin-text"><span class="ltr">VIGDER</span> הוא מותג קונספט. האתר שחוויתם עכשיו נבנה על ידי <b>Elevate Creative</b> כדי להראות מה קורה כשעסק מפסיק להיראות כמו כולם, ומתחיל לשדר.</p>
+        <a class="btn btn-volt btn-big" href="https://elevatecreative.com/" target="_blank" rel="noopener">רוצים אתר שמשדר ככה בשבילכם? Elevate ✦</a>
+        <footer class="fin-footer">
+          <span class="ltr">VIGDER © 2026</span>
+          <span>אתר קונספט · המותג, הפריטים והמחירים בדיוניים</span>
+          <a href="https://elevatecreative.com/" target="_blank" rel="noopener">עוצב ונבנה על ידי Elevate Creative</a>
+        </footer>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ Buy modal ═══ -->
+  <div class="modal" id="buyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-panel">
+      <button class="modal-close" id="modalClose" aria-label="סגירה">✕</button>
+      <p class="modal-tag">רגע לפני הקופה</p>
+      <h3 class="modal-title" id="modalTitle">הפריט הזה לא קיים.<br>האתר הזה, לגמרי כן.</h3>
+      <p class="modal-text"><span class="ltr">VIGDER</span> הוא מותג אופנה קונספטואלי. את האתר שאתם חווים עכשיו בנתה <b>Elevate Creative</b>, סטודיו שבונה לעסקים אתרים שנראים ומרגישים כמו מותג עולמי. אהבתם את התחושה? דמיינו אותה על העסק שלכם.</p>
+      <div class="modal-actions">
+        <a class="btn btn-volt" href="https://elevatecreative.com/" target="_blank" rel="noopener">אני רוצה אתר שמרים לי את העסק ✦</a>
+        <button class="btn" id="modalStay">עוד רגע, אני עדיין נהנה כאן</button>
+      </div>
+      <p class="modal-foot ltr">VIGDER · A CONCEPT BY ELEVATE CREATIVE</p>
+    </div>
+  </div>
+
+  <!-- Ambience -->
+  <audio id="bgm" src="assets/music.mp3" loop preload="metadata"></audio>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="js/webgl.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

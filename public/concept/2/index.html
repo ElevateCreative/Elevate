@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMBRAS · אור יום אמיתי. מתחת לכל תקרה.</title>
+  <meta name="description" content="UMBRAS ONE הוא חלון שמש חכם: פאנל שמדמה את השמים בזמן אמת ומציף כל חדר באור יום אמיתי, עם צל אמיתי. אתר קונספט מאת Elevate Creative.">
+  <meta name="theme-color" content="#F3E7DC">
+  <meta property="og:title" content="UMBRAS · אור יום אמיתי. מתחת לכל תקרה.">
+  <meta property="og:description" content="חלון השמש הראשון שמחזיר את היום הביתה. אתר קונספט מאת Elevate Creative.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body data-theme="dawn">
+
+  <!-- ══════════ PRELOADER ══════════ -->
+  <div id="loader" aria-hidden="true">
+    <div class="loader-stage">
+      <div class="loader-sun"></div>
+      <div class="loader-horizon"></div>
+    </div>
+    <div class="loader-word" dir="ltr">UMBRAS</div>
+    <div class="loader-line">מזריחים מערכת<span class="loader-dots"></span></div>
+    <div class="loader-pct" dir="ltr"><span id="loaderNum">0</span>%</div>
+  </div>
+
+  <!-- warm sunset wash (fades in over the final sections) -->
+  <div class="sunset-wash" aria-hidden="true"></div>
+
+  <!-- grain -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- custom cursor -->
+  <div id="cursor" aria-hidden="true"><span id="cursorDot"></span></div>
+
+  <!-- WebGL -->
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="topbar">
+    <a class="logo" href="#top" aria-label="UMBRAS · לראש העמוד">
+      <svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="10" r="6.5" class="logo-sun"/><path d="M13 10 L21 24 H5 Z" class="logo-shadow"/></svg>
+      <span dir="ltr">UMBRAS</span>
+    </a>
+    <nav class="topnav" aria-label="ניווט ראשי">
+      <a href="#why">למה</a>
+      <a href="#product">המוצר</a>
+      <a href="#shadow">הצל</a>
+      <a href="#specs">מפרט</a>
+      <a href="#team">הצוות</a>
+    </nav>
+    <div class="topbar-side">
+      <div class="hud" dir="ltr" aria-hidden="true">
+        <span class="hud-label">SOLAR</span>
+        <span id="hudTime">05:47</span>
+        <span class="hud-dim">AZ <b id="hudAz">096</b>° · EL <b id="hudEl">02</b>°</span>
+      </div>
+      <button class="btn btn-primary btn-s" data-elevate data-cast>הזמנה מוקדמת</button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ══════════ 00 · HERO ══════════ -->
+    <section class="hero" id="hero" data-scene="hero" data-theme-sec="dawn">
+      <p class="kicker reveal">UMBRAS · טכנולוגיית אור טבעי · תל אביב</p>
+      <h1 class="display split" data-cast-text>
+        אור יום אמיתי.<br>מתחת לכל תקרה.
+      </h1>
+      <p class="hero-sub reveal">
+        <span dir="ltr" class="brand-inline">UMBRAS ONE</span> הוא חלון שמש חכם: פאנל שמדמה את השמים בזמן אמת,
+        מציף את החדר באור בספקטרום מלא, ומחזיר הביתה את הדבר שהכי חסר בעיר. את היום עצמו.
+      </p>
+      <div class="hero-cta reveal">
+        <button class="btn btn-primary" data-elevate data-cast>לפרטים על המוצר</button>
+        <a class="btn btn-ghost" href="#why">איך זה עובד <span class="btn-arrow">↓</span></a>
+      </div>
+      <ul class="hero-chips reveal">
+        <li class="chip" data-cast><b dir="ltr">CRI 99.2</b><span>ספקטרום מלא ורציף</span></li>
+        <li class="chip" data-cast><b>צל אמיתי</b><span>קולימציה של <span dir="ltr">5°</span></span></li>
+        <li class="chip" data-cast><b>סנכרון צירקדי</b><span>האור לומד אותך</span></li>
+      </ul>
+
+      <div class="hero-note anno" dir="ltr" aria-hidden="true">N 32.0853° · E 34.7818°<br>TLV ROOFLINE LAB</div>
+      <div class="hero-serial anno" dir="ltr" aria-hidden="true">UMB·ONE<br>UNIT 001 / 250</div>
+
+      <div class="scroll-cue" aria-hidden="true">
+        <span>גללו · השמש עולה</span>
+        <i></i>
+      </div>
+    </section>
+
+    <!-- ══════════ 01 · WHY ══════════ -->
+    <section class="why" id="why" data-scene="drift" data-theme-sec="morning">
+      <p class="kicker reveal">01 · למה</p>
+      <div class="why-lines">
+        <h2 class="display-2 split" data-cast-text>אדם ממוצע מבלה <em dir="ltr">92%</em> מהיום בין קירות.</h2>
+        <p class="why-p split-soft">עוד ישיבה. עוד מסך. עוד יום שנגמר בלי רגע אחד של שמש. הגוף שלנו לא תוכנן לחיות ככה, הוא פשוט מחכה לאור, ומקבל נורה.</p>
+        <h2 class="display-2 split why-punch" data-cast-text>אז הפסקנו לחכות.<br><strong>בנינו שמש.</strong></h2>
+      </div>
+      <div class="why-stats">
+        <div class="stat reveal" data-cast>
+          <b dir="ltr"><span data-counter="92">0</span>%</b>
+          <span>מהזמן שלנו עובר בתוך מבנים</span>
+        </div>
+        <div class="stat reveal" data-cast>
+          <b dir="ltr"><span data-counter="300">0</span> lx</b>
+          <span>עוצמת האור במשרד ממוצע</span>
+        </div>
+        <div class="stat reveal" data-cast>
+          <b dir="ltr"><span data-counter="10000">0</span> lx</b>
+          <span>בחוץ, אפילו ביום מעונן</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ 02 · PRODUCT (pinned explode) ══════════ -->
+    <section class="product" id="product" data-scene="explode" data-theme-sec="noon">
+      <div class="pin-inner">
+        <header class="product-head">
+          <p class="kicker">02 · המוצר</p>
+          <h2 class="display-2" data-cast-text><span dir="ltr" class="brand-inline">UMBRAS ONE</span>. שמש בשש שכבות.</h2>
+          <p class="product-hint">המשיכו לגלול · המכשיר נפתח</p>
+        </header>
+        <ol class="stages">
+          <li class="stage-item" data-stage="0">
+            <i class="stage-num" dir="ltr">01</i>
+            <h3>עדשת אוֹמְבְּרָה</h3>
+            <p>340 מיקרו־עדשות משושות שמיישרות כל קרן לזווית של <span dir="ltr">5°</span>. זה מה שיוצר צל חד, כמו בחוץ.</p>
+            <span class="stage-meta" dir="ltr">HEX ARRAY · BOROSILICATE</span>
+          </li>
+          <li class="stage-item" data-stage="1">
+            <i class="stage-num" dir="ltr">02</i>
+            <h3>מנוע הספקטרום</h3>
+            <p>שבעה ערוצי אור שנשזרים לספקטרום רציף אחד. <span dir="ltr">CRI 99.2</span>, בלי החורים הכחולים של לד רגיל.</p>
+            <span class="stage-meta" dir="ltr">7CH ENGINE · 1800K–6500K</span>
+          </li>
+          <li class="stage-item" data-stage="2">
+            <i class="stage-num" dir="ltr">03</i>
+            <h3>ליבת HELIOS</h3>
+            <p>המוח שמסנכרן את האור לשעון הביולוגי שלכם, לשעה בחוץ ולמזג האוויר מעל הבית.</p>
+            <span class="stage-meta" dir="ltr">ON·DEVICE AI · ZERO CLOUD</span>
+          </li>
+          <li class="stage-item" data-stage="3">
+            <i class="stage-num" dir="ltr">04</i>
+            <h3>גוף אחד. אפס רעש.</h3>
+            <p>אלומיניום בציפוי שמפניה, פיזור חום פסיבי לגמרי. <span dir="ltr">0.0dB</span>, כי אור לא אמור להרעיש.</p>
+            <span class="stage-meta" dir="ltr">PASSIVE COOLING · 68MM</span>
+          </li>
+        </ol>
+        <div class="stage-progress" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 03 · THE NAME ══════════ -->
+    <section class="shadow-sec" id="shadow" data-scene="aside" data-theme-sec="gold">
+      <p class="kicker reveal">03 · השם</p>
+      <h2 class="display-2 split" data-cast-text>קוראים לנו<br>על שם הצל.</h2>
+      <div class="shadow-grid">
+        <div class="shadow-copy">
+          <p class="split-soft">אור מפוזר של נורות רגילות עוטף הכל בערפל שטוח וחסר כיוון. אור אמיתי מגיע ממקום אחד, נע בקווים מקבילים, ופוגש כל עצם בביטחון.</p>
+          <p class="split-soft">את ההבדל רואים על הרצפה: צל חד וחי, שנע עם השעות. הצל הוא תעודת המקוריות של האור. אין לו קיצורי דרך.</p>
+          <p class="shadow-latin" dir="ltr">UMBRA <span>· לטינית ·</span> צֵל</p>
+        </div>
+        <div class="cmp-stage">
+        <span class="cmp-glow" aria-hidden="true"></span>
+        <figure class="cmp" data-cast aria-label="השוואה בין תאורה רגילה לאור של אומברס">
+          <div class="cmp-scene cmp-after">
+            <span class="cmp-tag" >UMBRAS ONE</span>
+            <svg class="cmp-art" viewBox="0 0 420 340" aria-hidden="true">
+              <ellipse class="sh-crisp" cx="150" cy="296" rx="118" ry="14"/>
+              <g class="plant">
+                <path d="M210 296 L210 190" class="stem"/>
+                <path d="M210 230 C 160 210 150 150 168 118 C 196 140 214 190 210 230 Z" class="leaf"/>
+                <path d="M210 205 C 258 190 276 136 262 104 C 232 124 210 168 210 205 Z" class="leaf"/>
+                <path d="M210 250 C 178 244 158 210 162 188 C 188 200 206 226 210 250 Z" class="leaf leaf-b"/>
+                <path d="M252 296 L168 296 L176 252 L244 252 Z" class="pot"/>
+              </g>
+            </svg>
+          </div>
+          <div class="cmp-scene cmp-before">
+            <span class="cmp-tag">תאורה רגילה</span>
+            <svg class="cmp-art" viewBox="0 0 420 340" aria-hidden="true">
+              <ellipse class="sh-blur a" cx="196" cy="298" rx="90" ry="16"/>
+              <ellipse class="sh-blur b" cx="238" cy="296" rx="84" ry="14"/>
+              <ellipse class="sh-blur c" cx="214" cy="300" rx="110" ry="18"/>
+              <g class="plant">
+                <path d="M210 296 L210 190" class="stem"/>
+                <path d="M210 230 C 160 210 150 150 168 118 C 196 140 214 190 210 230 Z" class="leaf"/>
+                <path d="M210 205 C 258 190 276 136 262 104 C 232 124 210 168 210 205 Z" class="leaf"/>
+                <path d="M210 250 C 178 244 158 210 162 188 C 188 200 206 226 210 250 Z" class="leaf leaf-b"/>
+                <path d="M252 296 L168 296 L176 252 L244 252 Z" class="pot"/>
+              </g>
+            </svg>
+          </div>
+          <div class="cmp-handle" aria-hidden="true"><i>◂</i><i>▸</i></div>
+          <input type="range" id="cmpRange" min="0" max="100" value="50" aria-label="גררו להשוואה בין סוגי האור">
+          <figcaption class="cmp-cap">גררו · אותו עציץ, אור אחר</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ 04 · A DAY (pinned) ══════════ -->
+    <section class="day" id="day" data-scene="day" data-theme-sec="noon">
+      <div class="pin-inner">
+        <header class="day-head">
+          <p class="kicker">04 · היום</p>
+          <h2 class="display-2" data-cast-text>יום שלם. בלי לצאת מהבית.</h2>
+        </header>
+        <div class="day-clock" dir="ltr"><span id="dayTime">06:12</span></div>
+        <div class="day-captions">
+          <p class="day-cap is-on" data-cap="0">זריחה בחדר השינה. הגוף מתעורר לבד, בלי צלצול.</p>
+          <p class="day-cap" data-cap="1">אור בוקר קריר ונקי. הריכוז מטפס לבד.</p>
+          <p class="day-cap" data-cap="2">צהריים מלאים: <span dir="ltr">3,800</span> לוקס של בהירות שקטה.</p>
+          <p class="day-cap" data-cap="3">האור מזהיב ומתרכך. הגוף מבין שהיום נאסף.</p>
+          <p class="day-cap" data-cap="4">שקיעה פרטית בסלון. המלטונין כבר בדרך.</p>
+        </div>
+        <div class="day-beamwrap" aria-hidden="true"><div class="day-beam" id="dayBeam"></div></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 04b · SPACES ══════════ -->
+    <section class="spaces" data-scene="away" data-theme-sec="noon">
+      <p class="kicker reveal">אותו אור · כל מרחב</p>
+      <div class="spaces-row">
+        <a class="space-card reveal" data-cast data-elevate role="button" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200&auto=format&fit=crop" alt="סלון מואר באור יום" loading="lazy" onerror="this.remove()">
+          <span class="space-label">סלון</span>
+          <span class="space-lux" dir="ltr">TARGET · 2,400 lx</span>
+        </a>
+        <a class="space-card reveal" data-cast data-elevate role="button" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1200&auto=format&fit=crop" alt="חדר שינה בהיר" loading="lazy" onerror="this.remove()">
+          <span class="space-label">חדר שינה</span>
+          <span class="space-lux" dir="ltr">DAWN RAMP · 40 min</span>
+        </a>
+        <a class="space-card reveal" data-cast data-elevate role="button" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1200&auto=format&fit=crop" alt="פינת עבודה ביתית" loading="lazy" onerror="this.remove()">
+          <span class="space-label">סטודיו</span>
+          <span class="space-lux" dir="ltr">FOCUS · 5000K</span>
+        </a>
+        <a class="space-card reveal" data-cast data-elevate role="button" tabindex="0">
+          <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop" alt="חלל משרדי ירוק" loading="lazy" onerror="this.remove()">
+          <span class="space-label">משרד</span>
+          <span class="space-lux" dir="ltr">GRID · N × ONE</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══════════ 05 · SPECS ══════════ -->
+    <section class="specs" id="specs" data-scene="away" data-theme-sec="paper">
+      <p class="kicker reveal">05 · מפרט</p>
+      <h2 class="display-2 split" data-cast-text>מספרים שאפשר<br>להעמיד מול שמש.</h2>
+      <div class="spec-grid">
+        <div class="spec spec-wide reveal" data-cast>
+          <b dir="ltr"><span data-counter="3800">0</span><i>lx</i></b>
+          <span>עוצמה בגובה שולחן, בשיא היום. פי 12 ממשרד רגיל.</span>
+        </div>
+        <div class="spec reveal" data-cast><b dir="ltr"><span data-counter="99.2" data-dec="1">0</span></b><span>CRI · דיוק צבע</span></div>
+        <div class="spec reveal" data-cast><b dir="ltr">5°</b><span>קולימציה · צל חד</span></div>
+        <div class="spec reveal" data-cast><b dir="ltr">1800K–6500K</b><span>טווח טמפרטורת אור</span></div>
+        <div class="spec reveal" data-cast><b dir="ltr"><span data-counter="60">0</span><i>cm</i></b><span>קוטר · פני שמים</span></div>
+        <div class="spec reveal" data-cast><b dir="ltr"><span data-counter="68">0</span><i>mm</i></b><span>עובי כולל, שקוע בתקרה</span></div>
+        <div class="spec reveal" data-cast><b dir="ltr">0.0dB</b><span>קירור פסיבי · דממה</span></div>
+        <div class="spec reveal" data-cast><b dir="ltr">Matter</b><span>וגם HomeKit, בלי ענן</span></div>
+        <div class="spec reveal" data-cast><b>שעה</b><span>התקנה · תקרה אחת</span></div>
+      </div>
+      <p class="specs-note reveal">מפרט קונספט. הפיזיקה אמיתית, המוצר עדיין חלום.</p>
+    </section>
+
+    <!-- ══════════ PRESS ══════════ -->
+    <section class="press" data-scene="away" data-theme-sec="paper">
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track" id="marqueeTrack">
+          <span>השמש חוזרת הביתה</span><i>☀</i><span dir="ltr">DAYLIGHT, DELIVERED</span><i>☀</i><span>צל אמיתי או כלום</span><i>☀</i><span dir="ltr">UMBRAS ONE</span><i>☀</i>
+        </div>
+      </div>
+      <div class="quotes">
+        <blockquote class="quote reveal" data-cast>
+          <p>״הסטארטאפ שיצא לבטל את המושג ׳חדר חשוך׳.״</p>
+          <cite>גלובס</cite>
+        </blockquote>
+        <blockquote class="quote reveal" data-cast>
+          <p dir="ltr">“The sun, finally on demand.”</p>
+          <cite dir="ltr">WIRED</cite>
+        </blockquote>
+        <blockquote class="quote reveal" data-cast>
+          <p>״מחיפה לתקרה: השמש המלאכותית שמתעקשת להיות טבעית.״</p>
+          <cite>כלכליסט</cite>
+        </blockquote>
+      </div>
+      <p class="press-note reveal">* אזכורים להמחשה בלבד, כחלק מאתר הקונספט.</p>
+    </section>
+
+    <!-- ══════════ 06 · TEAM ══════════ -->
+    <section class="team" id="team" data-scene="away" data-theme-sec="morning">
+      <p class="kicker reveal">06 · הצוות</p>
+      <h2 class="display-2 split" data-cast-text>נולדנו במעבדת<br>אופטיקה בחיפה.</h2>
+      <p class="team-p reveal">שלוש שנים של פרוטוטייפים, תקרה אחת שרופה, ואמונה אחת פשוטה: אור הוא לא אבזר תאורה. הוא תנאי מחיה.</p>
+      <div class="team-grid">
+        <div class="founder reveal" data-cast>
+          <span class="founder-avatar" aria-hidden="true">נ</span>
+          <h3>ד״ר נעה אדרי</h3>
+          <p>מנכ״לית ומייסדת · דוקטורט בפוטוניקה, הטכניון. שמונה שנים בתאורה קלינית.</p>
+        </div>
+        <div class="founder reveal" data-cast>
+          <span class="founder-avatar" aria-hidden="true">ת</span>
+          <h3>תומר בן־ארי</h3>
+          <p>סמנכ״ל טכנולוגיות ומייסד · לשעבר ראש צוות אופטיקה בחברת ראייה ממוחשבת.</p>
+        </div>
+        <div class="founder founder-more reveal" data-cast>
+          <span class="founder-avatar founder-sun" aria-hidden="true">☀</span>
+          <h3>עוד 23 רודפי שמש</h3>
+          <p>אופטיקה, קושחה, עיצוב תעשייתי וכרונוביולוגיה · חיפה ותל אביב.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ 07 · WAITLIST ══════════ -->
+    <section class="join" id="join" data-scene="sunset" data-theme-sec="dusk">
+      <p class="kicker reveal">07 · הרשמה</p>
+      <h2 class="display-2 split" data-cast-text>השמש הבאה שלך<br>כבר בייצור.</h2>
+      <p class="join-p reveal">סדרת הייצור הראשונה: 250 יחידות, אביב 2027. ההרשמה שומרת מקום בתור, בלי שום התחייבות.</p>
+      <form class="join-form reveal" id="joinForm" novalidate>
+        <label class="visually-hidden" for="joinEmail">כתובת אימייל</label>
+        <input type="email" id="joinEmail" placeholder="המייל שלך, לזריחה הראשונה" required data-cast>
+        <button class="btn btn-primary" type="submit" data-cast>לשמור לי מקום</button>
+      </form>
+      <p class="join-done" id="joinDone" hidden>נרשמת ☀ מקומך בתור: <b dir="ltr" id="joinNum">4,213</b> · נתראה באור.</p>
+      <p class="join-note reveal">אתר קונספט של Elevate Creative · הטופס לא שולח ולא שומר מידע.</p>
+    </section>
+
+  </main>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer" data-scene="sunset" data-theme-sec="dusk">
+    <div class="foot-giant" id="footGiant" dir="ltr" aria-hidden="true">UMBRAS</div>
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <p class="foot-tag">אור יום אמיתי. מתחת לכל תקרה.</p>
+        <p class="foot-coords" dir="ltr">32.0853° N · 34.7818° E · TEL AVIV</p>
+      </div>
+      <nav class="foot-col" aria-label="קישורי אתר">
+        <a href="#why">למה</a>
+        <a href="#product">המוצר</a>
+        <a href="#shadow">הצל</a>
+        <a href="#specs">מפרט</a>
+        <a href="#join">הרשמה</a>
+      </nav>
+      <nav class="foot-col" aria-label="עוד">
+        <button data-elevate>קריירה</button>
+        <button data-elevate>מדע</button>
+        <button data-elevate>עיתונות</button>
+        <button data-elevate>משקיעים</button>
+      </nav>
+      <div class="foot-col foot-elevate">
+        <p><b>UMBRAS הוא מותג קונספט.</b><br>האתר עוצב ונבנה על ידי Elevate Creative כהדגמת יכולות.</p>
+        <a class="btn btn-ghost btn-s" href="https://elevatecreative.com/" target="_blank" rel="noopener">רוצים אתר כזה לעסק שלכם? ←</a>
+      </div>
+    </div>
+    <p class="foot-legal">© 2026 UMBRAS · תל אביב · המוצר אינו קיים. עדיין. · <button class="foot-legal-link" data-elevate>גילוי נאות</button></p>
+  </footer>
+
+  <!-- concept badge -->
+  <button class="badge-concept" data-elevate aria-label="אתר קונספט מאת Elevate Creative">
+    <i>☀</i> קונספט · <span dir="ltr">Elevate Creative</span>
+  </button>
+
+  <!-- ══════════ ELEVATE MODAL ══════════ -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-veil" data-modal-close></div>
+    <div class="modal-card" data-cast>
+      <button class="modal-x" data-modal-close aria-label="סגירה">✕</button>
+      <span class="modal-sun" aria-hidden="true"></span>
+      <p class="modal-kicker">גילוי נאות, באור מלא</p>
+      <h3 id="modalTitle">האמת? UMBRAS עדיין לא קיים.</h3>
+      <p class="modal-p">מה שכן קיים: הסטודיו שבנה את האתר הזה. UMBRAS הוא מותג קונספט שנוצר כדי להראות מה קורה כשמשקיעים בעיצוב, בתנועה ובפרטים הקטנים.</p>
+      <p class="modal-p"><b>האתר עוצב ונבנה על ידי Elevate Creative.</b></p>
+      <div class="modal-cta">
+        <a class="btn btn-primary" href="https://elevatecreative.com/" target="_blank" rel="noopener">רוצים אתר שמרים לכם את העסק? לחצו כאן</a>
+        <button class="btn btn-ghost" data-modal-close>להישאר עוד רגע בשמש</button>
+      </div>
+    </div>
+  </div>
+
+  <noscript><p class="noscript">האתר הזה חי על JavaScript: תלת־ממד, אור וצל. הפעילו אותו כדי לראות את השמש.</p></noscript>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
