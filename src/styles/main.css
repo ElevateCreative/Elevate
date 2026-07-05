@@ -259,25 +259,29 @@ main { position: static; }
   border-bottom: 1px solid var(--line); cursor: none;
   transition: padding-inline-start 0.5s var(--ease);
 }
-.service::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--ink); opacity: 0; transform: scaleY(0.3); transform-origin: bottom; transition: opacity 0.45s var(--ease), transform 0.45s var(--ease); }
+/* soft blue "glaze" wash + a glowing blue edge-bar at the row start (replaces the hard cream-block invert) */
+.service::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to left, rgba(0, 136, 255, 0.14), rgba(0, 136, 255, 0.04) 42%, transparent 72%); opacity: 0; transition: opacity 0.55s var(--ease); }
+.service::after { content: ""; position: absolute; inset-inline-start: 0; top: 50%; z-index: -1; width: 2px; height: 0; transform: translateY(-50%); background: linear-gradient(180deg, transparent, var(--blue) 20%, var(--blue) 80%, transparent); box-shadow: 0 0 14px rgba(0, 136, 255, 0.5); transition: height 0.55s var(--ease); }
 .service__no { grid-area: no; font-family: var(--f-mono); font-size: 0.8rem; color: var(--ink-dim); padding-top: 0.4em; transition: color 0.4s var(--ease); }
-.service__name { grid-area: name; min-width: 0; overflow-wrap: break-word; font-size: clamp(1.6rem, 4.4vw, 3.1rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s var(--ease); }
+.service__name { grid-area: name; min-width: 0; overflow-wrap: break-word; font-size: clamp(1.6rem, 4.4vw, 3.1rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s var(--ease), text-shadow 0.5s var(--ease); }
 .service__desc { grid-area: desc; color: var(--ink-dim); font-size: clamp(0.95rem, 1.4vw, 1.15rem); max-width: 46ch; transition: color 0.4s var(--ease); }
 .service__cta { position: absolute; inset-inline-end: clamp(0.4rem, 1.5vw, 1.4rem); top: 50%; font-style: normal; font-size: clamp(1.4rem, 3vw, 2.2rem); color: var(--blue); transform: translateY(-50%) translateX(0.4em); opacity: 0; transition: opacity 0.4s var(--ease), transform 0.5s var(--ease); }
 /* active state — used by the JS auto-centre on mobile (touch never triggers :hover) */
 .service.is-active { padding-inline-start: clamp(1.2rem, 3vw, 2.4rem); }
-.service.is-active::before { opacity: 1; transform: scaleY(1); }
-.service.is-active .service__name { color: var(--bg); }
-.service.is-active .service__no { color: rgba(150, 150, 160, 0.8); }
-.service.is-active .service__desc { color: rgba(150, 150, 160, 0.85); }
+.service.is-active::before { opacity: 1; }
+.service.is-active::after { height: 64%; }
+.service.is-active .service__name { text-shadow: 0 0 26px rgba(0, 136, 255, 0.28); }
+.service.is-active .service__no { color: var(--blue); }
+.service.is-active .service__desc { color: var(--ink); }
 .service.is-active .service__cta { opacity: 1; transform: translateY(-50%) translateX(0); }
 /* hover only on devices that actually hover → no sticky-tap double on touch */
 @media (hover: hover) {
   .service:hover { padding-inline-start: clamp(1.2rem, 3vw, 2.4rem); }
-  .service:hover::before { opacity: 1; transform: scaleY(1); }
-  .service:hover .service__name { color: var(--bg); }
-  .service:hover .service__no { color: rgba(150, 150, 160, 0.8); }
-  .service:hover .service__desc { color: rgba(150, 150, 160, 0.85); }
+  .service:hover::before { opacity: 1; }
+  .service:hover::after { height: 64%; }
+  .service:hover .service__name { text-shadow: 0 0 26px rgba(0, 136, 255, 0.28); }
+  .service:hover .service__no { color: var(--blue); }
+  .service:hover .service__desc { color: var(--ink); }
   .service:hover .service__cta { opacity: 1; transform: translateY(-50%) translateX(0); }
 }
 @media (min-width: 760px) {
