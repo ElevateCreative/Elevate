@@ -84,7 +84,7 @@ body.is-loading .orbits { opacity: 0; }
 .aura__layer--hero     { opacity: 1; background: radial-gradient(60% 55% at 50% 42%, rgba(40, 110, 255, 0.22), transparent 70%); }
 .aura__layer--about    { background: radial-gradient(58% 55% at 72% 38%, rgba(120, 90, 255, 0.24), transparent 70%); }
 .aura__layer--services { background: radial-gradient(60% 55% at 30% 44%, rgba(40, 200, 210, 0.20), transparent 70%); }
-.aura__layer--work     { background: radial-gradient(60% 60% at 64% 56%, rgba(255, 90, 140, 0.18), transparent 70%); }
+.aura__layer--work     { background: none; }   /* section 3: no background tint — the tile glows own the colour */
 .aura__layer--process  { background: radial-gradient(60% 55% at 38% 40%, rgba(60, 210, 150, 0.20), transparent 70%); }
 
 /* ---------- scene tuning (arrow glow + hue, orbit-ring speed) ---------- */
@@ -94,7 +94,11 @@ body[data-scene="about"]    .mark__shape { --glow1: rgba(120, 90, 255, 0.55); --
 body[data-scene="services"] { --arrow-hue: -24deg; }
 body[data-scene="services"] .mark__shape { --glow1: rgba(40, 200, 210, 0.5); --glow2: rgba(40, 120, 255, 0.28); }
 body[data-scene="work"]     { --arrow-hue: 14deg; --orbit-spin: 60s; }
-body[data-scene="work"]     .mark__shape { --glow1: rgba(255, 90, 140, 0.42); --glow2: rgba(150, 60, 255, 0.3); }
+body[data-scene="work"]     .mark__shape { --glow1: rgba(150, 180, 255, 0.4); --glow2: rgba(120, 150, 255, 0.22); }
+/* section 3 only: the arrow "comes out" above the tiles and points at the hovered tile (mouse devices) */
+@media (hover: hover) and (pointer: fine) {
+  body[data-scene="work"] .mark { z-index: 6; }
+}
 body[data-scene="process"]  { --arrow-hue: -40deg; --orbit-spin: 50s; }
 body[data-scene="process"]  .mark__shape { --glow1: rgba(60, 210, 150, 0.5); --glow2: rgba(40, 160, 255, 0.26); }
 

@@ -77,10 +77,19 @@ if (markShape && !reduced && !isMobile) {
     shX(e.clientX - window.innerWidth / 2);
     shY(e.clientY - window.innerHeight / 2);
     if (oX) { oX(nx * 42); oY(ny * 42); }
-    if (document.body.dataset.scene === 'services') {
+    const scene = document.body.dataset.scene;
+    if (scene === 'services') {
       const r = markShape.getBoundingClientRect();
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       aimRot(Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180 / Math.PI);
+    } else if (scene === 'work') {
+      // WORK: the arrow floats above the tiles and its tip locks onto whichever tile you're over
+      const r = markShape.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const tile = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
+      let tx = e.clientX, ty = e.clientY;
+      if (tile) { const t = tile.getBoundingClientRect(); tx = t.left + t.width / 2; ty = t.top + t.height / 2; }
+      aimRot(Math.atan2(tx - cx, -(ty - cy)) * 180 / Math.PI);
     }
   }, { passive: true });
   // let scenes dial the magnetism up/down
@@ -368,7 +377,8 @@ function setScene(name) {
   });
   // the arrow reaches out harder in the busier scenes
   if (window.__setArrowFollow) {
-    window.__setArrowFollow(name === 'services' ? 1.55 : name === 'work' ? 1.3 : name === 'about' ? 1.15 : 1);
+    // work stays lower so the arrow hangs back over the grid and its tip clearly points at a tile
+    window.__setArrowFollow(name === 'services' ? 1.55 : name === 'work' ? 0.55 : name === 'about' ? 1.15 : 1);
   }
 }
 function setupScenes() {
