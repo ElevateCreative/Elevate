@@ -495,14 +495,30 @@ function story() {
     onLeaveBack: (els) => els.forEach((el) => el.classList.remove('is-in')),
   });
 
-  // mobile: a service row "lights up" on its own when centred (no hover on touch)
+  // mobile: exactly ONE service row lights up — the single row nearest the viewport
+  // centre (no hover on touch). Picking the nearest guarantees we never light two at once.
   if (isMobile) {
-    gsap.utils.toArray('.service').forEach((el) => {
-      ScrollTrigger.create({
-        trigger: el, start: 'center 62%', end: 'center 38%',
-        onToggle: (self) => el.classList.toggle('is-active', self.isActive),
-      });
-    });
+    const services = gsap.utils.toArray('.service');
+    if (services.length) {
+      let ticking = false;
+      const pick = () => {
+        ticking = false;
+        const mid = window.innerHeight * 0.5;
+        let best = null, bd = Infinity;
+        services.forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > window.innerHeight) return; // off-screen
+          const d = Math.abs((r.top + r.height / 2) - mid);
+          if (d < bd) { bd = d; best = el; }
+        });
+        const within = best && bd < window.innerHeight * 0.3; // comfortable centre band, else none
+        services.forEach((el) => el.classList.toggle('is-active', within && el === best));
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(pick); } };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      pick();
+    }
   }
 
   // bottom takeover: a timed WASH (not scroll-scrubbed → smooth on mobile). On reaching the
