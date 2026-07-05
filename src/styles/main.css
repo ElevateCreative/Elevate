@@ -306,7 +306,9 @@ main { position: static; }
   position: relative; overflow: hidden; border-radius: 20px; border: 1px solid var(--line);
   aspect-ratio: 16 / 11; padding: clamp(1.2rem, 2vw, 1.8rem);
   display: flex; flex-direction: column; justify-content: flex-end; gap: 0.5rem;
-  transition: transform 0.5s var(--ease);
+  /* each tile carries a signature glow colour (R,G,B) lit on hover / when centred on mobile */
+  --glow: 234, 230, 221;
+  transition: transform 0.5s var(--ease), box-shadow 0.55s var(--ease), border-color 0.55s var(--ease);
 }
 .tile__media { position: absolute; inset: 0; z-index: -1; }
 .tile::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 35%, rgba(10, 9, 12, 0.8)); }
@@ -323,8 +325,15 @@ main { position: static; }
 .tile:hover .tile__media { transform: scale(1.06); }
 .tile:hover .tile__plus { transform: rotate(90deg); }
 
+/* signature glow — on hover (desktop) and when the tile is centred in the viewport (mobile) */
+@media (hover: hover) {
+  .tile:hover { box-shadow: 0 26px 64px rgba(var(--glow), 0.34); border-color: rgba(var(--glow), 0.5); }
+}
+.tile.is-incenter { box-shadow: 0 24px 60px rgba(var(--glow), 0.4); border-color: rgba(var(--glow), 0.55); }
+.tile.is-incenter .tile__media { transform: scale(1.05); }
+
 /* real project (Job Power) — same size as the other tiles; real video bg + logo */
-.tile--feature { cursor: none; }
+.tile--feature { cursor: none; --glow: 108, 96, 245; }
 .tile--feature .tile__media--jp {
   background:
     radial-gradient(55% 75% at 16% 14%, rgba(126, 77, 255, 0.5), transparent 60%),
@@ -342,7 +351,6 @@ main { position: static; }
 .jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; pointer-events: none; }
 .jp-hero__logo { width: 46%; max-width: 240px; aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 12px 36px rgba(60, 30, 120, 0.7)); transform: translateY(-8%); }
 .tile__sub { display: block; font-size: 0.5em; font-weight: 400; color: rgba(255, 255, 255, 0.74); margin-top: 0.25em; letter-spacing: 0; }
-.tile--feature:hover { box-shadow: 0 26px 64px rgba(28, 67, 196, 0.34); border-color: rgba(91, 155, 255, 0.5); }
 .work__note { margin-top: 1.6rem; font-size: 0.82rem; color: var(--ink-dim); }
 
 /* concept project · VIGDER — void black, icy volt blue, eclipse + Stardom wordmark */
@@ -351,6 +359,7 @@ main { position: static; }
   src: url(../assets/Stardom-Regular.woff2) format("woff2");
   font-display: swap;
 }
+.tile--vg { --glow: 107, 170, 255; }
 .tile--vg .tile__media--vg {
   background:
     radial-gradient(60% 80% at 18% 12%, rgba(77, 159, 255, 0.34), transparent 60%),
@@ -375,9 +384,9 @@ main { position: static; }
   letter-spacing: 0.52em; text-indent: 0.52em; color: rgba(159, 199, 255, 0.85);
   transform: translateY(-14%);
 }
-.tile--vg:hover { box-shadow: 0 26px 64px rgba(77, 159, 255, 0.22); border-color: rgba(159, 199, 255, 0.45); }
 
 /* concept project · UMBRAS — sun-washed cream, amber disc, crisp diagonal shadow */
+.tile--um { --glow: 232, 163, 61; }
 .tile--um .tile__media--um {
   background:
     linear-gradient(24deg, rgba(88, 52, 18, 0.10) 0 37%, transparent 37.5%),
@@ -394,7 +403,36 @@ main { position: static; }
   font-size: clamp(0.95rem, 2vw, 1.35rem); letter-spacing: 0.5em; text-indent: 0.5em;
   color: #241e16; transform: translateY(-10%);
 }
-.tile--um:hover { box-shadow: 0 26px 64px rgba(232, 163, 61, 0.28); border-color: rgba(232, 163, 61, 0.55); }
+/* invitation slot — the empty tile that says "your business could be next" */
+.tile--next { --glow: 69, 224, 192; cursor: pointer; }
+.tile--next .tile__media--next {
+  background:
+    radial-gradient(62% 72% at 50% 42%, rgba(69, 224, 192, 0.24), transparent 62%),
+    radial-gradient(120% 120% at 50% 55%, #102420 0%, #0a1512 82%);
+}
+.tile--next .tile__media--next::before {
+  content: ""; position: absolute; inset: clamp(12px, 4%, 22px);
+  border: 1.5px dashed rgba(69, 224, 192, 0.34); border-radius: 14px;
+  transition: border-color 0.5s var(--ease);
+}
+.next-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; pointer-events: none; }
+.next-hero__q {
+  font-family: var(--f-mono); font-weight: 300; line-height: 1;
+  font-size: clamp(3.4rem, 11vw, 6rem); color: rgba(214, 255, 246, 0.92);
+  text-shadow: 0 0 30px rgba(69, 224, 192, 0.55); transform: translateY(-8%);
+  transition: text-shadow 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.tile--next:hover .next-hero__q,
+.tile--next.is-incenter .next-hero__q { text-shadow: 0 0 48px rgba(69, 224, 192, 0.9); transform: translateY(-8%) scale(1.06); }
+.tile--next:hover .tile__media--next::before,
+.tile--next.is-incenter .tile__media--next::before { border-color: rgba(69, 224, 192, 0.62); }
+@media (prefers-reduced-motion: no-preference) {
+  .tile--next .tile__media--next::before { animation: nextRing 3.6s var(--ease) infinite; }
+}
+@keyframes nextRing {
+  0%, 100% { opacity: 0.62; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.012); }
+}
 
 /* ---------- CTA gradient marquee ---------- */
 .cta-band { position: relative; overflow: hidden; padding: clamp(3rem, 9vw, 6rem) 0; background: transparent; }

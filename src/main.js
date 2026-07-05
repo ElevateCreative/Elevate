@@ -187,6 +187,18 @@ document.querySelectorAll('[data-phones]').forEach((p) => {
   io.observe(vid);
 })();
 
+/* ---------- mobile: the work tile centred in the viewport lights up with its glow ---------- */
+(() => {
+  if (!isMobile) return;
+  const tiles = document.querySelectorAll('.bento .tile');
+  if (!tiles.length) return;
+  // root shrunk to a thin band at the vertical centre → a tile is "in centre" while it crosses it
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    en.target.classList.toggle('is-incenter', en.isIntersecting);
+  }), { rootMargin: '-45% 0px -45% 0px' });
+  tiles.forEach((t) => io.observe(t));
+})();
+
 /* ---------- dark / light theme toggle ---------- */
 const root = document.documentElement;
 const savedTheme = localStorage.getItem('elevate-theme');
