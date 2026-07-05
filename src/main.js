@@ -382,6 +382,40 @@ function setupScenes() {
   });
 }
 
+/* ---------- mobile HUD: top scroll-progress bar + scene dots (markup in HTML, styled in CSS) ---------- */
+function initMobileHud() {
+  if (!isMobile) return;
+  const bar = document.getElementById('mprogressBar');
+  const wrap = document.getElementById('mdots');
+  const sections = SCENES.map((n) => document.getElementById(n)).filter(Boolean);
+  if (!bar || !wrap || !sections.length) return;
+
+  // one dot per scene, in scroll order (the row itself is aria-hidden — decorative)
+  const dots = sections.map((sec) => {
+    const d = document.createElement('span');
+    d.dataset.scene = sec.id;
+    wrap.appendChild(d);
+    return d;
+  });
+
+  let ticking = false;
+  const draw = () => {
+    ticking = false;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    // active scene = the last section whose top has crossed the viewport centre
+    const mid = window.innerHeight * 0.5;
+    let active = 0;
+    sections.forEach((sec, i) => { if (sec.getBoundingClientRect().top <= mid) active = i; });
+    dots.forEach((d, i) => d.classList.toggle('is-on', i === active));
+  };
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(draw); } };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  draw();
+}
+
 /* ---------- magnetised scroll: settle onto the nearest section, no dead space ---------- */
 function setupSnap() {
   if (!lenis || !window.matchMedia('(min-width: 760px)').matches) return;
@@ -537,6 +571,7 @@ function boot() {
   booted = true;
   setScene('hero');
   story();
+  initMobileHud();
   const lift = runIntro();
   if (!reduced) {
     let played = false;

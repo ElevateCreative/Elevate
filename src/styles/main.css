@@ -619,6 +619,19 @@ body.is-takeover .altimeter__value { color: var(--takeover-ink); }
 body.is-takeover .altimeter::before, body.is-takeover .altimeter::after { background: var(--takeover-line); }
 @media (max-width: 760px), (hover: none) and (pointer: coarse) { .altimeter { display: none; } }
 
+/* ---------- mobile experience: progress bar + scene dots (desktop hides them) ---------- */
+.mprogress, .mdots { display: none; }
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .mprogress { display: block; position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 34; pointer-events: none; }
+  .mprogress span { display: block; height: 100%; background: linear-gradient(90deg, #46c6ff, var(--blue)); transform: scaleX(0); transform-origin: 100% 50%; box-shadow: 0 0 12px rgba(0, 136, 255, 0.55); will-change: transform; }
+  .mdots { display: flex; flex-direction: column; gap: 10px; position: fixed; top: 50%; right: 9px; transform: translateY(-50%); z-index: 34; pointer-events: none; }
+  .mdots span { width: 5px; height: 5px; border-radius: 999px; background: var(--ink); opacity: 0.3; transition: height 0.45s var(--ease), opacity 0.45s var(--ease), background 0.45s var(--ease), box-shadow 0.45s var(--ease); }
+  .mdots span.is-on { height: 20px; opacity: 1; background: var(--blue); box-shadow: 0 0 10px rgba(0, 136, 255, 0.7); }
+  body.is-takeover .mdots span { background: var(--takeover-ink); box-shadow: none; }
+  /* the pass-through phrases render without blend on mobile → give them solid readable ink */
+  .pw { color: var(--ink); }
+}
+
 /* ---------- accessibility widget (תוסף נגישות) ---------- */
 /* skip link — hidden until keyboard focus */
 .skip-link { position: fixed; top: 0.9rem; left: 50%; z-index: 120; padding: 0.7rem 1.4rem; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 600; font-size: 0.9rem; transform: translate(-50%, -300%); transition: transform 0.35s var(--ease); }
