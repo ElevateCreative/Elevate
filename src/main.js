@@ -285,7 +285,7 @@ function animateText() {
   });
 
   // LABELS · LINKS · CARDS · FOOTER — bold slide + fade as units
-  const sel = '.mono-label, .textlink, .pill, .tile, .work__note, .wa-btn, .phones, .footer span, .services__intro, .service, .step, .contact__about';
+  const sel = '.mono-label, .textlink, .pill, .tile, .work__note, .wa-btn, .phones, .services__intro, .service, .step, .contact__about';
   gsap.set(sel, { y: 50, autoAlpha: 0 });
   ScrollTrigger.batch(sel, {
     start: 'top 86%',
