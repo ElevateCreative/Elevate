@@ -340,6 +340,15 @@ main { position: static; }
 .tile.is-incenter { box-shadow: 0 24px 60px rgba(var(--glow), 0.4); border-color: rgba(var(--glow), 0.55); }
 .tile.is-incenter .tile__media { transform: scale(1.05); }
 
+/* dashed "blueprint" frame on every tile, tinted to the tile's own glow colour */
+.tile__media::before {
+  content: ""; position: absolute; inset: clamp(10px, 3.5%, 18px);
+  border: 1px dashed rgba(var(--glow), 0.28); border-radius: 13px;
+  transition: border-color 0.5s var(--ease);
+}
+@media (hover: hover) { .tile:hover .tile__media::before { border-color: rgba(var(--glow), 0.55); } }
+.tile.is-incenter .tile__media::before { border-color: rgba(var(--glow), 0.55); }
+
 /* real project (Job Power) — same size as the other tiles; rich purple bg + logo */
 .tile--feature { cursor: none; --glow: 108, 96, 245; }
 .tile--feature .tile__media--jp {
@@ -416,11 +425,6 @@ main { position: static; }
     radial-gradient(62% 72% at 50% 42%, rgba(69, 224, 192, 0.24), transparent 62%),
     radial-gradient(120% 120% at 50% 55%, #102420 0%, #0a1512 82%);
 }
-.tile--next .tile__media--next::before {
-  content: ""; position: absolute; inset: clamp(12px, 4%, 22px);
-  border: 1.5px dashed rgba(69, 224, 192, 0.34); border-radius: 14px;
-  transition: border-color 0.5s var(--ease);
-}
 .next-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; pointer-events: none; }
 .next-hero__q {
   font-family: var(--f-mono); font-weight: 300; line-height: 1;
@@ -430,10 +434,8 @@ main { position: static; }
 }
 .tile--next:hover .next-hero__q,
 .tile--next.is-incenter .next-hero__q { text-shadow: 0 0 48px rgba(69, 224, 192, 0.9); transform: translateY(-8%) scale(1.06); }
-.tile--next:hover .tile__media--next::before,
-.tile--next.is-incenter .tile__media--next::before { border-color: rgba(69, 224, 192, 0.62); }
 @media (prefers-reduced-motion: no-preference) {
-  .tile--next .tile__media--next::before { animation: nextRing 3.6s var(--ease) infinite; }
+  .tile--next .tile__media::before { animation: nextRing 3.6s var(--ease) infinite; }
 }
 @keyframes nextRing {
   0%, 100% { opacity: 0.62; transform: scale(1); }
@@ -516,16 +518,18 @@ body.is-takeover .footer { color: var(--takeover-dim); border-color: var(--takeo
 body.is-takeover .footer span { color: var(--takeover-dim); }
 body.is-takeover .footer__legal a { color: var(--takeover-dim); }
 body.is-takeover .footer__legal a:hover { color: var(--takeover-ink); }
-body.is-takeover .cursor__dot { background: var(--takeover-ink); }
-body.is-takeover .cursor__ring { border-color: var(--takeover-line); }
-
-/* ---------- cursor ---------- */
+/* ---------- cursor: glowing blue core + a difference-blend reticle that inverts over any colour ---------- */
 .cursor { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
-.cursor__dot, .cursor__ring { position: absolute; top: 0; left: 0; border-radius: 50%; transform: translate(-50%, -50%); }
-.cursor__dot { width: 6px; height: 6px; background: var(--cream); }
-.cursor__ring { width: 34px; height: 34px; border: 1px solid rgba(234, 230, 221, 0.4); transition: width 0.3s var(--ease), height 0.3s var(--ease), background 0.3s var(--ease); }
-.cursor.is-hover .cursor__ring { width: 60px; height: 60px; background: rgba(234, 230, 221, 0.08); }
+.cursor__dot, .cursor__ring { position: absolute; top: 0; left: 0; border-radius: 50%; }
+.cursor__dot { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; background: var(--blue); box-shadow: 0 0 12px 2px rgba(0, 136, 255, 0.6); transition: width 0.3s var(--ease), height 0.3s var(--ease), margin 0.3s var(--ease); }
+.cursor__ring { width: 30px; height: 30px; margin: -15px 0 0 -15px; border: 1.5px solid #fff; mix-blend-mode: difference; transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease); }
+.cursor.is-hover .cursor__ring { width: 58px; height: 58px; margin: -29px 0 0 -29px; }
+.cursor.is-hover .cursor__dot { width: 4px; height: 4px; margin: -2px 0 0 -2px; }
 .cursor.is-hidden { opacity: 0; }
+/* keep the custom cursor everywhere on mouse devices — links/tiles must not flip to the OS pointer */
+@media (hover: hover) and (pointer: fine) {
+  a, button, [data-magnetic], .tile, .service, .faq__q, .dock__link, .phones__toggle, .theme-toggle { cursor: none; }
+}
 @media (hover: none) { .cursor { display: none; } body { cursor: auto; } }
 
 /* ---------- preloader (curtain only; the arrow is the real #mark) ---------- */
