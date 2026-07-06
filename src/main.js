@@ -62,14 +62,21 @@ if (markShape && !reduced && !isMobile) {
   }
 
   let followScale = 1; // scaled per-scene so the pull is stronger in some scenes
+  const bentoEl = document.querySelector('.bento');
   window.addEventListener('pointermove', (e) => {
     if (document.body.classList.contains('is-loading')) return; // arrow stays steady while it fills
     const nx = (e.clientX / window.innerWidth) * 2 - 1;   // -1 … 1
     const ny = (e.clientY / window.innerHeight) * 2 - 1;
-    const inHero = document.body.dataset.scene === 'hero';
-    // in the hero the arrow is the "A" — keep it planted; elsewhere it drifts to the cursor
-    followX(inHero ? 0 : nx * 60 * followScale);
-    followY(inHero ? 0 : ny * 46 * followScale);
+    const scene = document.body.dataset.scene;
+    if (scene === 'work') {
+      // WORK: the arrow pulls to the far corner OPPOSITE the cursor, framing the grid from a distance
+      followX(-nx * 320);
+      followY(-ny * 165);
+    } else {
+      // in the hero the arrow is the "A" — keep it planted; elsewhere it drifts to the cursor
+      followX(scene === 'hero' ? 0 : nx * 60 * followScale);
+      followY(scene === 'hero' ? 0 : ny * 46 * followScale);
+    }
     rotY(nx * 22);
     rotX(-ny * 17);
     wmRotY(nx * 12);
@@ -77,19 +84,17 @@ if (markShape && !reduced && !isMobile) {
     shX(e.clientX - window.innerWidth / 2);
     shY(e.clientY - window.innerHeight / 2);
     if (oX) { oX(nx * 42); oY(ny * 42); }
-    const scene = document.body.dataset.scene;
     if (scene === 'services') {
       const r = markShape.getBoundingClientRect();
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       aimRot(Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180 / Math.PI);
-    } else if (scene === 'work') {
-      // WORK: the arrow floats above the tiles and its tip locks onto whichever tile you're over
+    } else if (scene === 'work' && bentoEl) {
+      // aim the tip at the fixed CENTRE of the tile grid — a steady target, not a movement compass
+      const b = bentoEl.getBoundingClientRect();
+      const gx = b.left + b.width / 2, gy = b.top + b.height / 2;
       const r = markShape.getBoundingClientRect();
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      const tile = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
-      let tx = e.clientX, ty = e.clientY;
-      if (tile) { const t = tile.getBoundingClientRect(); tx = t.left + t.width / 2; ty = t.top + t.height / 2; }
-      aimRot(Math.atan2(tx - cx, -(ty - cy)) * 180 / Math.PI);
+      aimRot(Math.atan2(gx - cx, -(gy - cy)) * 180 / Math.PI);
     }
   }, { passive: true });
   // let scenes dial the magnetism up/down
@@ -169,32 +174,6 @@ document.querySelectorAll('[data-phones]').forEach((p) => {
     t.setAttribute('aria-expanded', String(open));
   });
 });
-
-/* ---------- Job Power tile: stream their real hero video as the background ---------- */
-(() => {
-  const vid = document.querySelector('.jp-vid');
-  if (!vid || reduced) return;
-  const src = vid.dataset.hls;
-  const start = () => vid.play().then(() => vid.classList.add('is-ready')).catch(() => {});
-  let attached = false;
-  const attach = async () => {
-    if (attached) return; attached = true;
-    if (vid.canPlayType('application/vnd.apple.mpegurl')) { vid.src = src; start(); return; }
-    try {
-      const { default: Hls } = await import('hls.js');
-      if (Hls.isSupported()) {
-        const hls = new Hls({ capLevelToPlayerSize: true });
-        hls.loadSource(src); hls.attachMedia(vid);
-        hls.on(Hls.Events.MANIFEST_PARSED, start);
-      }
-    } catch (e) { /* leave the gradient fallback */ }
-  };
-  // only load + play while the tile is near the viewport (saves data/battery)
-  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
-    if (en.isIntersecting) { attach(); vid.play().catch(() => {}); } else { vid.pause(); }
-  }), { rootMargin: '250px' });
-  io.observe(vid);
-})();
 
 /* ---------- mobile: the work tile centred in the viewport lights up with its glow ---------- */
 (() => {
@@ -377,8 +356,8 @@ function setScene(name) {
   });
   // the arrow reaches out harder in the busier scenes
   if (window.__setArrowFollow) {
-    // work stays lower so the arrow hangs back over the grid and its tip clearly points at a tile
-    window.__setArrowFollow(name === 'services' ? 1.55 : name === 'work' ? 0.55 : name === 'about' ? 1.15 : 1);
+    // work drives the arrow itself (far-corner framing), so followScale is irrelevant there
+    window.__setArrowFollow(name === 'services' ? 1.55 : name === 'about' ? 1.15 : 1);
   }
 }
 function setupScenes() {

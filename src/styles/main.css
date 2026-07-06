@@ -340,22 +340,20 @@ main { position: static; }
 .tile.is-incenter { box-shadow: 0 24px 60px rgba(var(--glow), 0.4); border-color: rgba(var(--glow), 0.55); }
 .tile.is-incenter .tile__media { transform: scale(1.05); }
 
-/* real project (Job Power) — same size as the other tiles; real video bg + logo */
+/* real project (Job Power) — same size as the other tiles; rich purple bg + logo */
 .tile--feature { cursor: none; --glow: 108, 96, 245; }
 .tile--feature .tile__media--jp {
   background:
-    radial-gradient(55% 75% at 16% 14%, rgba(126, 77, 255, 0.5), transparent 60%),
-    radial-gradient(50% 70% at 86% 26%, rgba(158, 74, 230, 0.38), transparent 60%),
-    radial-gradient(75% 95% at 72% 96%, rgba(96, 42, 205, 0.42), transparent 62%),
-    radial-gradient(130% 120% at 50% 45%, #1a1033 0%, #0b0717 78%);
+    radial-gradient(55% 75% at 16% 14%, rgba(150, 96, 255, 0.55), transparent 60%),
+    radial-gradient(50% 70% at 86% 26%, rgba(170, 86, 240, 0.42), transparent 60%),
+    radial-gradient(80% 95% at 72% 98%, rgba(110, 52, 220, 0.5), transparent 64%),
+    radial-gradient(130% 120% at 50% 45%, #3a1d70 0%, #1a0f38 80%);
 }
 .tile--feature .tile__media--jp::after {
   content: ""; position: absolute; inset: -25%;
   background: conic-gradient(from 130deg at 42% 48%, transparent, rgba(150, 100, 255, 0.4) 18%, transparent 40%, rgba(110, 60, 230, 0.3) 70%, transparent 88%);
   filter: blur(34px); opacity: 0.65;
 }
-.jp-vid { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.9s var(--ease); }
-.jp-vid.is-ready { opacity: 1; }
 .jp-hero { position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; pointer-events: none; }
 .jp-hero__logo { width: 46%; max-width: 240px; aspect-ratio: 716 / 586; background: url(../assets/jobpower-logo.png) center / contain no-repeat; filter: drop-shadow(0 12px 36px rgba(60, 30, 120, 0.7)); transform: translateY(-8%); }
 .tile__sub { display: block; font-size: 0.5em; font-weight: 400; color: rgba(255, 255, 255, 0.74); margin-top: 0.25em; letter-spacing: 0; }
