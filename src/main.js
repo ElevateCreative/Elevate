@@ -26,7 +26,6 @@ const markFluid = mark && mark.querySelector('.mark__fluid');
 const shine = mark && mark.querySelector('.mark__shine');
 let velSquash = null;    // exposed to the scroll choreography below
 let breatheTween = null; // started once the intro launch lands
-let arrowPoseTween = null; // the tween that eases the mark to each scene's resting pose
 if (markShape && !reduced) {
   gsap.set(markShape, { transformPerspective: 1000, transformOrigin: '50% 50%' });
   gsap.set([markBreathe, markFluid], { transformOrigin: '50% 50%' });
@@ -48,9 +47,10 @@ if (markShape && !reduced && !isMobile) {
   const shY = gsap.quickTo(shine, 'y', { duration: 0.7, ease: 'power3' });
   // in the SERVICES scene only, the arrow swings to point its tip at the cursor
   const aimRot = gsap.quickTo(markShape, 'rotation', { duration: 0.5, ease: 'power3' });
-  // WORK scene takes manual control of the shape: fly it to a tile's outer corner + recolour it
+  // every bit of markShape's per-scene motion runs through these controllers (one owner per property)
+  // so the scene resting-poses and the work corner-framing never fight each other
   const mShapeX = gsap.quickTo(markShape, 'x', { duration: 0.9, ease: 'power3' });
-  const mShapeY = gsap.quickTo(markShape, 'y', { duration: 0.9, ease: 'power3' });
+  let mShapeY = gsap.quickTo(markShape, 'y', { duration: 0.9, ease: 'power3' });
   const mShapeSX = gsap.quickTo(markShape, 'scaleX', { duration: 0.9, ease: 'power3' });
   const mShapeSY = gsap.quickTo(markShape, 'scaleY', { duration: 0.9, ease: 'power3' });
   // chameleon skins — the arrow borrows the colour of the tile it frames
@@ -88,8 +88,48 @@ if (markShape && !reduced && !isMobile) {
 
   let followScale = 1; // scaled per-scene so the pull is stronger in some scenes
   const bentoEl = document.querySelector('.bento');
+  let lastPX = window.innerWidth / 2, lastPY = window.innerHeight / 2; // last cursor pos (for scroll-entry into work)
+
+  // WORK: fly the arrow to the outer corner of the tile under (px,py), tip pointing back at the tile,
+  // wearing that tile's colour. Nearest tile covers the gaps. Container is recentred here too.
+  function placeArrowInWork(px, py) {
+    if (!bentoEl) return;
+    followX(0); followY(0);
+    let tile = document.elementFromPoint(px, py)?.closest('.bento .tile');
+    const tiles = bentoEl.querySelectorAll('.tile');
+    if (!tile) { let bd = Infinity; tiles.forEach((el) => { const r = el.getBoundingClientRect(); const d = Math.hypot(px - (r.left + r.width / 2), py - (r.top + r.height / 2)); if (d < bd) { bd = d; tile = el; } }); }
+    if (!tile) return;
+    const b = bentoEl.getBoundingClientRect();
+    const gx = b.left + b.width / 2, gy = b.top + b.height / 2;
+    const t = tile.getBoundingClientRect();
+    const tcx = t.left + t.width / 2, tcy = t.top + t.height / 2;
+    const sx = Math.sign(tcx - gx) || 1, sy = Math.sign(tcy - gy) || 1;
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    const targetX = clamp(tcx + sx * (t.width * 0.42), 80, window.innerWidth - 80);   // outer corner, kept on-screen
+    const targetY = clamp(tcy + sy * (t.height * 0.4), 90, window.innerHeight - 90);
+    mShapeX(targetX - window.innerWidth / 2);
+    mShapeY(targetY - window.innerHeight / 2);
+    mShapeSX(0.44); mShapeSY(0.44);
+    aimRot(Math.atan2(tcx - targetX, -(tcy - targetY)) * 180 / Math.PI);
+    setArrowSkin(tile);
+  }
+  // scrolling INTO work places + colours the arrow at once (using the last cursor), no mouse move needed
+  window.__placeArrowWork = () => placeArrowInWork(lastPX, lastPY);
+  // setArrowPose() drives the shape through the SAME controllers, so leaving work eases cleanly (no fight)
+  window.__poseArrow = (x, y, scale, rot) => { mShapeX(x); mShapeY(y); mShapeSX(scale); mShapeSY(scale); if (rot !== null) aimRot(rot); };
+  // contact → process: the arrow rises into frame from BELOW the screen (a dedicated y-tween so it
+  // truly starts from below; x/scale/rotation still ride the shared controllers)
+  window.__riseFromBelow = (x, scale, rot) => {
+    gsap.killTweensOf(markShape, 'y');
+    gsap.fromTo(markShape, { y: window.innerHeight * 1.5 }, { y: 0, duration: 0.95, ease: 'power3.inOut',
+      // the killTweensOf orphaned the y controller — rebuild it so work's y-placement works again
+      onComplete: () => { mShapeY = gsap.quickTo(markShape, 'y', { duration: 0.9, ease: 'power3' }); } });
+    mShapeX(x); mShapeSX(scale); mShapeSY(scale); if (rot !== null) aimRot(rot);
+  };
+
   window.addEventListener('pointermove', (e) => {
     if (document.body.classList.contains('is-loading')) return; // arrow stays steady while it fills
+    lastPX = e.clientX; lastPY = e.clientY;
     const nx = (e.clientX / window.innerWidth) * 2 - 1;   // -1 … 1
     const ny = (e.clientY / window.innerHeight) * 2 - 1;
     const scene = document.body.dataset.scene;
@@ -107,30 +147,8 @@ if (markShape && !reduced && !isMobile) {
       const r = markShape.getBoundingClientRect();
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       aimRot(Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180 / Math.PI);
-    } else if (scene === 'work' && bentoEl) {
-      // WORK: fly the arrow to the OUTER corner of the tile under the cursor, tip pointing back
-      // at the tile, wearing that tile's colour (chameleon). Nearest tile covers the gaps.
-      if (arrowPoseTween) { arrowPoseTween.kill(); arrowPoseTween = null; } // take over from the resting-pose tween
-      let tile = document.elementFromPoint(e.clientX, e.clientY)?.closest('.bento .tile');
-      const tiles = bentoEl.querySelectorAll('.tile');
-      if (!tile) {
-        let bd = Infinity;
-        tiles.forEach((el) => { const r = el.getBoundingClientRect(); const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)); if (d < bd) { bd = d; tile = el; } });
-      }
-      const b = bentoEl.getBoundingClientRect();
-      const gx = b.left + b.width / 2, gy = b.top + b.height / 2;
-      const t = tile.getBoundingClientRect();
-      const tcx = t.left + t.width / 2, tcy = t.top + t.height / 2;
-      const sx = Math.sign(tcx - gx) || 1, sy = Math.sign(tcy - gy) || 1;
-      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-      // sit over the tile's outer corner, but clamped so the arrow never flies off-screen
-      const targetX = clamp(tcx + sx * (t.width * 0.42), 80, window.innerWidth - 80);
-      const targetY = clamp(tcy + sy * (t.height * 0.4), 90, window.innerHeight - 90);
-      mShapeX(targetX - window.innerWidth / 2);
-      mShapeY(targetY - window.innerHeight / 2);
-      mShapeSX(0.44); mShapeSY(0.44);
-      aimRot(Math.atan2(tcx - targetX, -(tcy - targetY)) * 180 / Math.PI);
-      setArrowSkin(tile);
+    } else if (scene === 'work') {
+      placeArrowInWork(e.clientX, e.clientY);
     }
   }, { passive: true });
   // let scenes dial the magnetism up/down
@@ -391,29 +409,23 @@ const SCENES = ['hero', 'about', 'services', 'work', 'process', 'contact'];
 //  · process   → centred, full size
 //  · contact   → flies straight up and off the top of the screen
 function setArrowPose(name, prev) {
-  if (isMobile || reduced || !markShape) return;
+  if (isMobile || reduced || !markShape || !window.__poseArrow) return;
   if (name !== 'work') window.__setArrowSkin?.(null); // chameleon skin only lives in the work scene
-  if (arrowPoseTween) { arrowPoseTween.kill(); arrowPoseTween = null; }
+  if (name === 'work') { window.__placeArrowWork(); return; } // place + colour at the hovered tile at once
 
   const vw = window.innerWidth, vh = window.innerHeight;
-  let to;
+  let x, y, scale, rot;
   if (name === 'hero') {
-    if (!prev) return;                             // first call at boot → the intro owns the "A"
-    to = { x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0 }; // scrolled back up → recentre so the "A" is correct
+    if (!prev) return;                                      // first call at boot → the intro owns the "A"
+    x = 0; y = 0; scale = 1; rot = 0;                       // scrolled back up → recentre so the "A" is correct
   }
-  // work: a defined RESTING pose (centred, smaller). The pointermove then flies it to the
-  // hovered tile's corner (and kills this tween). Giving it a real pose — instead of an early
-  // return — is what makes entering work from either direction actually animate.
-  else if (name === 'work')     to = { x: 0,          y: 0,         scaleX: 0.6,  scaleY: 0.6,  rotation: 0 };
-  else if (name === 'contact')  to = { x: 0,          y: -1.5 * vh, scaleX: 1,    scaleY: 1,    rotation: 0 };
-  else if (name === 'about')    to = { x: vw * 0.15,  y: 0,         scaleX: 0.82, scaleY: 0.82, rotation: 0 };
-  else if (name === 'services') to = { x: -vw * 0.15, y: 0,         scaleX: 0.72, scaleY: 0.72, rotation: 0 };
-  else /* process */            to = { x: 0,          y: 0,         scaleX: 1,    scaleY: 1,    rotation: 0 };
+  else if (name === 'contact')  { x = 0;          y = -1.5 * vh; scale = 1;    rot = 0; }
+  else if (name === 'about')    { x = vw * 0.15;  y = 0;         scale = 0.82; rot = 0; }
+  else if (name === 'services') { x = -vw * 0.15; y = 0;         scale = 0.72; rot = 0; }    // resets tilt; aim takes over on move
+  else                          { x = 0;          y = 0;         scale = 1;    rot = 0; }    // process
 
-  // coming back UP from contact → rise into the frame from below the screen
-  if (prev === 'contact') gsap.set(markShape, { y: 1.5 * vh });
-  // overwrite:true clears any leftover work quickTo tweens so the transitions fire cleanly
-  arrowPoseTween = gsap.to(markShape, { ...to, duration: 0.9, ease: 'power3.inOut', overwrite: true });
+  if (prev === 'contact') { window.__riseFromBelow(x, scale, rot); return; } // rise in from below the screen
+  window.__poseArrow(x, y, scale, rot);
 }
 
 function setScene(name) {
