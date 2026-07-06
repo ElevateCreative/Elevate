@@ -152,9 +152,9 @@ body[data-scene="process"]  .mark__shape { --glow1: rgba(60, 210, 150, 0.5); --g
 
 /* main MUST stay a plain block (no z-index/transform) for blend to reach canvas */
 main { position: static; }
-/* the huge type reads in the section's OWN colour (a lighter shade of what's behind it) rather
-   than the harsh complementary invert that "difference" produced */
-.blend { mix-blend-mode: luminosity; }
+/* keeps the arrow↔type colour-shift effect and stays readable in both themes, but exclusion is a
+   softer, muted "difference" — no harsh complementary carnival of colours */
+.blend { mix-blend-mode: exclusion; }
 
 /* ---------- navigation ---------- */
 .nav {
