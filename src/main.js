@@ -27,6 +27,8 @@ const shine = mark && mark.querySelector('.mark__shine');
 let velSquash = null;    // exposed to the scroll choreography below
 let breatheTween = null; // started once the intro launch lands
 let markJourneyST = null; // the scroll-driven arrow timeline's trigger (paused during the work scene)
+let markJourney = null;   // the timeline itself (read to hand control back smoothly on leaving work)
+let markHandBack = null;  // the ease-back tween that glides the arrow onto the journey when leaving work
 if (markShape && !reduced) {
   gsap.set(markShape, { transformPerspective: 1000, transformOrigin: '50% 50%' });
   gsap.set([markBreathe, markFluid], { transformOrigin: '50% 50%' });
@@ -54,11 +56,12 @@ if (markShape && !reduced && !isMobile) {
   const mShapeSX = gsap.quickTo(markShape, 'scaleX', { duration: 0.9, ease: 'power3' });
   const mShapeSY = gsap.quickTo(markShape, 'scaleY', { duration: 0.9, ease: 'power3' });
   // chameleon skins — the arrow borrows the colour of the tile it frames
+  // g1/g2 are the SAME colours as the gradient (c1/c2), so the glow matches the arrow exactly
   const ARROW_SKIN = {
-    'tile--feature': { c1: '#9a6cff', c2: '#5a2bd0', c3: '#1e1040', g1: '150, 110, 255', g2: '110, 70, 230' },
-    'tile--vg':      { c1: '#6a9be0', c2: '#24457e', c3: '#0b1830', g1: '120, 170, 255', g2: '80, 120, 220' },
-    'tile--um':      { c1: '#f2b555', c2: '#c07f2c', c3: '#3a2410', g1: '240, 180, 90',  g2: '200, 140, 60' },
-    'tile--next':    { c1: '#59dcae', c2: '#1f9a72', c3: '#0a2a22', g1: '90, 230, 180',  g2: '50, 180, 140' },
+    'tile--feature': { c1: '#9a6cff', c2: '#5a2bd0', c3: '#1e1040', g1: '154, 108, 255', g2: '90, 43, 208' },
+    'tile--vg':      { c1: '#6a9be0', c2: '#24457e', c3: '#0b1830', g1: '106, 155, 224', g2: '36, 69, 126' },
+    'tile--um':      { c1: '#f2b555', c2: '#c07f2c', c3: '#3a2410', g1: '242, 181, 85',  g2: '192, 127, 44' },
+    'tile--next':    { c1: '#59dcae', c2: '#1f9a72', c3: '#0a2a22', g1: '89, 220, 174',  g2: '31, 154, 114' },
   };
   const setArrowSkin = (tile) => {
     const key = tile && Object.keys(ARROW_SKIN).find((c) => tile.classList.contains(c));
@@ -67,8 +70,8 @@ if (markShape && !reduced && !isMobile) {
     markShape.style.setProperty('--arrow-c1', s.c1);
     markShape.style.setProperty('--arrow-c2', s.c2);
     markShape.style.setProperty('--arrow-c3', s.c3);
-    markShape.style.setProperty('--glow1', `rgba(${s.g1}, 0.5)`);
-    markShape.style.setProperty('--glow2', `rgba(${s.g2}, 0.3)`);
+    markShape.style.setProperty('--glow1', `rgba(${s.g1}, 0.6)`);
+    markShape.style.setProperty('--glow2', `rgba(${s.g2}, 0.36)`);
   };
   window.__setArrowSkin = setArrowSkin;
   // HERO hover: the whole ELEVATE word tilts in 3D toward the cursor (arrow tilts with it)
@@ -380,7 +383,8 @@ function animateText() {
 /* ---------- scene system: each section is its own "world" ---------- */
 const SCENES = ['hero', 'about', 'services', 'work', 'process', 'contact'];
 function setScene(name) {
-  if (document.body.dataset.scene === name) return;
+  const prev = document.body.dataset.scene;
+  if (prev === name) return;
   document.body.dataset.scene = name;
   document.querySelectorAll('.aura__layer').forEach((l) => {
     l.style.opacity = l.classList.contains('aura__layer--' + name) ? '1' : '0';
@@ -393,8 +397,25 @@ function setScene(name) {
     // work drives the arrow itself (per-tile corner framing), so followScale is irrelevant there
     window.__setArrowFollow(name === 'services' ? 1.55 : name === 'about' ? 1.15 : 1);
   }
-  // in work the arrow is hand-placed at the hovered tile, so pause the scroll journey + reset its skin on exit
-  if (markJourneyST) { if (name === 'work') markJourneyST.disable(); else { markJourneyST.enable(); window.__setArrowSkin?.(null); } }
+  // in work the arrow is hand-placed at the hovered tile, so pause the scroll journey there.
+  // on the way out, ease it from its tile corner onto the journey pose instead of snapping.
+  if (markJourneyST && markJourney) {
+    if (name === 'work') {
+      if (markHandBack) { markHandBack.kill(); markHandBack = null; }
+      markJourneyST.disable();
+    } else if (prev === 'work') {
+      window.__setArrowSkin?.(null);
+      const read = () => ({ x: gsap.getProperty(markShape, 'x'), y: gsap.getProperty(markShape, 'y'), scaleX: gsap.getProperty(markShape, 'scaleX'), scaleY: gsap.getProperty(markShape, 'scaleY'), rotation: gsap.getProperty(markShape, 'rotation') });
+      const from = read();                 // current tile-corner pose
+      const denom = (markJourneyST.end - markJourneyST.start) || 1;
+      const p = Math.max(0, Math.min(1, (window.scrollY - markJourneyST.start) / denom));
+      markJourney.progress(p);             // apply the scroll-appropriate pose so we can read it
+      const to = read();
+      gsap.set(markShape, from);           // restore the corner (same JS turn → journey pose never painted)
+      // glide from the corner onto the journey, then re-arm scroll control (unless we went back to work)
+      markHandBack = gsap.to(markShape, { ...to, duration: 0.6, ease: 'power2.inOut', onComplete: () => { markHandBack = null; if (document.body.dataset.scene !== 'work') markJourneyST.enable(); } });
+    }
+  }
 }
 function setupScenes() {
   SCENES.forEach((name) => {
@@ -490,6 +511,7 @@ function story() {
       .to(markShape, { x: () => -window.innerWidth * 0.19, y: () => -window.innerHeight * 0.04, scale: 0.66, rotation: -12, ease: 'sine.inOut' })
       .to(markShape, { x: () => window.innerWidth * 0.06, y: 0, scale: 0.9, rotation: 5, ease: 'sine.inOut' })
       .to(markShape, { x: 0, y: 0, scale: 1.1, rotation: 0, ease: 'sine.inOut' });
+    markJourney = journey;
     markJourneyST = journey.scrollTrigger; // paused in the work scene so the arrow can be hand-placed
 
     // feed live scroll velocity into the arrow's squash/stretch deformation
