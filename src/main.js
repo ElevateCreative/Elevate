@@ -110,6 +110,7 @@ if (markShape && !reduced && !isMobile) {
     } else if (scene === 'work' && bentoEl) {
       // WORK: fly the arrow to the OUTER corner of the tile under the cursor, tip pointing back
       // at the tile, wearing that tile's colour (chameleon). Nearest tile covers the gaps.
+      if (arrowPoseTween) { arrowPoseTween.kill(); arrowPoseTween = null; } // take over from the resting-pose tween
       let tile = document.elementFromPoint(e.clientX, e.clientY)?.closest('.bento .tile');
       const tiles = bentoEl.querySelectorAll('.tile');
       if (!tile) {
@@ -391,21 +392,28 @@ const SCENES = ['hero', 'about', 'services', 'work', 'process', 'contact'];
 //  · contact   → flies straight up and off the top of the screen
 function setArrowPose(name, prev) {
   if (isMobile || reduced || !markShape) return;
-  if (name === 'hero') { return; }                 // the hero owns the arrow (its "A" slot)
   if (name !== 'work') window.__setArrowSkin?.(null); // chameleon skin only lives in the work scene
   if (arrowPoseTween) { arrowPoseTween.kill(); arrowPoseTween = null; }
-  if (name === 'work') return;                     // the pointermove hand-places + colours it
 
   const vw = window.innerWidth, vh = window.innerHeight;
   let to;
-  if (name === 'contact')       to = { x: 0,            y: -1.5 * vh, scaleX: 1,    scaleY: 1,    rotation: 0 };
-  else if (name === 'about')    to = { x: vw * 0.15,    y: 0,         scaleX: 0.82, scaleY: 0.82, rotation: 0 };
-  else if (name === 'services') to = { x: -vw * 0.15,   y: 0,         scaleX: 0.72, scaleY: 0.72 }; // aim owns rotation
-  else /* process */            to = { x: 0,            y: 0,         scaleX: 1,    scaleY: 1,    rotation: 0 };
+  if (name === 'hero') {
+    if (!prev) return;                             // first call at boot → the intro owns the "A"
+    to = { x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0 }; // scrolled back up → recentre so the "A" is correct
+  }
+  // work: a defined RESTING pose (centred, smaller). The pointermove then flies it to the
+  // hovered tile's corner (and kills this tween). Giving it a real pose — instead of an early
+  // return — is what makes entering work from either direction actually animate.
+  else if (name === 'work')     to = { x: 0,          y: 0,         scaleX: 0.6,  scaleY: 0.6,  rotation: 0 };
+  else if (name === 'contact')  to = { x: 0,          y: -1.5 * vh, scaleX: 1,    scaleY: 1,    rotation: 0 };
+  else if (name === 'about')    to = { x: vw * 0.15,  y: 0,         scaleX: 0.82, scaleY: 0.82, rotation: 0 };
+  else if (name === 'services') to = { x: -vw * 0.15, y: 0,         scaleX: 0.72, scaleY: 0.72, rotation: 0 };
+  else /* process */            to = { x: 0,          y: 0,         scaleX: 1,    scaleY: 1,    rotation: 0 };
 
   // coming back UP from contact → rise into the frame from below the screen
   if (prev === 'contact') gsap.set(markShape, { y: 1.5 * vh });
-  arrowPoseTween = gsap.to(markShape, { ...to, duration: 0.9, ease: 'power3.inOut', overwrite: 'auto' });
+  // overwrite:true clears any leftover work quickTo tweens so the transitions fire cleanly
+  arrowPoseTween = gsap.to(markShape, { ...to, duration: 0.9, ease: 'power3.inOut', overwrite: true });
 }
 
 function setScene(name) {

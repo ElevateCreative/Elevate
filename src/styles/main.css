@@ -94,7 +94,8 @@ body[data-scene="about"]    .mark__shape { --glow1: rgba(120, 90, 255, 0.55); --
 body[data-scene="services"] { --arrow-hue: -24deg; }
 body[data-scene="services"] .mark__shape { --glow1: rgba(40, 200, 210, 0.5); --glow2: rgba(40, 120, 255, 0.28); }
 body[data-scene="work"]     { --arrow-hue: 14deg; --orbit-spin: 60s; }
-body[data-scene="work"]     .mark__shape { --glow1: rgba(150, 180, 255, 0.4); --glow2: rgba(120, 150, 255, 0.22); }
+/* work: the body colour (gradient) switches instantly per tile, so make the glow snap too (in sync) */
+body[data-scene="work"]     .mark__shape { --glow1: rgba(150, 180, 255, 0.4); --glow2: rgba(120, 150, 255, 0.22); transition: filter 0.18s var(--ease); }
 /* section 3 only: the arrow "comes out" above the tiles and points at the hovered tile (mouse devices) */
 @media (hover: hover) and (pointer: fine) {
   body[data-scene="work"] .mark { z-index: 6; }
@@ -564,7 +565,7 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
 [data-theme="light"] .menu-fab { background: rgba(255, 255, 255, 0.55); }
 [data-theme="light"] .cursor__ring { border-color: rgba(28, 28, 30, 0.4); }
 [data-theme="light"] .orbits circle { stroke: rgba(28, 28, 30, 0.08); }
-[data-theme="light"] .mark__shape { filter: drop-shadow(0 28px 55px rgba(18, 38, 90, 0.16)) drop-shadow(0 0 46px rgba(60, 120, 255, 0.4)) drop-shadow(0 0 110px rgba(120, 70, 255, 0.22)); }
+[data-theme="light"] .mark__shape { filter: drop-shadow(0 28px 55px rgba(18, 38, 90, 0.16)) drop-shadow(0 0 46px var(--glow1)) drop-shadow(0 0 110px var(--glow2)); }
 /* readable link hover on the bright takeover gradient (both themes) */
 .contact__link:hover { color: #0b0b0d; }
 /* the preloader follows the theme (see .preloader rules, which use the theme vars) */
