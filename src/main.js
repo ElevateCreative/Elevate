@@ -26,6 +26,7 @@ const markFluid = mark && mark.querySelector('.mark__fluid');
 const shine = mark && mark.querySelector('.mark__shine');
 let velSquash = null;    // exposed to the scroll choreography below
 let breatheTween = null; // started once the intro launch lands
+let markJourneyST = null; // the scroll-driven arrow timeline's trigger (paused during the work scene)
 if (markShape && !reduced) {
   gsap.set(markShape, { transformPerspective: 1000, transformOrigin: '50% 50%' });
   gsap.set([markBreathe, markFluid], { transformOrigin: '50% 50%' });
@@ -47,6 +48,29 @@ if (markShape && !reduced && !isMobile) {
   const shY = gsap.quickTo(shine, 'y', { duration: 0.7, ease: 'power3' });
   // in the SERVICES scene only, the arrow swings to point its tip at the cursor
   const aimRot = gsap.quickTo(markShape, 'rotation', { duration: 0.5, ease: 'power3' });
+  // WORK scene takes manual control of the shape: fly it to a tile's outer corner + recolour it
+  const mShapeX = gsap.quickTo(markShape, 'x', { duration: 0.9, ease: 'power3' });
+  const mShapeY = gsap.quickTo(markShape, 'y', { duration: 0.9, ease: 'power3' });
+  const mShapeSX = gsap.quickTo(markShape, 'scaleX', { duration: 0.9, ease: 'power3' });
+  const mShapeSY = gsap.quickTo(markShape, 'scaleY', { duration: 0.9, ease: 'power3' });
+  // chameleon skins — the arrow borrows the colour of the tile it frames
+  const ARROW_SKIN = {
+    'tile--feature': { c1: '#9a6cff', c2: '#5a2bd0', c3: '#1e1040', g1: '150, 110, 255', g2: '110, 70, 230' },
+    'tile--vg':      { c1: '#6a9be0', c2: '#24457e', c3: '#0b1830', g1: '120, 170, 255', g2: '80, 120, 220' },
+    'tile--um':      { c1: '#f2b555', c2: '#c07f2c', c3: '#3a2410', g1: '240, 180, 90',  g2: '200, 140, 60' },
+    'tile--next':    { c1: '#59dcae', c2: '#1f9a72', c3: '#0a2a22', g1: '90, 230, 180',  g2: '50, 180, 140' },
+  };
+  const setArrowSkin = (tile) => {
+    const key = tile && Object.keys(ARROW_SKIN).find((c) => tile.classList.contains(c));
+    if (!key) { ['--arrow-c1', '--arrow-c2', '--arrow-c3', '--glow1', '--glow2'].forEach((p) => markShape.style.removeProperty(p)); return; }
+    const s = ARROW_SKIN[key];
+    markShape.style.setProperty('--arrow-c1', s.c1);
+    markShape.style.setProperty('--arrow-c2', s.c2);
+    markShape.style.setProperty('--arrow-c3', s.c3);
+    markShape.style.setProperty('--glow1', `rgba(${s.g1}, 0.5)`);
+    markShape.style.setProperty('--glow2', `rgba(${s.g2}, 0.3)`);
+  };
+  window.__setArrowSkin = setArrowSkin;
   // HERO hover: the whole ELEVATE word tilts in 3D toward the cursor (arrow tilts with it)
   gsap.set('.hero__wordmark', { transformPerspective: 1100, transformOrigin: '50% 50%' });
   const wmRotY = gsap.quickTo('.hero__wordmark', 'rotationY', { duration: 0.9, ease: 'power3' });
@@ -68,15 +92,9 @@ if (markShape && !reduced && !isMobile) {
     const nx = (e.clientX / window.innerWidth) * 2 - 1;   // -1 … 1
     const ny = (e.clientY / window.innerHeight) * 2 - 1;
     const scene = document.body.dataset.scene;
-    if (scene === 'work') {
-      // WORK: the arrow pulls to the far corner OPPOSITE the cursor, framing the grid from a distance
-      followX(-nx * 320);
-      followY(-ny * 165);
-    } else {
-      // in the hero the arrow is the "A" — keep it planted; elsewhere it drifts to the cursor
-      followX(scene === 'hero' ? 0 : nx * 60 * followScale);
-      followY(scene === 'hero' ? 0 : ny * 46 * followScale);
-    }
+    // in work the shape flies to a tile corner itself, so keep the container centred there
+    followX(scene === 'work' ? 0 : scene === 'hero' ? 0 : nx * 60 * followScale);
+    followY(scene === 'work' ? 0 : scene === 'hero' ? 0 : ny * 46 * followScale);
     rotY(nx * 22);
     rotX(-ny * 17);
     wmRotY(nx * 12);
@@ -89,12 +107,28 @@ if (markShape && !reduced && !isMobile) {
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       aimRot(Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180 / Math.PI);
     } else if (scene === 'work' && bentoEl) {
-      // aim the tip at the fixed CENTRE of the tile grid — a steady target, not a movement compass
+      // WORK: fly the arrow to the OUTER corner of the tile under the cursor, tip pointing back
+      // at the tile, wearing that tile's colour (chameleon). Nearest tile covers the gaps.
+      let tile = document.elementFromPoint(e.clientX, e.clientY)?.closest('.bento .tile');
+      const tiles = bentoEl.querySelectorAll('.tile');
+      if (!tile) {
+        let bd = Infinity;
+        tiles.forEach((el) => { const r = el.getBoundingClientRect(); const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)); if (d < bd) { bd = d; tile = el; } });
+      }
       const b = bentoEl.getBoundingClientRect();
       const gx = b.left + b.width / 2, gy = b.top + b.height / 2;
-      const r = markShape.getBoundingClientRect();
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      aimRot(Math.atan2(gx - cx, -(gy - cy)) * 180 / Math.PI);
+      const t = tile.getBoundingClientRect();
+      const tcx = t.left + t.width / 2, tcy = t.top + t.height / 2;
+      const sx = Math.sign(tcx - gx) || 1, sy = Math.sign(tcy - gy) || 1;
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      // sit over the tile's outer corner, but clamped so the arrow never flies off-screen
+      const targetX = clamp(tcx + sx * (t.width * 0.42), 80, window.innerWidth - 80);
+      const targetY = clamp(tcy + sy * (t.height * 0.4), 90, window.innerHeight - 90);
+      mShapeX(targetX - window.innerWidth / 2);
+      mShapeY(targetY - window.innerHeight / 2);
+      mShapeSX(0.44); mShapeSY(0.44);
+      aimRot(Math.atan2(tcx - targetX, -(tcy - targetY)) * 180 / Math.PI);
+      setArrowSkin(tile);
     }
   }, { passive: true });
   // let scenes dial the magnetism up/down
@@ -356,9 +390,11 @@ function setScene(name) {
   });
   // the arrow reaches out harder in the busier scenes
   if (window.__setArrowFollow) {
-    // work drives the arrow itself (far-corner framing), so followScale is irrelevant there
+    // work drives the arrow itself (per-tile corner framing), so followScale is irrelevant there
     window.__setArrowFollow(name === 'services' ? 1.55 : name === 'about' ? 1.15 : 1);
   }
+  // in work the arrow is hand-placed at the hovered tile, so pause the scroll journey + reset its skin on exit
+  if (markJourneyST) { if (name === 'work') markJourneyST.disable(); else { markJourneyST.enable(); window.__setArrowSkin?.(null); } }
 }
 function setupScenes() {
   SCENES.forEach((name) => {
@@ -449,11 +485,12 @@ function story() {
   // Skipped on mobile — transforming a heavily-filtered element each frame crashes phones.
   if (markShape && !isMobile) {
     // starts at #about so the hero exit just GROWS the centred arrow; the drift begins after
-    gsap.timeline({ scrollTrigger: { trigger: '#about', start: 'top top', end: 'max', scrub: 1 } })
+    const journey = gsap.timeline({ scrollTrigger: { trigger: '#about', start: 'top top', end: 'max', scrub: 1 } })
       .to(markShape, { x: () => window.innerWidth * 0.18, y: () => window.innerHeight * 0.05, scale: 0.8, rotation: 10, ease: 'sine.inOut' })
       .to(markShape, { x: () => -window.innerWidth * 0.19, y: () => -window.innerHeight * 0.04, scale: 0.66, rotation: -12, ease: 'sine.inOut' })
       .to(markShape, { x: () => window.innerWidth * 0.06, y: 0, scale: 0.9, rotation: 5, ease: 'sine.inOut' })
       .to(markShape, { x: 0, y: 0, scale: 1.1, rotation: 0, ease: 'sine.inOut' });
+    markJourneyST = journey.scrollTrigger; // paused in the work scene so the arrow can be hand-placed
 
     // feed live scroll velocity into the arrow's squash/stretch deformation
     if (velSquash) {

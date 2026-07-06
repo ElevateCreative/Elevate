@@ -64,7 +64,7 @@ body.is-loading .mark__outline { opacity: 1; }
 body.is-loading .mark__breathe { clip-path: inset(100% 0% 0% 0%); }
 body.is-loading .mark { z-index: 101; }   /* lift the real arrow above the preloader curtain */
 body.is-loading .orbits { opacity: 0; }
-.mark__fluid { position: relative; width: 100%; height: 100%; overflow: hidden; clip-path: url(#arrowClip); -webkit-clip-path: url(#arrowClip); background: radial-gradient(120% 120% at 50% 28%, #2f6dff, #0a2f9e 68%, #061d66); filter: hue-rotate(var(--arrow-hue, 0deg)); transition: filter 0.9s var(--ease); }
+.mark__fluid { position: relative; width: 100%; height: 100%; overflow: hidden; clip-path: url(#arrowClip); -webkit-clip-path: url(#arrowClip); background: radial-gradient(120% 120% at 50% 28%, var(--arrow-c1, #2f6dff), var(--arrow-c2, #0a2f9e) 68%, var(--arrow-c3, #061d66)); filter: hue-rotate(var(--arrow-hue, 0deg)); transition: filter 0.9s var(--ease); }
 .blob { position: absolute; border-radius: 50%; filter: blur(22px); mix-blend-mode: screen; will-change: transform; }
 .blob--1 { width: 72%; height: 72%; left: -6%; top: -2%; background: radial-gradient(circle, #5fe0ff, transparent 68%); animation: blobA 9s ease-in-out infinite alternate; }
 .blob--2 { width: 66%; height: 66%; right: -8%; top: -8%; background: radial-gradient(circle, #a9dcff, transparent 66%); animation: blobB 11.5s ease-in-out infinite alternate; }
