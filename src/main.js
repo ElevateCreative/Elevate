@@ -26,9 +26,7 @@ const markFluid = mark && mark.querySelector('.mark__fluid');
 const shine = mark && mark.querySelector('.mark__shine');
 let velSquash = null;    // exposed to the scroll choreography below
 let breatheTween = null; // started once the intro launch lands
-let markJourneyST = null; // the scroll-driven arrow timeline's trigger (paused during the work scene)
-let markJourney = null;   // the timeline itself (read to hand control back smoothly on leaving work)
-let markHandBack = null;  // the ease-back tween that glides the arrow onto the journey when leaving work
+let arrowPoseTween = null; // the tween that eases the mark to each scene's resting pose
 if (markShape && !reduced) {
   gsap.set(markShape, { transformPerspective: 1000, transformOrigin: '50% 50%' });
   gsap.set([markBreathe, markFluid], { transformOrigin: '50% 50%' });
@@ -382,6 +380,34 @@ function animateText() {
 
 /* ---------- scene system: each section is its own "world" ---------- */
 const SCENES = ['hero', 'about', 'services', 'work', 'process', 'contact'];
+
+// The arrow's RESTING pose per scene (desktop). Interactive behaviour (cursor drift on the
+// container, aim in services, corner-framing in work) composes on top in the pointermove handler.
+//  · hero      → left to the intro (the "A" in ELEVATE); not touched here
+//  · about     → offset right, calm
+//  · services  → offset left, points at the hovered row (aim owns rotation)
+//  · work      → hand-placed at the hovered tile's corner (pointermove owns it)
+//  · process   → centred, full size
+//  · contact   → flies straight up and off the top of the screen
+function setArrowPose(name, prev) {
+  if (isMobile || reduced || !markShape) return;
+  if (name === 'hero') { return; }                 // the hero owns the arrow (its "A" slot)
+  if (name !== 'work') window.__setArrowSkin?.(null); // chameleon skin only lives in the work scene
+  if (arrowPoseTween) { arrowPoseTween.kill(); arrowPoseTween = null; }
+  if (name === 'work') return;                     // the pointermove hand-places + colours it
+
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let to;
+  if (name === 'contact')       to = { x: 0,            y: -1.5 * vh, scaleX: 1,    scaleY: 1,    rotation: 0 };
+  else if (name === 'about')    to = { x: vw * 0.15,    y: 0,         scaleX: 0.82, scaleY: 0.82, rotation: 0 };
+  else if (name === 'services') to = { x: -vw * 0.15,   y: 0,         scaleX: 0.72, scaleY: 0.72 }; // aim owns rotation
+  else /* process */            to = { x: 0,            y: 0,         scaleX: 1,    scaleY: 1,    rotation: 0 };
+
+  // coming back UP from contact → rise into the frame from below the screen
+  if (prev === 'contact') gsap.set(markShape, { y: 1.5 * vh });
+  arrowPoseTween = gsap.to(markShape, { ...to, duration: 0.9, ease: 'power3.inOut', overwrite: 'auto' });
+}
+
 function setScene(name) {
   const prev = document.body.dataset.scene;
   if (prev === name) return;
@@ -397,25 +423,8 @@ function setScene(name) {
     // work drives the arrow itself (per-tile corner framing), so followScale is irrelevant there
     window.__setArrowFollow(name === 'services' ? 1.55 : name === 'about' ? 1.15 : 1);
   }
-  // in work the arrow is hand-placed at the hovered tile, so pause the scroll journey there.
-  // on the way out, ease it from its tile corner onto the journey pose instead of snapping.
-  if (markJourneyST && markJourney) {
-    if (name === 'work') {
-      if (markHandBack) { markHandBack.kill(); markHandBack = null; }
-      markJourneyST.disable();
-    } else if (prev === 'work') {
-      window.__setArrowSkin?.(null);
-      const read = () => ({ x: gsap.getProperty(markShape, 'x'), y: gsap.getProperty(markShape, 'y'), scaleX: gsap.getProperty(markShape, 'scaleX'), scaleY: gsap.getProperty(markShape, 'scaleY'), rotation: gsap.getProperty(markShape, 'rotation') });
-      const from = read();                 // current tile-corner pose
-      const denom = (markJourneyST.end - markJourneyST.start) || 1;
-      const p = Math.max(0, Math.min(1, (window.scrollY - markJourneyST.start) / denom));
-      markJourney.progress(p);             // apply the scroll-appropriate pose so we can read it
-      const to = read();
-      gsap.set(markShape, from);           // restore the corner (same JS turn → journey pose never painted)
-      // glide from the corner onto the journey, then re-arm scroll control (unless we went back to work)
-      markHandBack = gsap.to(markShape, { ...to, duration: 0.6, ease: 'power2.inOut', onComplete: () => { markHandBack = null; if (document.body.dataset.scene !== 'work') markJourneyST.enable(); } });
-    }
-  }
+  // give the arrow this scene's resting pose (a clean, deterministic tween — no scroll scrub)
+  setArrowPose(name, prev);
 }
 function setupScenes() {
   SCENES.forEach((name) => {
@@ -500,27 +509,16 @@ function story() {
 
   animateText();
 
-  // the central mark takes a richer journey: it glides, scales and rotates through
-  // the sections (centre → right → left → centre). It lives on .mark__shape so the
-  // cursor-follow (on .mark) and breath (on .mark__breathe) compose on top of it.
+  // the mark's per-scene pose is set discretely by setArrowPose() on each scene change
+  // (no scroll-scrubbed timeline — that fought the scene overrides and made the arrow flicker).
+  // It lives on .mark__shape so the cursor-follow (.mark) and breath (.mark__breathe) compose on top.
   // Skipped on mobile — transforming a heavily-filtered element each frame crashes phones.
-  if (markShape && !isMobile) {
-    // starts at #about so the hero exit just GROWS the centred arrow; the drift begins after
-    const journey = gsap.timeline({ scrollTrigger: { trigger: '#about', start: 'top top', end: 'max', scrub: 1 } })
-      .to(markShape, { x: () => window.innerWidth * 0.18, y: () => window.innerHeight * 0.05, scale: 0.8, rotation: 10, ease: 'sine.inOut' })
-      .to(markShape, { x: () => -window.innerWidth * 0.19, y: () => -window.innerHeight * 0.04, scale: 0.66, rotation: -12, ease: 'sine.inOut' })
-      .to(markShape, { x: () => window.innerWidth * 0.06, y: 0, scale: 0.9, rotation: 5, ease: 'sine.inOut' })
-      .to(markShape, { x: 0, y: 0, scale: 1.1, rotation: 0, ease: 'sine.inOut' });
-    markJourney = journey;
-    markJourneyST = journey.scrollTrigger; // paused in the work scene so the arrow can be hand-placed
-
+  if (markShape && !isMobile && velSquash) {
     // feed live scroll velocity into the arrow's squash/stretch deformation
-    if (velSquash) {
-      ScrollTrigger.create({
-        trigger: document.body, start: 'top top', end: 'bottom bottom',
-        onUpdate: (self) => velSquash(gsap.utils.clamp(-1, 1, self.getVelocity() / 2600)),
-      });
-    }
+    ScrollTrigger.create({
+      trigger: document.body, start: 'top top', end: 'bottom bottom',
+      onUpdate: (self) => velSquash(gsap.utils.clamp(-1, 1, self.getVelocity() / 2600)),
+    });
   }
 
   setupScenes();
@@ -570,18 +568,19 @@ function story() {
   }
 
   // bottom takeover: a timed WASH (not scroll-scrubbed → smooth on mobile). On reaching the
-  // CTA band the gradient sweeps the screen open, the arrow fades, and the UI ink flips.
+  // CTA band the gradient sweeps the screen open and the UI ink flips. On desktop the arrow
+  // flies up and off the screen via setArrowPose('contact'); on mobile it just fades out.
   const markRest = isMobile ? 0.13 : 1;
   ScrollTrigger.create({
     trigger: '.cta-band', start: 'top 72%',
     onEnter: () => {
       gsap.to('.takeover', { clipPath: 'circle(155% at 50% 78%)', duration: 1.1, ease: 'power2.inOut' });
-      gsap.to('#mark', { autoAlpha: 0, duration: 0.7, ease: 'power2.in' });
+      if (isMobile) gsap.to('#mark', { autoAlpha: 0, duration: 0.7, ease: 'power2.in' });
       document.body.classList.add('is-takeover');
     },
     onLeaveBack: () => {
       gsap.to('.takeover', { clipPath: 'circle(0% at 50% 78%)', duration: 0.6, ease: 'power2.in' });
-      gsap.to('#mark', { autoAlpha: markRest, duration: 0.6 });
+      if (isMobile) gsap.to('#mark', { autoAlpha: markRest, duration: 0.6 });
       document.body.classList.remove('is-takeover');
     },
   });
