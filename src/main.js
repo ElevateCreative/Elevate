@@ -129,7 +129,6 @@ if (markShape && !reduced && !isMobile) {
 
   window.addEventListener('pointermove', (e) => {
     if (document.body.classList.contains('is-loading')) return; // arrow stays steady while it fills
-    if (document.body.classList.contains('is-mark-looping')) return; // let the easter-egg loop own the arrow
     lastPX = e.clientX; lastPY = e.clientY;
     const nx = (e.clientX / window.innerWidth) * 2 - 1;   // -1 … 1
     const ny = (e.clientY / window.innerHeight) * 2 - 1;
@@ -170,44 +169,6 @@ if (markShape && !reduced && !isMobile) {
     resetT = setTimeout(() => { sY(1); sX(1); skew(0); }, 130);
   };
 }
-
-/* ---------- easter egg: click the arrow on the HERO only → it loops-the-loop with a glow + light trail ---------- */
-(() => {
-  if (!mark || !markShape) return;
-  let looping = false;
-  const spawnTrail = (x, y) => {
-    const d = document.createElement('span');
-    d.className = 'mark-trail';
-    d.style.left = x + 'px'; d.style.top = y + 'px';
-    document.body.appendChild(d);
-    gsap.to(d, { opacity: 0, scale: 0.25, duration: 0.55, ease: 'power2.out', onComplete: () => d.remove() });
-  };
-  markShape.addEventListener('click', () => {
-    if (looping || reduced) return;
-    if (document.body.dataset.scene !== 'hero' || document.body.classList.contains('is-loading')) return; // HERO only
-    looping = true;
-    document.body.classList.add('is-mark-looping'); // raises the arrow above the type + pauses the cursor-follow
-    markShape.classList.add('is-looping');          // boosts the glow behind it
-    const R = 110, proxy = { t: 0 };
-    let last = 0;
-    gsap.to(proxy, {
-      t: 1, duration: 1.2, ease: 'power2.inOut',
-      onUpdate: () => {
-        const th = proxy.t * Math.PI * 2;
-        // a full loop around a circle just above the rest spot, with a barrel-roll + a little pop
-        gsap.set(mark, { x: R * Math.sin(th), y: -R + R * Math.cos(th), rotation: proxy.t * 360, scale: 1 + Math.sin(proxy.t * Math.PI) * 0.4 });
-        const now = performance.now();
-        if (now - last > 40) { last = now; const r = markShape.getBoundingClientRect(); spawnTrail(r.left + r.width / 2, r.top + r.height / 2); }
-      },
-      onComplete: () => {
-        gsap.set(mark, { x: 0, y: 0, rotation: 0, scale: 1 }); // back to its exact spot
-        markShape.classList.remove('is-looping');
-        document.body.classList.remove('is-mark-looping');
-        looping = false;
-      },
-    });
-  });
-})();
 
 /* ---------- smooth scroll + cursor + accessibility widget ---------- */
 const lenis = (reduced || isMobile) ? null : initSmoothScroll();
@@ -307,7 +268,13 @@ if (!reduced) {
 
 /* ---------- scroll choreography ---------- */
 let heroIntro = null;
-const HERO_A = 0.3; // the arrow's scale when it stands in as the "A" in ELEVATE
+// the arrow's scale when it stands in as the "A" in ELEVATE — derived from the slot so it always
+// matches the letter size (the slot + letters are responsive, so a fixed value would drift)
+const HERO_A = (() => {
+  const slot = document.querySelector('.wm--slot');
+  const w = markShape && markShape.offsetWidth;
+  return (slot && w) ? slot.offsetWidth / w : 0.3;
+})();
 
 /* ---------- text splitters: wrap each word/char in an overflow mask ---------- */
 function splitWords(el) {
