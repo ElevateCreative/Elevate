@@ -566,10 +566,6 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
 .lang-toggle__he { color: var(--ink); font-weight: 500; }
 :root[lang="en"] .lang-toggle__he { color: inherit; font-weight: 400; }
 :root[lang="en"] .lang-toggle__en { color: var(--ink); font-weight: 500; }
-body.is-takeover .nav .lang-toggle { color: var(--takeover-dim); border-color: var(--takeover-line); }
-body.is-takeover .nav .lang-toggle__he { color: var(--takeover-ink); }
-:root[lang="en"] body.is-takeover .nav .lang-toggle__he { color: var(--takeover-dim); }
-:root[lang="en"] body.is-takeover .nav .lang-toggle__en { color: var(--takeover-ink); }
 
 /* ---------- ENGLISH / LTR ----------
    Latin display type moves from Heebo's generic Latin to Archivo (premium grotesk);
