@@ -682,6 +682,8 @@ body.is-takeover .altimeter::before, body.is-takeover .altimeter::after { backgr
 }
 
 /* ---------- accessibility widget (תוסף נגישות) ---------- */
+/* visually hidden, read by crawlers + screen readers (SEO section headings) */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 /* skip link — hidden until keyboard focus */
 .skip-link { position: fixed; top: 0.9rem; left: 50%; z-index: 120; padding: 0.7rem 1.4rem; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 600; font-size: 0.9rem; transform: translate(-50%, -300%); transition: transform 0.35s var(--ease); }
 .skip-link:focus-visible { transform: translate(-50%, 0); }

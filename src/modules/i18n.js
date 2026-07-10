@@ -9,9 +9,9 @@ const KEY = 'elevate-lang';
 
 const EN = {
   /* meta */
-  'meta.title': 'Elevate Creative · Digital & Creative Agency',
-  'meta.desc': 'Elevate Creative · a digital and creative agency that lifts businesses to the next level. Premium websites and digital experiences that leave a mark.',
-  'meta.og.desc': 'Digital experiences that elevate. Premium websites that launch brands above the competition.',
+  'meta.title': 'Elevate Creative · Premium Web Design & Development Agency',
+  'meta.desc': 'Elevate Creative is a digital and creative agency building premium, high-performance websites. Web design, development, branding and SEO that lift your business above the competition.',
+  'meta.og.desc': 'Premium web design and development. Digital experiences that launch brands above the competition.',
 
   /* chrome */
   'skip': 'Skip to content',
@@ -30,6 +30,7 @@ const EN = {
   'aria.theme': 'Dark or light mode',
 
   /* hero */
+  'hero.seo': 'Elevate Creative · premium web design, development and creative agency',
   'hero.scroll': 'SCROLL',
   'pw.1': 'Premium websites',
   'pw.2': 'Unforgettable design',
@@ -44,6 +45,7 @@ const EN = {
   'about.lead': 'Elevate Creative was born to take businesses, lift them and launch them to the next level. We distil the identity of every brand and tailor it a stunning premium website, one that speaks its exact language and pushes it above the competition.',
 
   /* services */
+  'services.h2': 'Web design, development and creative services',
   'services.intro': 'From strategy to launch, everything you need to build a digital presence that leads, all under one roof.',
   'service.1.name': 'Strategy & Branding',
   'service.1.desc': 'Distilling the story, the voice and the edge that make you unforgettable.',
@@ -57,6 +59,7 @@ const EN = {
   'service.5.desc': 'SEO, performance and analytics, so you keep climbing after going live.',
 
   /* work */
+  'work.h2': 'Featured work · website portfolio',
   'work.all': 'All work',
   'work.jp.sub': 'Recruitment agency',
   'work.vg.sub': 'Tech couture · concept site',
@@ -89,7 +92,7 @@ const EN = {
   'contact.l1': 'Ready to',
   'contact.l2': 'level up?',
   'contact.sub': 'Tell us about your business, and we will return a digital vision that lifts you above everyone else.',
-  'contact.about': 'Behind Elevate are Orel and Agam, two army veterans with a great love for the digital and marketing world. We founded the studio to build businesses a digital presence that feels premium, precise and distinct. Every project gets personal attention, strategic thinking and design that lifts the brand above its competitors.',
+  'contact.about': 'Elevate Creative is led by Orel and Agam, a team driven by a shared passion for digital excellence and cutting-edge design. We founded the studio to help businesses transcend their digital boundaries with premium, high-performance websites. We combine strategic thinking with meticulous craftsmanship to ensure your brand stands out, performs flawlessly, and stays ahead of the competition.',
   'wa.title': 'Talk to us on WhatsApp',
   'wa.sub': 'Click to send a message and we will get back to you fast',
   'wa.arrow': '→',
