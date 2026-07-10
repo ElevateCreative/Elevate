@@ -551,6 +551,39 @@ body.is-takeover .footer__legal a:hover { color: var(--takeover-ink); }
 body.is-takeover .theme-toggle__track { border-color: rgba(22, 22, 26, 0.3); background: rgba(255, 255, 255, 0.25); }
 body.is-takeover .theme-toggle__knob { background: #16161a; }
 
+/* ---------- language toggle (HE · EN) ---------- */
+.lang-toggle {
+  display: inline-flex; align-items: center; gap: 0.45em;
+  background: none; border: 1px solid var(--line); border-radius: 999px;
+  padding: 0.45rem 0.85rem; cursor: none;
+  font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.14em; line-height: 1;
+  color: var(--ink-dim);
+  transition: border-color 0.35s var(--ease), color 0.35s var(--ease);
+}
+.lang-toggle i { font-style: normal; opacity: 0.45; }
+.lang-toggle:hover { border-color: var(--ink-dim); }
+.lang-toggle__he, .lang-toggle__en { transition: color 0.3s var(--ease); }
+.lang-toggle__he { color: var(--ink); font-weight: 500; }
+:root[lang="en"] .lang-toggle__he { color: inherit; font-weight: 400; }
+:root[lang="en"] .lang-toggle__en { color: var(--ink); font-weight: 500; }
+body.is-takeover .nav .lang-toggle { color: var(--takeover-dim); border-color: var(--takeover-line); }
+body.is-takeover .nav .lang-toggle__he { color: var(--takeover-ink); }
+:root[lang="en"] body.is-takeover .nav .lang-toggle__he { color: var(--takeover-dim); }
+:root[lang="en"] body.is-takeover .nav .lang-toggle__en { color: var(--takeover-ink); }
+
+/* ---------- ENGLISH / LTR ----------
+   Latin display type moves from Heebo's generic Latin to Archivo (premium grotesk);
+   everything positional flips via dir="ltr" — logical properties handle most of it,
+   these are the few physical leftovers. */
+:root[lang="en"] { --f-sans: "Archivo", "Heebo", system-ui, sans-serif; }
+:root[dir="ltr"] .nav { flex-direction: row; }   /* logo back on the physical left */
+:root[dir="ltr"] .dock__panel, :root[dir="ltr"] .a11y__panel { direction: ltr; }
+:root[dir="ltr"] .service::before { background: linear-gradient(to right, rgba(0, 136, 255, 0.14), rgba(0, 136, 255, 0.04) 42%, transparent 72%); }
+:root[dir="ltr"] .footer__legal a::after { transform-origin: left; }
+:root[dir="ltr"] .cta-band__track { animation-name: marqueeLtr; }
+@keyframes marqueeLtr { to { transform: translateX(-50%); } }
+:root[dir="ltr"] .wa-btn:hover .wa-btn__arrow { transform: translateX(7px); }
+
 /* ---------- LIGHT THEME ---------- */
 [data-theme="light"] {
   --bg: #e9e7e2;

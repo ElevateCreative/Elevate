@@ -15,9 +15,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Archivo:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script>
     try { var t = localStorage.getItem('elevate-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+    /* saved language → lang/dir before first paint (the copy itself is swapped in main.js) */
+    try { if (localStorage.getItem('elevate-lang') === 'en') { document.documentElement.lang = 'en'; document.documentElement.dir = 'ltr'; } } catch (e) {}
     /* re-apply saved accessibility settings before first paint (the widget itself boots in main.js) */
     try {
       var a = JSON.parse(localStorage.getItem('elevate-a11y') || '{}');
@@ -32,7 +34,7 @@
   </script>
 </head>
 <body class="is-loading">
-  <a class="skip-link" href="#about">דילוג לתוכן</a>
+  <a class="skip-link" href="#about" data-i18n="skip">דילוג לתוכן</a>
   <div class="cursor" aria-hidden="true"><div class="cursor__ring"></div><div class="cursor__dot"></div></div>
 
   <!-- Preloader: a solid curtain. The arrow that fills + launches is the REAL #mark
@@ -101,10 +103,11 @@
     </a>
     <div class="nav__right">
       <nav class="nav__links">
-        <a href="#about">מניפסט<i dir="ltr">↗</i></a>
-        <a href="#work">עבודות<i dir="ltr">↗</i></a>
+        <a href="#about"><span data-i18n="nav.manifesto">מניפסט</span><i dir="ltr">↗</i></a>
+        <a href="#work"><span data-i18n="nav.work">עבודות</span><i dir="ltr">↗</i></a>
       </nav>
-      <a href="#contact" class="nav__cta" data-magnetic>צרו קשר<i dir="ltr">→</i></a>
+      <button class="lang-toggle" type="button" data-lang-toggle dir="ltr" aria-label="החלפת שפה · Switch language"><span class="lang-toggle__he">HE</span><i>·</i><span class="lang-toggle__en">EN</span></button>
+      <a href="#contact" class="nav__cta" data-magnetic><span data-i18n="nav.cta">צרו קשר</span><i dir="ltr">→</i></a>
     </div>
   </header>
 
@@ -112,20 +115,24 @@
   <div class="dock" id="dock">
     <nav class="dock__panel" id="dockPanel" aria-hidden="true">
       <p class="dock__title" dir="ltr">NAVIGATE</p>
-      <a href="#hero" class="dock__link"><span class="dock__no" dir="ltr">00</span>ראשי</a>
-      <a href="#about" class="dock__link"><span class="dock__no" dir="ltr">01</span>מניפסט</a>
-      <a href="#services" class="dock__link"><span class="dock__no" dir="ltr">02</span>שירותים</a>
-      <a href="#work" class="dock__link"><span class="dock__no" dir="ltr">03</span>עבודות</a>
-      <a href="#process" class="dock__link"><span class="dock__no" dir="ltr">04</span>תהליך</a>
-      <a href="#contact" class="dock__link"><span class="dock__no" dir="ltr">05</span>צור קשר</a>
+      <a href="#hero" class="dock__link"><span class="dock__no" dir="ltr">00</span><span data-i18n="dock.home">ראשי</span></a>
+      <a href="#about" class="dock__link"><span class="dock__no" dir="ltr">01</span><span data-i18n="dock.manifesto">מניפסט</span></a>
+      <a href="#services" class="dock__link"><span class="dock__no" dir="ltr">02</span><span data-i18n="dock.services">שירותים</span></a>
+      <a href="#work" class="dock__link"><span class="dock__no" dir="ltr">03</span><span data-i18n="dock.work">עבודות</span></a>
+      <a href="#process" class="dock__link"><span class="dock__no" dir="ltr">04</span><span data-i18n="dock.process">תהליך</span></a>
+      <a href="#contact" class="dock__link"><span class="dock__no" dir="ltr">05</span><span data-i18n="dock.contact">צור קשר</span></a>
       <div class="dock__theme">
-        <span class="dock__theme-label">מצב תצוגה</span>
-        <button class="theme-toggle" id="themeToggle" type="button" dir="ltr" aria-label="מצב כהה או בהיר">
+        <span class="dock__theme-label" data-i18n="dock.theme">מצב תצוגה</span>
+        <button class="theme-toggle" id="themeToggle" type="button" dir="ltr" aria-label="מצב כהה או בהיר" data-i18n-aria="aria.theme">
           <span class="theme-toggle__track"><span class="theme-toggle__knob"></span></span>
         </button>
       </div>
+      <div class="dock__theme">
+        <span class="dock__theme-label" data-i18n="dock.lang">שפה</span>
+        <button class="lang-toggle" type="button" data-lang-toggle dir="ltr" aria-label="החלפת שפה · Switch language"><span class="lang-toggle__he">HE</span><i>·</i><span class="lang-toggle__en">EN</span></button>
+      </div>
     </nav>
-    <button class="menu-fab" id="menuFab" type="button" aria-label="תפריט ניווט" aria-expanded="false" aria-controls="dockPanel"><span></span><span></span></button>
+    <button class="menu-fab" id="menuFab" type="button" aria-label="תפריט ניווט" data-i18n-aria="aria.menu" aria-expanded="false" aria-controls="dockPanel"><span></span><span></span></button>
   </div>
 
   <main id="top">
@@ -136,29 +143,29 @@
         <span class="wm wm--slot" aria-hidden="true"></span>
         <span class="wm wm--r"><span class="line"><span>TE</span></span></span>
       </h1>
-      <span class="hero__scroll" aria-hidden="true">גלול <i dir="ltr">↓</i></span>
+      <span class="hero__scroll" aria-hidden="true"><span data-i18n="hero.scroll">גלול</span> <i dir="ltr">↓</i></span>
       <!-- words you "pass through" (over the arrow, so they shift colour) on the way down -->
       <div class="passwords blend" aria-hidden="true">
-        <span class="pw pw--1">אתרי פרימיום</span>
-        <span class="pw pw--2">עיצוב בלתי נשכח</span>
-        <span class="pw pw--3">נוכחות שמרימה</span>
+        <span class="pw pw--1" data-i18n="pw.1">אתרי פרימיום</span>
+        <span class="pw pw--2" data-i18n="pw.2">עיצוב בלתי נשכח</span>
+        <span class="pw pw--3" data-i18n="pw.3">נוכחות שמרימה</span>
       </div>
     </section>
 
     <!-- MANIFESTO / ABOUT -->
     <section class="section manifesto" id="about">
       <p class="big blend">
-        <span class="line"><span>ברגש, אסטרטגיה ועיצוב</span></span>
-        <span class="line"><span>אנחנו דוחפים את גבולות</span></span>
-        <span class="line"><span>היצירה הדיגיטלית.</span></span>
+        <span class="line"><span data-i18n="about.l1">ברגש, אסטרטגיה ועיצוב</span></span>
+        <span class="line"><span data-i18n="about.l2">אנחנו דוחפים את גבולות</span></span>
+        <span class="line"><span data-i18n="about.l3">היצירה הדיגיטלית.</span></span>
       </p>
       <div class="manifesto__foot">
         <div class="manifesto__col">
           <p class="mono-label" dir="ltr">(01) · WHO WE ARE</p>
-          <p class="upper">סוכנות דיגיטל וקריאייטיב שיוצרת אתרי פרימיום וחוויות בלתי נשכחות.</p>
-          <a href="#contact" class="textlink" data-magnetic>עלינו <i dir="ltr">→</i></a>
+          <p class="upper" data-i18n="about.upper">סוכנות דיגיטל וקריאייטיב שיוצרת אתרי פרימיום וחוויות בלתי נשכחות.</p>
+          <a href="#contact" class="textlink" data-magnetic><span data-i18n="about.link">עלינו</span> <i dir="ltr">→</i></a>
         </div>
-        <p class="manifesto__lead" data-reveal>Elevate Creative נולדה כדי לקחת עסקים, להרים ולהזניק אותם לשלב הבא. אנחנו מזקקים את הזהות של כל מותג ותופרים לו אתר פרימיום מרהיב, כזה שמתקשר בדיוק בשפה שלו ודוחף אותו מעל המתחרים.</p>
+        <p class="manifesto__lead" data-reveal data-i18n="about.lead">Elevate Creative נולדה כדי לקחת עסקים, להרים ולהזניק אותם לשלב הבא. אנחנו מזקקים את הזהות של כל מותג ותופרים לו אתר פרימיום מרהיב, כזה שמתקשר בדיוק בשפה שלו ודוחף אותו מעל המתחרים.</p>
       </div>
     </section>
 
@@ -166,37 +173,37 @@
     <section class="section services" id="services">
       <div class="services__head">
         <p class="mono-label" dir="ltr">(02) · WHAT WE DO</p>
-        <p class="services__intro">מהאסטרטגיה ועד ההשקה, כל מה שצריך כדי לבנות נוכחות דיגיטלית שמובילה, תחת קורת גג אחת.</p>
+        <p class="services__intro" data-i18n="services.intro">מהאסטרטגיה ועד ההשקה, כל מה שצריך כדי לבנות נוכחות דיגיטלית שמובילה, תחת קורת גג אחת.</p>
       </div>
       <ul class="services__list">
         <li class="service">
           <span class="service__no" dir="ltr">01</span>
-          <h3 class="service__name">אסטרטגיה ומיתוג</h3>
-          <p class="service__desc">מזקקים את הסיפור, השפה והבידול שהופכים אתכם לבלתי נשכחים.</p>
+          <h3 class="service__name" data-i18n="service.1.name">אסטרטגיה ומיתוג</h3>
+          <p class="service__desc" data-i18n="service.1.desc">מזקקים את הסיפור, השפה והבידול שהופכים אתכם לבלתי נשכחים.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">02</span>
-          <h3 class="service__name">עיצוב חוויה · UX/UI</h3>
-          <p class="service__desc">ממשקים יפים שמרגישים טבעיים, מנחים את העין וממירים מבקרים ללקוחות.</p>
+          <h3 class="service__name" data-i18n="service.2.name">עיצוב חוויה · UX/UI</h3>
+          <p class="service__desc" data-i18n="service.2.desc">ממשקים יפים שמרגישים טבעיים, מנחים את העין וממירים מבקרים ללקוחות.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">03</span>
-          <h3 class="service__name">פיתוח Web פרימיום</h3>
-          <p class="service__desc">קוד נקי, מהיר ומדויק, עם אנימציות חיות שמרגישות יקרות.</p>
+          <h3 class="service__name" data-i18n="service.3.name">פיתוח Web פרימיום</h3>
+          <p class="service__desc" data-i18n="service.3.desc">קוד נקי, מהיר ומדויק, עם אנימציות חיות שמרגישות יקרות.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">04</span>
-          <h3 class="service__name">מושן, 3D ואינטראקציה</h3>
-          <p class="service__desc">תנועה שמספרת סיפור, מושכת תשומת לב ומשאירה חותם רגשי.</p>
+          <h3 class="service__name" data-i18n="service.4.name">מושן, 3D ואינטראקציה</h3>
+          <p class="service__desc" data-i18n="service.4.desc">תנועה שמספרת סיפור, מושכת תשומת לב ומשאירה חותם רגשי.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">05</span>
-          <h3 class="service__name">השקה ואופטימיזציה</h3>
-          <p class="service__desc">SEO, ביצועים ומדידה, שתמשיכו לעלות גם אחרי שעולים לאוויר.</p>
+          <h3 class="service__name" data-i18n="service.5.name">השקה ואופטימיזציה</h3>
+          <p class="service__desc" data-i18n="service.5.desc">SEO, ביצועים ומדידה, שתמשיכו לעלות גם אחרי שעולים לאוויר.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
       </ul>
@@ -206,7 +213,7 @@
     <section class="section work" id="work">
       <div class="work__head">
         <p class="mono-label" dir="ltr">(03) · FEATURED WORK</p>
-        <a href="#contact" class="pill" data-magnetic>כל העבודות <i dir="ltr">→</i></a>
+        <a href="#contact" class="pill" data-magnetic><span data-i18n="work.all">כל העבודות</span> <i dir="ltr">→</i></a>
       </div>
       <div class="bento">
         <a class="tile tile--feature" href="https://job-power.github.io/JobPower/" target="_blank" rel="noopener" data-reveal>
@@ -214,7 +221,7 @@
           <span class="jp-hero" aria-hidden="true">
             <span class="jp-hero__logo"></span>
           </span>
-          <div class="tile__row"><h3>Job Power <span class="tile__sub">משרד גיוס והשמה</span></h3><span class="tile__plus" aria-hidden="true">↗</span></div>
+          <div class="tile__row"><h3>Job Power <span class="tile__sub" data-i18n="work.jp.sub">משרד גיוס והשמה</span></h3><span class="tile__plus" aria-hidden="true">↗</span></div>
           <p class="tile__tags" dir="ltr">RECRUITMENT · WEB · BRANDING</p>
         </a>
         <a class="tile tile--vg" href="/concept/1/" target="_blank" rel="noopener" data-reveal>
@@ -223,7 +230,7 @@
             <span class="vg-hero__logo" dir="ltr">VIGDER</span>
             <span class="vg-hero__sub" dir="ltr">OBSCURITÉ</span>
           </span>
-          <div class="tile__row"><h3>VIGDER <span class="tile__sub">אופנת עילית טכנולוגית · אתר קונספט</span></h3><span class="tile__plus" aria-hidden="true">↗</span></div>
+          <div class="tile__row"><h3>VIGDER <span class="tile__sub" data-i18n="work.vg.sub">אופנת עילית טכנולוגית · אתר קונספט</span></h3><span class="tile__plus" aria-hidden="true">↗</span></div>
           <p class="tile__tags" dir="ltr">COUTURE · WEBGL · CONCEPT</p>
         </a>
         <a class="tile tile--um" href="/concept/2/" target="_blank" rel="noopener" data-reveal>
@@ -232,17 +239,17 @@
             <svg class="um-hero__mark" viewBox="0 0 26 26"><circle cx="13" cy="10" r="6.5"/><path d="M13 10 L21 24 H5 Z"/></svg>
             <span class="um-hero__logo" dir="ltr">UMBRAS</span>
           </span>
-          <div class="tile__row"><h3>UMBRAS <span class="tile__sub">חלון שמש חכם · אתר קונספט</span></h3><span class="tile__plus" aria-hidden="true">↗</span></div>
+          <div class="tile__row"><h3>UMBRAS <span class="tile__sub" data-i18n="work.um.sub">חלון שמש חכם · אתר קונספט</span></h3><span class="tile__plus" aria-hidden="true">↗</span></div>
           <p class="tile__tags" dir="ltr">PRODUCT · 3D · MOTION</p>
         </a>
-        <a class="tile tile--next" href="#contact" data-reveal aria-label="הפרויקט הבא יכול להיות שלכם. דברו איתנו">
+        <a class="tile tile--next" href="#contact" data-reveal aria-label="הפרויקט הבא יכול להיות שלכם. דברו איתנו" data-i18n-aria="work.next.aria">
           <span class="tile__media tile__media--next"></span>
           <span class="next-hero" aria-hidden="true"><span class="next-hero__q">?</span></span>
-          <div class="tile__row"><h3>העסק הבא <span class="tile__sub">אולי זה שלכם?</span></h3><span class="tile__plus" aria-hidden="true">+</span></div>
+          <div class="tile__row"><h3><span data-i18n="work.next.h">העסק הבא</span> <span class="tile__sub" data-i18n="work.next.sub">אולי זה שלכם?</span></h3><span class="tile__plus" aria-hidden="true">+</span></div>
           <p class="tile__tags" dir="ltr">YOUR BRAND · NEXT</p>
         </a>
       </div>
-      <p class="work__note">* Job Power, אתר לקוח חי. VIGDER ו־UMBRAS, אתרי קונספט חיים שבנינו מאפס, היכנסו ותתרשמו. הכרטיס האחרון מחכה לפרויקט שלכם.</p>
+      <p class="work__note" data-i18n="work.note">* Job Power, אתר לקוח חי. VIGDER ו־UMBRAS, אתרי קונספט חיים שבנינו מאפס, היכנסו ותתרשמו. הכרטיס האחרון מחכה לפרויקט שלכם.</p>
     </section>
 
     <!-- PROCESS / HOW WE WORK -->
@@ -250,38 +257,38 @@
       <div class="process__head">
         <p class="mono-label" dir="ltr">(04) · HOW WE WORK</p>
         <p class="big blend">
-          <span class="line"><span>תהליך מדויק,</span></span>
-          <span class="line"><span>תוצאה שמרימה.</span></span>
+          <span class="line"><span data-i18n="process.l1">תהליך מדויק,</span></span>
+          <span class="line"><span data-i18n="process.l2">תוצאה שמרימה.</span></span>
         </p>
       </div>
       <ol class="process__steps">
         <li class="step" data-reveal>
           <span class="step__no" dir="ltr">01</span>
-          <h3 class="step__name">גילוי</h3>
-          <p class="step__desc">צוללים לעומק העסק, הקהל והמטרות, ומבינים מה באמת מבדל אתכם.</p>
+          <h3 class="step__name" data-i18n="step.1.name">גילוי</h3>
+          <p class="step__desc" data-i18n="step.1.desc">צוללים לעומק העסק, הקהל והמטרות, ומבינים מה באמת מבדל אתכם.</p>
         </li>
         <li class="step" data-reveal>
           <span class="step__no" dir="ltr">02</span>
-          <h3 class="step__name">אסטרטגיה</h3>
-          <p class="step__desc">בונים כיוון, מסר וארכיטקטורת חוויה שמדברים בדיוק בשפה שלכם.</p>
+          <h3 class="step__name" data-i18n="step.2.name">אסטרטגיה</h3>
+          <p class="step__desc" data-i18n="step.2.desc">בונים כיוון, מסר וארכיטקטורת חוויה שמדברים בדיוק בשפה שלכם.</p>
         </li>
         <li class="step" data-reveal>
           <span class="step__no" dir="ltr">03</span>
-          <h3 class="step__name">עיצוב ופיתוח</h3>
-          <p class="step__desc">מעצבים שפה ויזואלית ומקודדים אתר מהיר, חי ומונפש עד הפיקסל האחרון.</p>
+          <h3 class="step__name" data-i18n="step.3.name">עיצוב ופיתוח</h3>
+          <p class="step__desc" data-i18n="step.3.desc">מעצבים שפה ויזואלית ומקודדים אתר מהיר, חי ומונפש עד הפיקסל האחרון.</p>
         </li>
         <li class="step" data-reveal>
           <span class="step__no" dir="ltr">04</span>
-          <h3 class="step__name">השקה ועלייה</h3>
-          <p class="step__desc">עולים לאוויר, מודדים, מחדדים, וממשיכים להזניק אתכם קדימה.</p>
+          <h3 class="step__name" data-i18n="step.4.name">השקה ועלייה</h3>
+          <p class="step__desc" data-i18n="step.4.desc">עולים לאוויר, מודדים, מחדדים, וממשיכים להזניק אתכם קדימה.</p>
         </li>
       </ol>
     </section>
 
     <!-- CTA gradient marquee -->
-    <section class="cta-band" aria-label="אתרים שהם הרבה מעבר לעיצוב">
+    <section class="cta-band" aria-label="אתרים שהם הרבה מעבר לעיצוב" data-i18n-aria="cta.aria">
       <div class="cta-band__track">
-        <span>אתרים שהם הרבה מעבר לעיצוב</span><i>✦</i><span>טכנולוגיה חדשנית</span><i>✦</i><span>חוויות משתמש בלתי נשכחות</span><i>✦</i><span>מניעים את העסק שלך קדימה</span><i>✦</i><span>אתרים שהם הרבה מעבר לעיצוב</span><i>✦</i><span>טכנולוגיה חדשנית</span><i>✦</i><span>חוויות משתמש בלתי נשכחות</span><i>✦</i><span>מניעים את העסק שלך קדימה</span><i>✦</i>
+        <span data-i18n="cta.1">אתרים שהם הרבה מעבר לעיצוב</span><i>✦</i><span data-i18n="cta.2">טכנולוגיה חדשנית</span><i>✦</i><span data-i18n="cta.3">חוויות משתמש בלתי נשכחות</span><i>✦</i><span data-i18n="cta.4">מניעים את העסק שלך קדימה</span><i>✦</i><span data-i18n="cta.1">אתרים שהם הרבה מעבר לעיצוב</span><i>✦</i><span data-i18n="cta.2">טכנולוגיה חדשנית</span><i>✦</i><span data-i18n="cta.3">חוויות משתמש בלתי נשכחות</span><i>✦</i><span data-i18n="cta.4">מניעים את העסק שלך קדימה</span><i>✦</i>
       </div>
     </section>
 
@@ -289,21 +296,21 @@
     <section class="section contact" id="contact">
       <p class="mono-label" dir="ltr">(05) · LET'S TALK</p>
       <h2 class="big blend">
-        <span class="line"><span>מוכנים</span></span>
-        <span class="line"><span>לעלות שלב?</span></span>
+        <span class="line"><span data-i18n="contact.l1">מוכנים</span></span>
+        <span class="line"><span data-i18n="contact.l2">לעלות שלב?</span></span>
       </h2>
-      <p class="contact__sub" data-reveal>ספרו לנו על העסק, ונחזיר לכם חזון דיגיטלי שמרים אתכם מעל כולם.</p>
-      <p class="contact__about">מאחורי Elevate עומדים אוראל ואגם, שני חיילים משוחררים עם אהבה גדולה לעולם הדיגיטל והשיווק. הקמנו את הסטודיו כדי לבנות לעסקים נוכחות דיגיטלית שמרגישה יוקרתית, מדויקת ומבדלת. כל פרויקט מקבל מאיתנו יחס אישי, חשיבה אסטרטגית ועיצוב שמרים את המותג מעל המתחרים.</p>
+      <p class="contact__sub" data-reveal data-i18n="contact.sub">ספרו לנו על העסק, ונחזיר לכם חזון דיגיטלי שמרים אתכם מעל כולם.</p>
+      <p class="contact__about" data-i18n="contact.about">מאחורי Elevate עומדים אוראל ואגם, שני חיילים משוחררים עם אהבה גדולה לעולם הדיגיטל והשיווק. הקמנו את הסטודיו כדי לבנות לעסקים נוכחות דיגיטלית שמרגישה יוקרתית, מדויקת ומבדלת. כל פרויקט מקבל מאיתנו יחס אישי, חשיבה אסטרטגית ועיצוב שמרים את המותג מעל המתחרים.</p>
       <div class="contact__cta">
         <a class="wa-btn" href="https://api.whatsapp.com/send?phone=972555191163" target="_blank" rel="noopener" data-magnetic>
           <span class="wa-btn__icon" aria-hidden="true">
             <svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7.7.7-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.2 0-5.4 4.4-9.8 9.8-9.8s9.8 4.4 9.8 9.8-4.4 9.9-9.8 9.9zm5.4-7.3c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5.2-.2.2-.3.3-.5.1-.2.1-.4 0-.5-.1-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"/></svg>
           </span>
           <span class="wa-btn__text">
-            <span class="wa-btn__title">דברו איתנו בוואטסאפ</span>
-            <span class="wa-btn__sub">לחצו לשליחת הודעה ונחזור אליכם מהר</span>
+            <span class="wa-btn__title" data-i18n="wa.title">דברו איתנו בוואטסאפ</span>
+            <span class="wa-btn__sub" data-i18n="wa.sub">לחצו לשליחת הודעה ונחזור אליכם מהר</span>
           </span>
-          <span class="wa-btn__arrow" dir="ltr" aria-hidden="true">←</span>
+          <span class="wa-btn__arrow" dir="ltr" aria-hidden="true" data-i18n="wa.arrow">←</span>
         </a>
 
         <div class="phones" data-phones>
@@ -311,12 +318,12 @@
             <span class="phones__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .7-.2 1l-2.3 2.2z"/></svg>
             </span>
-            <span class="phones__label">או חייגו אלינו</span>
+            <span class="phones__label" data-i18n="phones.label">או חייגו אלינו</span>
             <span class="phones__chev" dir="ltr" aria-hidden="true">⌄</span>
           </button>
           <div class="phones__list" id="phonesList">
-            <a href="tel:+972546679080" class="phones__item"><span>אוראל</span><span class="phones__num" dir="ltr">054-667-9080</span></a>
-            <a href="tel:+972543904753" class="phones__item"><span>אגם</span><span class="phones__num" dir="ltr">054-390-4753</span></a>
+            <a href="tel:+972546679080" class="phones__item"><span data-i18n="phones.orel">אוראל</span><span class="phones__num" dir="ltr">054-667-9080</span></a>
+            <a href="tel:+972543904753" class="phones__item"><span data-i18n="phones.agam">אגם</span><span class="phones__num" dir="ltr">054-390-4753</span></a>
           </div>
         </div>
       </div>
@@ -324,9 +331,9 @@
 
     <footer class="footer">
       <span dir="ltr">ELEVATE Creative</span>
-      <nav class="footer__legal" aria-label="מסמכים משפטיים">
-        <a href="/elevate_creative_legal_documents.pdf" target="_blank" rel="noopener">מדיניות פרטיות</a>
-        <a href="/elevate_creative_legal_documents.pdf" target="_blank" rel="noopener">תנאי שימוש</a>
+      <nav class="footer__legal" aria-label="מסמכים משפטיים" data-i18n-aria="footer.legal.aria">
+        <a href="/elevate_creative_legal_documents.pdf" target="_blank" rel="noopener" data-i18n="footer.privacy">מדיניות פרטיות</a>
+        <a href="/elevate_creative_legal_documents.pdf" target="_blank" rel="noopener" data-i18n="footer.terms">תנאי שימוש</a>
       </nav>
       <span dir="ltr">© 2026 · ALL RIGHTS RESERVED</span>
     </footer>

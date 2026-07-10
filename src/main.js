@@ -6,8 +6,14 @@ import { initSmoothScroll } from './modules/smoothScroll.js';
 import { initCursor } from './modules/cursor.js';
 import { initA11y, loadA11yPrefs } from './modules/a11y.js';
 import { initAscent } from './modules/ascent.js';
+import { applyI18n, initLangToggle } from './modules/i18n.js';
+
+// swap the copy to the saved language BEFORE anything measures or splits text
+applyI18n();
 
 gsap.registerPlugin(ScrollTrigger);
+// mirrors the arrow's per-scene x-offsets when the site runs LTR (English)
+const XD = document.documentElement.dir === 'ltr' ? -1 : 1;
 // "stop animations" from the accessibility widget rides the same path as the OS setting
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || !!loadA11yPrefs().motion;
 // phones/tablets can't afford the per-frame blend + heavy-filter compositing, so we
@@ -215,6 +221,7 @@ function setDock(open) {
   menuFab?.setAttribute('aria-expanded', String(open));
   dockPanel?.setAttribute('aria-hidden', String(!open));
 }
+initLangToggle(); // HE ↔ EN — persists the choice, then reloads into the other language
 menuFab?.addEventListener('click', (e) => { e.stopPropagation(); setDock(!dock.classList.contains('is-open')); });
 dock?.querySelectorAll('.dock__link').forEach((a) => a.addEventListener('click', () => setDock(false)));
 document.addEventListener('click', (e) => { if (dock?.classList.contains('is-open') && !dock.contains(e.target)) setDock(false); });
@@ -425,9 +432,9 @@ function setArrowPose(name, prev) {
     if (!prev) return;                                      // first call at boot → the intro owns the "A"
     x = 0; y = 0; scale = 1; rot = 0;                       // scrolled back up → recentre so the "A" is correct
   }
-  else if (name === 'contact')  { x = 0;          y = -1.5 * vh; scale = 1;    rot = 0; }
-  else if (name === 'about')    { x = vw * 0.15;  y = 0;         scale = 0.82; rot = 0; }
-  else if (name === 'services') { x = -vw * 0.15; y = 0;         scale = 0.72; rot = 0; }    // resets tilt; aim takes over on move
+  else if (name === 'contact')  { x = 0;               y = -1.5 * vh; scale = 1;    rot = 0; }
+  else if (name === 'about')    { x = XD * vw * 0.15;  y = 0;         scale = 0.82; rot = 0; }
+  else if (name === 'services') { x = XD * -vw * 0.15; y = 0;         scale = 0.72; rot = 0; }    // resets tilt; aim takes over on move
   else                          { x = 0;          y = 0;         scale = 1;    rot = 0; }    // process
 
   if (prev === 'contact') { window.__riseFromBelow(x, scale, rot); return; } // rise in from below the screen
