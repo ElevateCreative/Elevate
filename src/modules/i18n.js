@@ -99,6 +99,7 @@ const EN = {
   'phones.label': 'Or give us a call',
   'phones.orel': 'Orel',
   'phones.agam': 'Agam',
+  'socials.aria': 'Social media',
 
   /* footer */
   'footer.legal.aria': 'Legal documents',

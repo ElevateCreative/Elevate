@@ -502,6 +502,12 @@ main { position: static; }
 .phones__item:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
 .phones__num { font-family: var(--f-mono); font-size: 0.86em; opacity: 0.78; }
 
+/* socials — Instagram / TikTok, same fixed dark-on-light palette as the phone pill */
+.socials { display: inline-flex; align-items: center; gap: 0.7rem; }
+.socials__item { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--blue); background: rgba(255, 255, 255, 0.55); color: #075ec9; cursor: none; transition: background 0.35s var(--ease), color 0.35s var(--ease), transform 0.5s var(--ease); }
+.socials__item svg { width: 21px; height: 21px; fill: currentColor; }
+.socials__item:hover { background: var(--blue); color: #fff; transform: translateY(-3px); }
+
 /* ---------- footer ---------- */
 .footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: clamp(2rem, 5vw, 3rem) var(--gutter); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em; }
 .footer__legal { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; }
@@ -509,6 +515,10 @@ main { position: static; }
 .footer__legal a::after { content: ""; position: absolute; inset-inline: 0; bottom: -3px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.35s var(--ease); }
 .footer__legal a:hover { color: var(--cream); }
 .footer__legal a:hover::after { transform: scaleX(1); }
+.footer__social { display: flex; align-items: center; gap: 1.1rem; }
+.footer__social a { display: inline-flex; color: var(--ink-dim); transition: color 0.3s var(--ease), transform 0.3s var(--ease); }
+.footer__social a svg { width: 17px; height: 17px; fill: currentColor; }
+.footer__social a:hover { color: var(--cream); transform: translateY(-2px); }
 
 /* ---------- bottom takeover: ink adapts to the gradient (dark→light ink, light→dark ink) ---------- */
 body.is-takeover .nav__elevate { color: var(--takeover-ink); }
@@ -524,6 +534,8 @@ body.is-takeover .footer { color: var(--takeover-dim); border-color: var(--takeo
 body.is-takeover .footer span { color: var(--takeover-dim); }
 body.is-takeover .footer__legal a { color: var(--takeover-dim); }
 body.is-takeover .footer__legal a:hover { color: var(--takeover-ink); }
+body.is-takeover .footer__social a { color: var(--takeover-dim); }
+body.is-takeover .footer__social a:hover { color: var(--takeover-ink); }
 /* ---------- cursor: glowing blue core + a difference-blend reticle that inverts over any colour ---------- */
 .cursor { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
 .cursor__dot, .cursor__ring { position: absolute; top: 0; left: 0; border-radius: 50%; }
@@ -614,6 +626,7 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .contact__cta { width: 100%; }
   .wa-btn, .phones, .phones__toggle { width: 100%; }
   .phones__toggle { justify-content: center; }
+  .socials { width: 100%; justify-content: center; }
   /* no forced full-height sections on mobile → no dead space between them */
   .section { min-height: auto; padding-block: clamp(3rem, 9vw, 4.5rem); }
 }
