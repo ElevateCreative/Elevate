@@ -92,13 +92,11 @@ const EN = {
   'contact.l1': 'Ready to',
   'contact.l2': 'level up?',
   'contact.sub': 'Tell us about your business, and we will return a digital vision that lifts you above everyone else.',
-  'contact.about': 'Elevate Creative is led by Orel and Agam, a team driven by a shared passion for digital excellence and cutting-edge design. We founded the studio to help businesses transcend their digital boundaries with premium, high-performance websites. We combine strategic thinking with meticulous craftsmanship to ensure your brand stands out, performs flawlessly, and stays ahead of the competition.',
+  'contact.about': 'Elevate Creative is led by Orel, driven by a deep passion for digital excellence and cutting-edge design. The studio was founded to help businesses transcend their digital boundaries with premium, high-performance websites. We combine strategic thinking with meticulous craftsmanship to ensure your brand stands out, performs flawlessly, and stays ahead of the competition.',
   'wa.title': 'Talk to us on WhatsApp',
   'wa.sub': 'Click to send a message and we will get back to you fast',
   'wa.arrow': '→',
   'phones.label': 'Or give us a call',
-  'phones.orel': 'Orel',
-  'phones.agam': 'Agam',
   'socials.aria': 'Social media',
 
   /* footer */

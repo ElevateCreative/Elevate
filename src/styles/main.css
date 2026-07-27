@@ -494,12 +494,6 @@ main { position: static; }
 .phones__toggle:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
 .phones__icon { display: inline-flex; }
 .phones__icon svg { width: 19px; height: 19px; fill: currentColor; }
-.phones__chev { font-style: normal; transition: transform 0.4s var(--ease); }
-.phones.is-open .phones__chev { transform: rotate(180deg); }
-.phones__list { display: grid; gap: 0.4rem; overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.5s var(--ease), opacity 0.4s var(--ease), margin-top 0.4s var(--ease); }
-.phones.is-open .phones__list { max-height: 220px; opacity: 1; margin-top: 0.6rem; }
-.phones__item { display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; padding: 0.72rem 1.3rem; border-radius: 14px; border: 1px solid rgba(0, 136, 255, 0.4); background: rgba(255, 255, 255, 0.45); color: #075ec9; font-weight: 600; cursor: none; transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease); }
-.phones__item:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
 .phones__num { font-family: var(--f-mono); font-size: 0.86em; opacity: 0.78; }
 
 /* socials — Instagram / TikTok, same fixed dark-on-light palette as the phone pill */

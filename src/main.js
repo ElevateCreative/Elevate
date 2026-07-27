@@ -227,15 +227,6 @@ dock?.querySelectorAll('.dock__link').forEach((a) => a.addEventListener('click',
 document.addEventListener('click', (e) => { if (dock?.classList.contains('is-open') && !dock.contains(e.target)) setDock(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setDock(false); });
 
-/* ---------- contact: tap to reveal the phone numbers ---------- */
-document.querySelectorAll('[data-phones]').forEach((p) => {
-  const t = p.querySelector('.phones__toggle');
-  t?.addEventListener('click', () => {
-    const open = p.classList.toggle('is-open');
-    t.setAttribute('aria-expanded', String(open));
-  });
-});
-
 /* ---------- mobile: the work tile centred in the viewport lights up with its glow ---------- */
 (() => {
   if (!isMobile) return;
