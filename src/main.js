@@ -20,8 +20,24 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
 // run a lighter path there (no smooth-scroll hijack, no scroll-driven arrow work).
 const isMobile = window.matchMedia('(max-width: 760px), (hover: none) and (pointer: coarse)').matches;
 
+/* Start at the top, and mean it.
+   scrollRestoration:'manual' does not hold on its own — reload this page part-way down
+   and it comes back at the old offset regardless — and a deep start is the one state
+   the choreography cannot absorb. Every ScrollTrigger for that offset fires at once
+   (the scene swap, the takeover bloom, the arrow's launch) while the intro timeline
+   plays over the top of them, all of it behind the preloader: a full-screen fixed
+   layer, which on iOS the page cannot be scrolled past for as long as it is up. The
+   phone spends the next several seconds catching up and the visitor cannot move.
+   So leave nothing to restore (top of page on the way out) and re-assert once the
+   restore would have landed. A real #hash target is somebody asking for a position —
+   that one we honour. */
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-window.scrollTo(0, 0);
+if (!location.hash) {
+  const toTop = () => window.scrollTo(0, 0);
+  toTop();
+  window.addEventListener('pagehide', toTop);
+  window.addEventListener('load', () => { toTop(); requestAnimationFrame(toTop); }, { once: true });
+}
 
 /* ---------- central 2D arrow mark — alive: follows the cursor, leans, breathes ---------- */
 const mark = document.getElementById('mark');

@@ -749,17 +749,6 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .blob { filter: blur(13px); mix-blend-mode: normal; }
   .mark__shine { display: none; }
   .takeover__flow { filter: blur(4px); }
-  /* No permanently-promoted full-screen layers. `will-change` is not a free hint: it
-     pins the element onto its own GPU surface for the whole session, and at an iPhone's
-     DPR that is ~10MB per full-screen surface. The five aura tints (four of them at
-     opacity 0 at any given moment), the takeover field (clipped to nothing for all but
-     the last screen) and the arrow stack together held a few hundred MB that was never
-     released — enough that a second load, which overlaps with the previous document
-     still sitting in Safari's page cache, started the tab off already out of room.
-     Safari promotes these by itself while they actually animate, which is the only time
-     it needs to. Small elements keep their hints — it is the viewport-sized ones that
-     cost real memory. */
-  .aura__layer, .takeover, .mark__pos, .mark__shape, .mark__breathe, .blob { will-change: auto; }
   /* backdrop-filter is very costly on mobile → solid panels instead */
   .menu-fab, .dock__panel { backdrop-filter: none; }
   .menu-fab { background: rgba(20, 19, 22, 0.92); }
