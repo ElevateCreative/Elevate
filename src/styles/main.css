@@ -743,8 +743,16 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   /* readable solid headings instead of difference-blend recomputed every frame */
   .blend { mix-blend-mode: normal; }
   .big, .wm .line > span { color: var(--ink); }
-  /* lighter arrow: one modest shadow, static blobs, no shine */
-  .mark__shape { filter: drop-shadow(0 0 26px var(--glow1)); }
+  /* Lighter arrow: one modest shadow, static blobs, no shine.
+     The light theme sets this filter too, and `[data-theme="light"] .mark__shape` is an
+     attribute selector plus a class — it outranks a bare class wherever it sits in the
+     file. Left implicit, switching to light silently handed the phone the full desktop
+     filter back: three drop-shadows, the widest a 110px blur, inflating the raster box
+     by ~220px in each direction on an element that is re-rastered every frame it
+     breathes, drifts or squashes with the scroll. A freeze you could toggle on.
+     So the light theme is named here as well, and this block sits last. */
+  .mark__shape,
+  [data-theme="light"] .mark__shape { filter: drop-shadow(0 0 26px var(--glow1)); }
   /* keep the liquid motion, but drop the costly screen-blend compositing */
   .blob { filter: blur(13px); mix-blend-mode: normal; }
   .mark__shine { display: none; }
