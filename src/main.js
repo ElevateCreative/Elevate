@@ -4,9 +4,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { initSmoothScroll } from './modules/smoothScroll.js';
 import { initCursor } from './modules/cursor.js';
-import { initA11y, loadA11yPrefs } from './modules/a11y.js';
-import { initAscent } from './modules/ascent.js';
+import { loadA11yPrefs } from './modules/a11y-prefs.js';
 import { applyI18n, initLangToggle } from './modules/i18n.js';
+import { initWeightHover } from './modules/weightHover.js';
 
 // swap the copy to the saved language BEFORE anything measures or splits text
 applyI18n();
@@ -176,12 +176,65 @@ if (markShape && !reduced && !isMobile) {
   };
 }
 
-/* ---------- smooth scroll + cursor + accessibility widget ---------- */
+/* ---------- mobile: the arrow answers to the finger and to scroll momentum ----------
+   On a phone the pointer is the finger, so the desktop's cursor-follow has a direct
+   equivalent: the mark drifts toward wherever you are touching, and leans with how
+   hard you are flinging the page.
+
+   Two rules this obeys:
+   · Only TRANSLATION. The mark carries a drop-shadow filter, and scaling or rotating
+     a filtered subtree re-rasterises it every frame, which is exactly what made the
+     desktop squash unaffordable here. A translate rides the compositor for free.
+   · Nothing happens in the hero, where the mark is standing in as the "A" of ELEVATE
+     and must not wander out of the word — the same exception the desktop makes. */
+if (markShape && !reduced && isMobile) {
+  const driftX = gsap.quickTo(mark, 'x', { duration: 1.2, ease: 'power3' });
+  const driftY = gsap.quickTo(mark, 'y', { duration: 1.2, ease: 'power3' });
+  let touchX = 0, touchY = 0, velY = 0;
+  const apply = () => { driftX(touchX); driftY(touchY + velY); };
+
+  window.addEventListener('touchmove', (e) => {
+    if (document.body.classList.contains('is-loading')) return;
+    if (document.body.dataset.scene === 'hero') { touchX = 0; touchY = 0; apply(); return; }
+    const t = e.touches[0];
+    if (!t) return;
+    touchX = ((t.clientX / window.innerWidth) * 2 - 1) * 34;
+    touchY = ((t.clientY / window.innerHeight) * 2 - 1) * 28;
+    apply();
+  }, { passive: true });
+
+  let velResetT;
+  velSquash = (v) => {
+    if (document.body.dataset.scene === 'hero') return;
+    velY = gsap.utils.clamp(-26, 26, v * 26);
+    apply();
+    clearTimeout(velResetT);
+    velResetT = setTimeout(() => { velY = 0; apply(); }, 160);
+  };
+}
+
+/* ---------- smooth scroll + cursor ---------- */
 const lenis = (reduced || isMobile) ? null : initSmoothScroll();
 if (lenis) window.lenis = lenis;
-initA11y(); // before initCursor so the widget's buttons get the hover-ring binding
-initCursor();
-if (!reduced) initAscent({ isMobile }); // rising dust + click sparks + comets
+initCursor(); // delegated listeners, so lazily-mounted UI still gets the hover ring
+
+/* Nothing below is needed to paint the first screen, so it is split out of the main
+   chunk and pulled in once the browser is idle: the accessibility widget (markup +
+   two string tables + the statement modal) and the rising-dust canvas. */
+const whenIdle = (fn) => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 1));
+whenIdle(() => {
+  import('./modules/a11y.js').then((m) => m.initA11y());
+  if (!reduced) import('./modules/ascent.js').then((m) => m.initAscent({ isMobile }));
+  // effects that only ever matter further down the page — none of them touch the
+  // first screen, so they ride along in the idle batch rather than the main chunk
+  import('./modules/readingHighlight.js').then((m) => m.initReadingHighlight({ reduced }));
+  import('./modules/elasticText.js').then((m) => m.initElasticText({ reduced }));
+});
+
+/* ---------- new interaction layers (first screen) ---------- */
+// letters gain weight one by one under the pointer (needs the variable fonts).
+// Eager: the nav sits above the fold and must be interactive immediately.
+initWeightHover({ reduced });
 
 /* ---------- altimeter: your altitude climbs as you scroll (the footer is the summit) ---------- */
 const altValue = document.getElementById('altimeterValue');
@@ -227,16 +280,51 @@ dock?.querySelectorAll('.dock__link').forEach((a) => a.addEventListener('click',
 document.addEventListener('click', (e) => { if (dock?.classList.contains('is-open') && !dock.contains(e.target)) setDock(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setDock(false); });
 
-/* ---------- mobile: the work tile centred in the viewport lights up with its glow ---------- */
+/* ---------- mobile: the work gallery is a swipeable rail ----------
+   The tile at the centre lights up with its signature glow, and a row of dots below
+   says how many cards there are and where you are among them. */
 (() => {
   if (!isMobile) return;
-  const tiles = document.querySelectorAll('.bento .tile');
-  if (!tiles.length) return;
-  // root shrunk to a thin band at the vertical centre → a tile is "in centre" while it crosses it
+  const rail = document.querySelector('.bento');
+  const tiles = [...document.querySelectorAll('.bento .tile')];
+  if (!rail || !tiles.length) return;
+
+  // the band is squeezed hard on the horizontal axis (the rail scrolls that way) and
+  // a little on the vertical, so a card off the bottom of the page is not counted
   const io = new IntersectionObserver((entries) => entries.forEach((en) => {
     en.target.classList.toggle('is-incenter', en.isIntersecting);
-  }), { rootMargin: '-45% 0px -45% 0px' });
+  }), { rootMargin: '-12% -45% -12% -45%' });
   tiles.forEach((t) => io.observe(t));
+
+  const dotsWrap = document.createElement('div');
+  dotsWrap.className = 'bento-dots';
+  dotsWrap.setAttribute('aria-hidden', 'true'); // decorative: the cards themselves are the content
+  const dots = tiles.map(() => dotsWrap.appendChild(document.createElement('span')));
+  rail.after(dotsWrap);
+
+  /* Measured from bounding rects rather than scrollLeft on purpose: this page runs
+     RTL, where scrollLeft's sign and origin differ across engines, while rects do not.
+     Cards snap to their start edge, so the active one is whichever sits closest to the
+     rail's own start edge. */
+  let ticking = false;
+  const sync = () => {
+    ticking = false;
+    const railRect = rail.getBoundingClientRect();
+    const rtl = getComputedStyle(rail).direction === 'rtl';
+    const anchor = rtl ? railRect.right : railRect.left;
+    let best = 0, bd = Infinity;
+    tiles.forEach((t, i) => {
+      const b = t.getBoundingClientRect();
+      const d = Math.abs((rtl ? b.right : b.left) - anchor);
+      if (d < bd) { bd = d; best = i; }
+    });
+    dots.forEach((d, i) => d.classList.toggle('is-on', i === best));
+  };
+  rail.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(sync); }
+  }, { passive: true });
+  window.addEventListener('resize', sync, { passive: true });
+  sync();
 })();
 
 /* ---------- dark / light theme toggle ---------- */
@@ -285,7 +373,9 @@ function splitWords(el) {
     const mask = document.createElement('span');
     mask.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:top;';
     const inner = document.createElement('span');
-    inner.style.cssText = 'display:inline-block;will-change:transform;';
+    // no will-change here: a paragraph splits into dozens of these, and permanently
+    // promoting every word costs far more than the tween saves. GSAP handles it.
+    inner.style.cssText = 'display:inline-block;';
     inner.textContent = tok;
     mask.appendChild(inner); el.appendChild(mask); inners.push(inner);
   });
@@ -300,7 +390,9 @@ function splitChars(el) {
     const mask = document.createElement('span');
     mask.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:top;';
     const inner = document.createElement('span');
-    inner.style.cssText = 'display:inline-block;will-change:transform;';
+    // no will-change here: a paragraph splits into dozens of these, and permanently
+    // promoting every word costs far more than the tween saves. GSAP handles it.
+    inner.style.cssText = 'display:inline-block;';
     inner.textContent = ch;
     mask.appendChild(inner); el.appendChild(mask); inners.push(inner);
   });
@@ -319,8 +411,10 @@ function animateText() {
     });
   });
 
-  // PARAGRAPHS — words cascade up out of masks
-  document.querySelectorAll('.manifesto__lead, .contact__sub, .upper').forEach((el) => {
+  // PARAGRAPHS — words cascade up out of masks.
+  // .manifesto__lead and .contact__about are deliberately absent: they are now driven
+  // by the scroll reading-highlight instead, and splitting them twice would fight it.
+  document.querySelectorAll('.contact__sub, .upper').forEach((el) => {
     const words = splitWords(el);
     gsap.set(words, { yPercent: 115 });
     ScrollTrigger.create({
@@ -331,7 +425,7 @@ function animateText() {
   });
 
   // LABELS · LINKS · CARDS · FOOTER — bold slide + fade as units
-  const sel = '.mono-label, .textlink, .pill, .tile, .work__note, .wa-btn, .phones, .services__intro, .service, .step, .contact__about';
+  const sel = '.mono-label, .textlink, .pill, .tile, .work__note, .wa-btn, .phones, .services__intro, .service, .step';
   gsap.set(sel, { y: 50, autoAlpha: 0 });
   ScrollTrigger.batch(sel, {
     start: 'top 86%',
@@ -495,36 +589,6 @@ function initMobileHud() {
   draw();
 }
 
-/* ---------- magnetised scroll: settle onto the nearest section, no dead space ---------- */
-function setupSnap() {
-  if (!lenis || !window.matchMedia('(min-width: 760px)').matches) return;
-  const ids = ['#hero', '#about', '#services', '#work', '#process', '#contact'];
-  const getPoints = () => ids
-    .map((s) => { const el = document.querySelector(s); return el ? el.getBoundingClientRect().top + window.scrollY : null; })
-    .filter((v) => v != null);
-  let points = getPoints();
-  ScrollTrigger.addEventListener('refresh', () => { points = getPoints(); });
-
-  let snapping = false;
-  let idle;
-  const trySnap = () => {
-    if (snapping) return;
-    const y = lenis.scroll;
-    const vh = window.innerHeight;
-    let best = null, bd = Infinity;
-    points.forEach((p) => { const d = Math.abs(p - y); if (d < bd) { bd = d; best = p; } });
-    if (best == null || bd <= 6 || bd >= vh * 0.9) return; // already there, or free to roam in tall sections
-    snapping = true;
-    lenis.scrollTo(best, { duration: 0.8, easing: (t) => 1 - Math.pow(1 - t, 3), onComplete: () => { snapping = false; } });
-    setTimeout(() => { snapping = false; }, 1100); // safety net if interrupted
-  };
-  lenis.on('scroll', ({ velocity }) => {
-    if (snapping) return;
-    clearTimeout(idle);
-    if (Math.abs(velocity) < 0.06) idle = setTimeout(trySnap, 90);
-  });
-}
-
 function story() {
   const nav = document.getElementById('nav');
   ScrollTrigger.create({ start: 'top -60', end: 'max', onUpdate: (s) => nav.classList.toggle('is-scrolled', s.scroll() > 60) });
@@ -536,8 +600,9 @@ function story() {
   // the mark's per-scene pose is set discretely by setArrowPose() on each scene change
   // (no scroll-scrubbed timeline — that fought the scene overrides and made the arrow flicker).
   // It lives on .mark__shape so the cursor-follow (.mark) and breath (.mark__breathe) compose on top.
-  // Skipped on mobile — transforming a heavily-filtered element each frame crashes phones.
-  if (markShape && !isMobile && velSquash) {
+  // Both platforms feed velocity in; what they DO with it differs — desktop squashes the
+  // fluid inside the filter, mobile only translates the whole mark (see the block above).
+  if (markShape && velSquash) {
     // feed live scroll velocity into the arrow's squash/stretch deformation
     ScrollTrigger.create({
       trigger: document.body, start: 'top top', end: 'bottom bottom',
@@ -546,17 +611,6 @@ function story() {
   }
 
   setupScenes();
-  setupSnap();
-
-  // marquee leans into scroll velocity (speeds up / nudges with momentum)
-  const band = document.querySelector('.cta-band__track');
-  if (band) {
-    const bx = gsap.quickTo(band, 'x', { duration: 0.6, ease: 'power3' });
-    ScrollTrigger.create({
-      trigger: '.cta-band', start: 'top bottom', end: 'bottom top',
-      onUpdate: (self) => bx(gsap.utils.clamp(-80, 80, self.getVelocity() / 60)),
-    });
-  }
 
   // process steps: the blue rule draws across each card as it enters
   ScrollTrigger.batch('.step', {
@@ -591,12 +645,13 @@ function story() {
     }
   }
 
-  // bottom takeover: a timed WASH (not scroll-scrubbed → smooth on mobile). On reaching the
-  // CTA band the gradient sweeps the screen open and the UI ink flips. On desktop the arrow
-  // flies up and off the screen via setArrowPose('contact'); on mobile it just fades out.
+  // bottom takeover: a timed WASH (not scroll-scrubbed → smooth on mobile). The gradient
+  // sweeps the screen open and the UI ink flips. On desktop the arrow flies up and off the
+  // screen via setArrowPose('contact'); on mobile it just fades out.
+  // Anchored to #contact — it used to hang off the CTA marquee, which no longer exists.
   const markRest = isMobile ? 0.13 : 1;
   ScrollTrigger.create({
-    trigger: '.cta-band', start: 'top 72%',
+    trigger: '#contact', start: 'top 88%',
     onEnter: () => {
       gsap.to('.takeover', { clipPath: 'circle(155% at 50% 78%)', duration: 1.1, ease: 'power2.inOut' });
       if (isMobile) gsap.to('#mark', { autoAlpha: 0, duration: 0.7, ease: 'power2.in' });
@@ -634,20 +689,21 @@ function runIntro() {
     gsap.set(markBreathe, { clipPath: 'inset(100% 0% 0% 0%)' });
 
     gsap.timeline()
-      // 1) blue floods the arrow from the bottom up (slow enough to actually watch)
-      .to(markBreathe, { clipPath: 'inset(0% 0% 0% 0%)', duration: 2.1, ease: 'power1.inOut' }, 0)
-      .to(counter, { v: 100, duration: 2.1, ease: 'power1.inOut', onUpdate: () => { if (countEl) countEl.textContent = Math.round(counter.v); } }, 0)
-      .to({}, { duration: 0.3 }) // a beat at full before it takes off
+      // 1) blue floods the arrow from the bottom up. Tightened from 2.1s: the curtain
+      //    is a hard gate in front of the site, and the fill still reads at this speed.
+      .to(markBreathe, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.15, ease: 'power1.inOut' }, 0)
+      .to(counter, { v: 100, duration: 1.15, ease: 'power1.inOut', onUpdate: () => { if (countEl) countEl.textContent = Math.round(counter.v); } }, 0)
+      .to({}, { duration: 0.15 }) // a beat at full before it takes off
       // 2) a tiny crouch, the outline lets go
-      .to(markShape, { y: 18, scaleY: 0.88, scaleX: 1.08, duration: 0.22, ease: 'power2.in' })
-      .to('.mark__outline', { opacity: 0, duration: 0.22 }, '<')
+      .to(markShape, { y: 18, scaleY: 0.88, scaleX: 1.08, duration: 0.18, ease: 'power2.in' })
+      .to('.mark__outline', { opacity: 0, duration: 0.18 }, '<')
       // 3) LAUNCH — it stretches and flies clean off the TOP while the curtain lifts
-      .to(markShape, { y: () => -vh() * 1.25, scaleY: 1.36, scaleX: 0.8, duration: 0.6, ease: 'power3.in' })
-      .to(pre, { autoAlpha: 0, duration: 0.5, ease: 'power2.inOut', onStart: reveal }, '<0.05')
+      .to(markShape, { y: () => -vh() * 1.25, scaleY: 1.36, scaleX: 0.8, duration: 0.5, ease: 'power3.in' })
+      .to(pre, { autoAlpha: 0, duration: 0.42, ease: 'power2.inOut', onStart: reveal }, '<0.05')
       .add(() => { done(); }) // hand the arrow back to z-index:-1 so the blend works
       // 4) it re-enters from the BOTTOM and rises into the hero centre (as the "A")
       .set(markShape, { y: () => vh() * 1.25, scaleY: 1.2, scaleX: 0.88 })
-      .to(markShape, { y: 0, scaleY: 1, scaleX: 1, duration: 1.05, ease: 'power3.out', onComplete: () => { if (breatheTween) breatheTween.play(); } });
+      .to(markShape, { y: 0, scaleY: 1, scaleX: 1, duration: 0.9, ease: 'power3.out', onComplete: () => { if (breatheTween) breatheTween.play(); } });
   });
 }
 
@@ -664,15 +720,20 @@ function boot() {
     let played = false;
     const play = () => { if (played || !heroIntro) return; played = true; heroIntro(); };
     if (lift && typeof lift.then === 'function') lift.then(play);
-    setTimeout(play, 4200); // fallback so the hero never stays hidden
+    setTimeout(play, 2600); // fallback so the hero never stays hidden
   }
   ScrollTrigger.refresh();
 }
-if (document.fonts && document.fonts.ready) { document.fonts.ready.then(boot); setTimeout(boot, 2500); }
-else boot();
+/* Boot immediately. This used to wait on document.fonts.ready before starting, which
+   stacked the whole font download in front of a ~3s intro. Nothing here needs final
+   font metrics up front (the hero's slot and the arrow are both sized in CSS, and the
+   slot offset is read lazily inside the tween), so we start now and simply re-measure
+   once the faces land. */
+boot();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
 // safety net: never leave the curtain (or loading lock) stuck
 setTimeout(() => {
   const p = document.getElementById('preloader');
   if (p && p.style.display !== 'none') p.style.display = 'none';
   document.body.classList.remove('is-loading');
-}, 6000);
+}, 4500);

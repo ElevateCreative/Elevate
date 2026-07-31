@@ -1,3 +1,5 @@
+@import "./fonts.css";
+
 /* ============================================================
    ELEVATE CREATIVE — off-brand-inspired studio site (RTL)
    Warm-dark · huge light grotesk · blue arrow as the living mark.
@@ -20,7 +22,11 @@
   --takeover-line: rgba(241, 239, 233, 0.2);
 
   --f-sans: "Heebo", system-ui, sans-serif;
-  --f-mono: "JetBrains Mono", ui-monospace, monospace;
+  /* Heebo sits in the mono stack as a safety net, NOT as a monospace choice: JetBrains
+     Mono has no Hebrew glyphs, so any Hebrew that ends up in a mono context would
+     otherwise drop to an arbitrary system font. Per-character fallback keeps it in the
+     brand face instead. Hebrew copy should still be given --f-sans explicitly. */
+  --f-mono: "JetBrains Mono", "Heebo", ui-monospace, monospace;
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --maxw: 1600px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -144,8 +150,10 @@ body[data-scene="process"]  .mark__shape { --glow1: rgba(60, 210, 150, 0.5); --g
   to   { transform: translate3d(4%, 3%, 0) scale(1.18) rotate(8deg); }
 }
 .orbits circle { fill: none; stroke: rgba(234, 230, 221, 0.06); stroke-width: 1; }
+/* inset:0, not -50% — the tile repeats anyway, and the old bleed made this
+   blended full-screen layer four times the viewport area to composite. */
 .grain {
-  position: fixed; inset: -50%; z-index: 50; pointer-events: none; opacity: 0.04;
+  position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
 }
@@ -273,7 +281,10 @@ main { position: static; }
 .service::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to left, rgba(0, 136, 255, 0.14), rgba(0, 136, 255, 0.04) 42%, transparent 72%); opacity: 0; transition: opacity 0.55s var(--ease); }
 .service::after { content: ""; position: absolute; inset-inline-start: 0; top: 50%; z-index: -1; width: 2px; height: 0; transform: translateY(-50%); background: linear-gradient(180deg, transparent, var(--blue) 20%, var(--blue) 80%, transparent); box-shadow: 0 0 14px rgba(0, 136, 255, 0.5); transition: height 0.55s var(--ease); }
 .service__no { grid-area: no; font-family: var(--f-mono); font-size: 0.8rem; color: var(--ink-dim); padding-top: 0.4em; transition: color 0.4s var(--ease); }
-.service__name { grid-area: name; min-width: 0; overflow-wrap: break-word; font-size: clamp(1.6rem, 4.4vw, 3.1rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s var(--ease), text-shadow 0.5s var(--ease); }
+/* the vw factor is deliberately gentler than the rest of the display type: this text
+   lives in a fixed-width grid track, so it has to stay in proportion to the track
+   rather than to the viewport, or it wraps to three or four lines on mid-size screens */
+.service__name { grid-area: name; min-width: 0; overflow-wrap: break-word; text-wrap: balance; font-size: clamp(1.5rem, 3vw, 2.75rem); font-weight: 500; line-height: 1.06; letter-spacing: -0.02em; color: var(--ink); transition: color 0.4s var(--ease), text-shadow 0.5s var(--ease); }
 .service__desc { grid-area: desc; color: var(--ink-dim); font-size: clamp(0.95rem, 1.4vw, 1.15rem); max-width: 46ch; transition: color 0.4s var(--ease); }
 .service__cta { position: absolute; inset-inline-end: clamp(0.4rem, 1.5vw, 1.4rem); top: 50%; font-style: normal; font-size: clamp(1.4rem, 3vw, 2.2rem); color: var(--blue); transform: translateY(-50%) translateX(0.4em); opacity: 0; transition: opacity 0.4s var(--ease), transform 0.5s var(--ease); }
 /* active state — used by the JS auto-centre on mobile (touch never triggers :hover) */
@@ -295,7 +306,7 @@ main { position: static; }
   .service:hover .service__cta { opacity: 1; transform: translateY(-50%) translateX(0); }
 }
 @media (min-width: 760px) {
-  .service { grid-template-columns: 4.5rem minmax(15rem, 26rem) 1fr; grid-template-areas: "no name desc"; align-items: center; gap: 1.4rem 2.4rem; }
+  .service { grid-template-columns: 4.5rem minmax(17rem, 31rem) 1fr; grid-template-areas: "no name desc"; align-items: center; gap: 1.4rem 2.4rem; }
   .service__desc { padding-inline-end: 4rem; }
 }
 
@@ -316,6 +327,8 @@ main { position: static; }
 .pill i { font-style: normal; }
 .pill:hover { background: var(--cream); color: #111; }
 .bento { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(0.8rem, 1.4vw, 1.3rem); }
+/* only the mobile carousel has a position indicator (see the max-width:720px block) */
+.bento-dots { display: none; }
 .tile {
   position: relative; overflow: hidden; border-radius: 20px; border: 1px solid var(--line);
   aspect-ratio: 16 / 11; padding: clamp(1.2rem, 2vw, 1.8rem);
@@ -448,12 +461,44 @@ main { position: static; }
   50% { opacity: 1; transform: scale(1.012); }
 }
 
-/* ---------- CTA gradient marquee ---------- */
-.cta-band { position: relative; overflow: hidden; padding: clamp(3rem, 9vw, 6rem) 0; background: transparent; }
-.cta-band__track { display: inline-flex; align-items: center; gap: 1.4rem; white-space: nowrap; animation: marquee 46s linear infinite; }
-.cta-band__track span { font-weight: 700; font-size: clamp(1.6rem, 5vw, 4rem); color: #111317; letter-spacing: -0.01em; }
-.cta-band__track i { color: rgba(17, 19, 23, 0.5); font-style: normal; font-size: clamp(1rem, 3vw, 2rem); }
-@keyframes marquee { to { transform: translateX(50%); } }
+/* ---------- elastic headline ---------- */
+.el-char { display: inline-block; white-space: pre; will-change: transform; }
+/* the reveal masks each line, which would clip a dragged letter — opened for the
+   duration of a drag only, so scrolling back up still masks the reveal correctly */
+[data-elastic].is-grabbed .line { overflow: visible; }
+@media (hover: hover) and (pointer: fine) {
+  .el-char { cursor: grab; }
+  [data-elastic].is-grabbed .el-char { cursor: grabbing; }
+}
+/* sans, never mono: this line is Hebrew, and the mono face carries no Hebrew glyphs.
+   Wide letter-spacing is dropped for the same reason — it only harms Hebrew. */
+.elastic-hint {
+  font-family: var(--f-sans); font-size: 0.82rem; font-weight: 500; letter-spacing: 0;
+  color: var(--ink-dim); margin-top: clamp(0.8rem, 2vw, 1.2rem);
+}
+body.is-takeover .elastic-hint { color: var(--takeover-dim); }
+/* nothing to drag without a pointer, so do not promise it */
+@media (hover: none), (pointer: coarse) { .elastic-hint { display: none; } }
+
+/* ---------- weight-hover letters ----------
+   MUST stay `inline`. As inline-block each letter becomes an atomic inline, and that
+   breaks the text in two ways in a Hebrew page:
+     · bidi — an atomic inline is a neutral object, so an embedded Latin run stops
+       being a run. "3D" was laid out as two independent boxes in RTL order: "D3".
+     · line breaking — a break becomes legal between any two atomic inlines, so words
+       split mid-word ("ואינטראקצ / יה").
+   A plain inline span does neither: the bidi algorithm and the line breaker both see
+   one continuous string, exactly as if the spans were not there. */
+.wgt { display: inline; }
+
+/* ---------- reading highlight ---------- */
+.rh-word { display: inline-block; }
+[data-reading] { --rh-dim: rgba(217, 215, 209, 0.22); --rh-lit: var(--ink); }
+[data-theme="light"] [data-reading] { --rh-dim: rgba(28, 28, 30, 0.2); }
+/* the contact paragraph lands on the bright takeover field, which has its own ink */
+.contact__about { --rh-dim: rgba(241, 239, 233, 0.24); --rh-lit: var(--takeover-ink); }
+[data-theme="light"] .contact__about { --rh-dim: rgba(22, 22, 26, 0.2); }
+html.a11y-contrast [data-reading] { --rh-dim: rgba(255, 255, 255, 0.55); --rh-lit: #fff; }
 
 /* ---------- contact ---------- */
 .contact__sub { color: var(--ink-dim); font-size: clamp(1.05rem, 1.8vw, 1.4rem); max-width: 44ch; margin: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(1.2rem, 2.5vw, 1.8rem); }
@@ -503,16 +548,24 @@ main { position: static; }
 .socials__item:hover { background: var(--blue); color: #fff; transform: translateY(-3px); }
 
 /* ---------- footer ---------- */
-.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: clamp(2rem, 5vw, 3rem) var(--gutter); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em; }
+.footer {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 1.2rem 2rem; border-top: 1px solid var(--line);
+  color: var(--ink-dim); font-size: 0.82rem; letter-spacing: 0.04em;
+  /* The accessibility and menu fabs are fixed to the bottom-right of the VIEWPORT, and
+     at full scroll that is exactly where the footer sits — they would otherwise cover
+     the wordmark. Reserve their height (54px) plus their own offset as bottom padding
+     so the footer's last row always clears them. */
+  padding: clamp(2rem, 5vw, 3rem) var(--gutter) calc(clamp(1rem, 3vw, 2rem) + 54px + 1.4rem);
+}
+.footer__brand { display: grid; gap: 0.25rem; text-align: left; }
+.footer__name { color: var(--ink); font-weight: 600; letter-spacing: 0.06em; }
+.footer__rights { font-size: 0.76rem; }
 .footer__legal { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; }
 .footer__legal a { position: relative; color: var(--ink-dim); transition: color 0.3s var(--ease); }
 .footer__legal a::after { content: ""; position: absolute; inset-inline: 0; bottom: -3px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.35s var(--ease); }
 .footer__legal a:hover { color: var(--cream); }
 .footer__legal a:hover::after { transform: scaleX(1); }
-.footer__social { display: flex; align-items: center; gap: 1.1rem; }
-.footer__social a { display: inline-flex; color: var(--ink-dim); transition: color 0.3s var(--ease), transform 0.3s var(--ease); }
-.footer__social a svg { width: 17px; height: 17px; fill: currentColor; }
-.footer__social a:hover { color: var(--cream); transform: translateY(-2px); }
 
 /* ---------- bottom takeover: ink adapts to the gradient (dark→light ink, light→dark ink) ---------- */
 body.is-takeover .nav__elevate { color: var(--takeover-ink); }
@@ -520,16 +573,13 @@ body.is-takeover .nav__links a { color: var(--takeover-ink); }
 body.is-takeover .nav__links a i { color: var(--takeover-dim); }
 body.is-takeover .nav__cta { color: var(--takeover-ink); border-color: var(--takeover-line); }
 body.is-takeover .nav__cta:hover { background: var(--takeover-ink); color: var(--bg); }
-body.is-takeover .cta-band__track span { color: var(--takeover-ink); }
-body.is-takeover .cta-band__track i { color: var(--takeover-dim); }
 body.is-takeover .contact .mono-label { color: var(--takeover-dim); }
 body.is-takeover .contact__sub { color: var(--takeover-ink); }
 body.is-takeover .footer { color: var(--takeover-dim); border-color: var(--takeover-line); }
 body.is-takeover .footer span { color: var(--takeover-dim); }
+body.is-takeover .footer__name { color: var(--takeover-ink); }
 body.is-takeover .footer__legal a { color: var(--takeover-dim); }
 body.is-takeover .footer__legal a:hover { color: var(--takeover-ink); }
-body.is-takeover .footer__social a { color: var(--takeover-dim); }
-body.is-takeover .footer__social a:hover { color: var(--takeover-ink); }
 /* ---------- cursor: glowing blue core + a difference-blend reticle that inverts over any colour ---------- */
 .cursor { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
 .cursor__dot, .cursor__ring { position: absolute; top: 0; left: 0; border-radius: 50%; }
@@ -582,8 +632,6 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
 :root[dir="ltr"] .dock__panel, :root[dir="ltr"] .a11y__panel { direction: ltr; }
 :root[dir="ltr"] .service::before { background: linear-gradient(to right, rgba(0, 136, 255, 0.14), rgba(0, 136, 255, 0.04) 42%, transparent 72%); }
 :root[dir="ltr"] .footer__legal a::after { transform-origin: left; }
-:root[dir="ltr"] .cta-band__track { animation-name: marqueeLtr; }
-@keyframes marqueeLtr { to { transform: translateX(-50%); } }
 :root[dir="ltr"] .wa-btn:hover .wa-btn__arrow { transform: translateX(7px); }
 
 /* ---------- LIGHT THEME ---------- */
@@ -616,7 +664,44 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
 }
 @media (max-width: 720px) {
   .nav__links { display: none; }
-  .bento { grid-template-columns: 1fr; }
+
+  /* ---------- work gallery becomes a swipeable carousel ----------
+     Four full-width cards stacked vertically is a long, flat scroll. As a snapping
+     horizontal rail with the next card peeking past the edge, the portfolio reads as
+     something you flick through — and the peek is the affordance, so it needs no
+     "swipe me" label. Full-bleed via negative margins, with matching padding so the
+     first and last cards still line up with the page gutter. */
+  .bento {
+    display: flex;
+    grid-template-columns: none;
+    gap: 0.9rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
+    /* a scroll container clips to its padding box, which would cut the signature glow
+       off the centred card — give the shadow room inside, then take the space back */
+    padding-block: 40px;
+    margin-block: -40px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .bento::-webkit-scrollbar { display: none; }
+  .tile {
+    flex: 0 0 82%;
+    scroll-snap-align: start;
+    aspect-ratio: 4 / 5;   /* portrait reads better than 16/11 on a phone */
+  }
+  /* position dots — orientation for how many cards there are */
+  .bento-dots { display: flex; justify-content: center; gap: 7px; margin-top: 1.1rem; }
+  .bento-dots span {
+    width: 6px; height: 6px; border-radius: 999px; background: var(--ink); opacity: 0.25;
+    transition: width 0.35s var(--ease), opacity 0.35s var(--ease), background 0.35s var(--ease);
+  }
+  .bento-dots span.is-on { width: 20px; opacity: 1; background: var(--blue); }
+
   .contact__cta { width: 100%; }
   .wa-btn, .phones, .phones__toggle { width: 100%; }
   .phones__toggle { justify-content: center; }
@@ -650,7 +735,7 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .cta-band__track, .hero__scroll i, .orbits, .blob { animation: none; }
+  .hero__scroll i, .orbits, .blob { animation: none; }
   .cursor { display: none; }
   body { cursor: auto; }
 }
@@ -752,7 +837,8 @@ body.is-takeover .altimeter::before, body.is-takeover .altimeter::after { backgr
 .a11y-modal__body strong { color: var(--ink); font-weight: 600; }
 .a11y-modal__body ul { padding-inline-start: 1.2rem; display: grid; gap: 0.4rem; }
 .a11y-modal__body a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
-.a11y-modal__date { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.1em; }
+/* Hebrew line → sans, not mono (see the --f-mono note at the top) */
+.a11y-modal__date { font-family: var(--f-sans); font-size: 0.78rem; }
 .a11y-modal__close { position: absolute; top: 1rem; inset-inline-end: 1rem; width: 38px; height: 38px; border-radius: 12px; border: 1px solid var(--line); background: none; color: var(--ink); font-size: 1.3rem; line-height: 1; cursor: none; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
 .a11y-modal__close:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
 [data-theme="light"] .a11y-modal__box { background: #f7f5f1; }
@@ -784,8 +870,6 @@ html.a11y-contrast .blend { mix-blend-mode: normal; }
 html.a11y-contrast .big, html.a11y-contrast .wm .line > span, html.a11y-contrast .pw { color: #fff; }
 html.a11y-contrast .mark { opacity: 0.3; }
 html.a11y-contrast .mark__shape { filter: none; }
-html.a11y-contrast .cta-band__track span { color: #fff; }
-html.a11y-contrast .cta-band__track i { color: rgba(255, 255, 255, 0.6); }
 html.a11y-contrast .menu-fab, html.a11y-contrast .dock__panel, html.a11y-contrast .a11y-fab, html.a11y-contrast .a11y__panel, html.a11y-contrast .a11y-modal__box { background: #000; }
 
 /* mobile: solid panels (backdrop-filter is too costly), same as the dock */

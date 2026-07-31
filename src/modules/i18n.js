@@ -81,17 +81,11 @@ const EN = {
   'step.4.name': 'Launch & Rise',
   'step.4.desc': 'We go live, measure, refine, and keep launching you forward.',
 
-  /* CTA marquee */
-  'cta.aria': 'Websites far beyond design',
-  'cta.1': 'Websites far beyond design',
-  'cta.2': 'Innovative technology',
-  'cta.3': 'Unforgettable user experiences',
-  'cta.4': 'Driving your business forward',
-
   /* contact */
   'contact.l1': 'Ready to',
   'contact.l2': 'level up?',
   'contact.sub': 'Tell us about your business, and we will return a digital vision that lifts you above everyone else.',
+  'elastic.hint': 'Drag the letters ✦ then let go',
   'contact.about': 'Elevate Creative is led by Orel, driven by a deep passion for digital excellence and cutting-edge design. The studio was founded to help businesses transcend their digital boundaries with premium, high-performance websites. We combine strategic thinking with meticulous craftsmanship to ensure your brand stands out, performs flawlessly, and stays ahead of the competition.',
   'wa.title': 'Talk to us on WhatsApp',
   'wa.sub': 'Click to send a message and we will get back to you fast',

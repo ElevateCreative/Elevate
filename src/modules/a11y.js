@@ -4,7 +4,8 @@
    boots straight into its reduced-motion path (no Lenis, no GSAP choreography).
    Bilingual: strings follow the page language (<html lang>), set before this runs. */
 
-const KEY = 'elevate-a11y';
+import { A11Y_KEY as KEY, loadA11yPrefs } from './a11y-prefs.js';
+
 const FLAGS = { contrast: 'a11y-contrast', links: 'a11y-links', font: 'a11y-font', cursor: 'a11y-cursor', motion: 'a11y-no-motion' };
 const FS_MAX = 3; // 100% → 137.5% in 12.5% steps
 
@@ -40,10 +41,6 @@ const EN = {
   issueTitle: 'Ran into a difficulty?', issueBody: 'We would love to hear about it and fix it fast.',
   date: 'Last updated: July 2026',
 };
-
-export function loadA11yPrefs() {
-  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
-}
 
 export function initA11y() {
   const s = loadA11yPrefs();

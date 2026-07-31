@@ -26,10 +26,14 @@ export function initCursor() {
   };
   loop();
 
-  const targets = 'a, button, [data-magnetic], [data-tilt], input, textarea, .faq__q';
-  document.querySelectorAll(targets).forEach((el) => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
+  /* Delegated, not per-element: one pair of listeners instead of ~60, and it keeps
+     working for anything mounted later (the accessibility widget is now lazy-loaded). */
+  const targets = 'a, button, [data-magnetic], [data-tilt], input, textarea, .service, .tile';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest?.(targets)) cursor.classList.add('is-hover');
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest?.(targets) && !e.relatedTarget?.closest?.(targets)) cursor.classList.remove('is-hover');
   });
 
   document.addEventListener('mouseleave', () => cursor.classList.add('is-hidden'));

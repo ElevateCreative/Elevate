@@ -36,13 +36,25 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Archivo:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- fonts are self-hosted variable subsets (see src/styles/fonts.css) — no third-party
+       origin, no render-blocking stylesheet. Only the two that paint the first screen
+       are preloaded; Archivo (English only) and the mono labels load on demand. -->
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/heebo-hebrew.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/heebo-latin.woff2" crossorigin />
   <script>
     try { var t = localStorage.getItem('elevate-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
-    /* saved language → lang/dir before first paint (the copy itself is swapped in main.js) */
-    try { if (localStorage.getItem('elevate-lang') === 'en') { document.documentElement.lang = 'en'; document.documentElement.dir = 'ltr'; } } catch (e) {}
+    /* saved language → lang/dir before first paint (the copy itself is swapped in main.js).
+       Hebrew is the default, so only the Heebo subsets are preloaded in the markup;
+       an English visitor gets Archivo queued here instead, at the same early moment. */
+    try {
+      if (localStorage.getItem('elevate-lang') === 'en') {
+        document.documentElement.lang = 'en'; document.documentElement.dir = 'ltr';
+        var l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'font'; l.type = 'font/woff2';
+        l.href = '/fonts/archivo-latin.woff2'; l.crossOrigin = 'anonymous';
+        document.head.appendChild(l);
+      }
+    } catch (e) {}
     /* re-apply saved accessibility settings before first paint (the widget itself boots in main.js) */
     try {
       var a = JSON.parse(localStorage.getItem('elevate-a11y') || '{}');
@@ -175,10 +187,10 @@
     </a>
     <div class="nav__right">
       <nav class="nav__links">
-        <a href="#about"><span data-i18n="nav.manifesto">מניפסט</span><i dir="ltr">↗</i></a>
-        <a href="#work"><span data-i18n="nav.work">עבודות</span><i dir="ltr">↗</i></a>
+        <a href="#about"><span data-i18n="nav.manifesto" data-weight-hover>מניפסט</span><i dir="ltr">↗</i></a>
+        <a href="#work"><span data-i18n="nav.work" data-weight-hover>עבודות</span><i dir="ltr">↗</i></a>
       </nav>
-      <a href="#contact" class="nav__cta" data-magnetic><span data-i18n="nav.cta">צרו קשר</span><i dir="ltr">→</i></a>
+      <a href="#contact" class="nav__cta" data-magnetic><span data-i18n="nav.cta" data-weight-hover>צרו קשר</span><i dir="ltr">→</i></a>
     </div>
   </header>
 
@@ -186,12 +198,12 @@
   <div class="dock" id="dock">
     <nav class="dock__panel" id="dockPanel" aria-hidden="true">
       <p class="dock__title" dir="ltr">NAVIGATE</p>
-      <a href="#hero" class="dock__link"><span class="dock__no" dir="ltr">00</span><span data-i18n="dock.home">ראשי</span></a>
-      <a href="#about" class="dock__link"><span class="dock__no" dir="ltr">01</span><span data-i18n="dock.manifesto">מניפסט</span></a>
-      <a href="#services" class="dock__link"><span class="dock__no" dir="ltr">02</span><span data-i18n="dock.services">שירותים</span></a>
-      <a href="#work" class="dock__link"><span class="dock__no" dir="ltr">03</span><span data-i18n="dock.work">עבודות</span></a>
-      <a href="#process" class="dock__link"><span class="dock__no" dir="ltr">04</span><span data-i18n="dock.process">תהליך</span></a>
-      <a href="#contact" class="dock__link"><span class="dock__no" dir="ltr">05</span><span data-i18n="dock.contact">צור קשר</span></a>
+      <a href="#hero" class="dock__link"><span class="dock__no" dir="ltr">00</span><span data-weight-hover data-i18n="dock.home">ראשי</span></a>
+      <a href="#about" class="dock__link"><span class="dock__no" dir="ltr">01</span><span data-weight-hover data-i18n="dock.manifesto">מניפסט</span></a>
+      <a href="#services" class="dock__link"><span class="dock__no" dir="ltr">02</span><span data-weight-hover data-i18n="dock.services">שירותים</span></a>
+      <a href="#work" class="dock__link"><span class="dock__no" dir="ltr">03</span><span data-weight-hover data-i18n="dock.work">עבודות</span></a>
+      <a href="#process" class="dock__link"><span class="dock__no" dir="ltr">04</span><span data-weight-hover data-i18n="dock.process">תהליך</span></a>
+      <a href="#contact" class="dock__link"><span class="dock__no" dir="ltr">05</span><span data-weight-hover data-i18n="dock.contact">צור קשר</span></a>
       <div class="dock__theme">
         <span class="dock__theme-label" data-i18n="dock.theme">מצב תצוגה</span>
         <button class="theme-toggle" id="themeToggle" type="button" dir="ltr" aria-label="מצב כהה או בהיר" data-i18n-aria="aria.theme">
@@ -237,7 +249,7 @@
           <p class="upper" data-i18n="about.upper">סוכנות דיגיטל וקריאייטיב שיוצרת אתרי פרימיום וחוויות בלתי נשכחות.</p>
           <a href="#contact" class="textlink" data-magnetic><span data-i18n="about.link">עלינו</span> <i dir="ltr">→</i></a>
         </div>
-        <p class="manifesto__lead" data-reveal data-i18n="about.lead">Elevate Creative נולדה כדי לקחת עסקים, להרים ולהזניק אותם לשלב הבא. אנחנו מזקקים את הזהות של כל מותג ותופרים לו אתר פרימיום מרהיב, כזה שמתקשר בדיוק בשפה שלו ודוחף אותו מעל המתחרים.</p>
+        <p class="manifesto__lead" data-reading data-i18n="about.lead">Elevate Creative נולדה כדי לקחת עסקים, להרים ולהזניק אותם לשלב הבא. אנחנו מזקקים את הזהות של כל מותג ותופרים לו אתר פרימיום מרהיב, כזה שמתקשר בדיוק בשפה שלו ודוחף אותו מעל המתחרים.</p>
       </div>
     </section>
 
@@ -251,31 +263,31 @@
       <ul class="services__list">
         <li class="service">
           <span class="service__no" dir="ltr">01</span>
-          <h3 class="service__name" data-i18n="service.1.name">אסטרטגיה ומיתוג</h3>
+          <h3 class="service__name" data-weight-hover data-weight-from="first" data-i18n="service.1.name">אסטרטגיה ומיתוג</h3>
           <p class="service__desc" data-i18n="service.1.desc">מזקקים את הסיפור, השפה והבידול שהופכים אתכם לבלתי נשכחים.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">02</span>
-          <h3 class="service__name" data-i18n="service.2.name">עיצוב חוויה · UX/UI</h3>
+          <h3 class="service__name" data-weight-hover data-weight-from="first" data-i18n="service.2.name">עיצוב חוויה · UX/UI</h3>
           <p class="service__desc" data-i18n="service.2.desc">ממשקים יפים שמרגישים טבעיים, מנחים את העין וממירים מבקרים ללקוחות.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">03</span>
-          <h3 class="service__name" data-i18n="service.3.name">פיתוח Web פרימיום</h3>
+          <h3 class="service__name" data-weight-hover data-weight-from="first" data-i18n="service.3.name">פיתוח Web פרימיום</h3>
           <p class="service__desc" data-i18n="service.3.desc">קוד נקי, מהיר ומדויק, עם אנימציות חיות שמרגישות יקרות.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">04</span>
-          <h3 class="service__name" data-i18n="service.4.name">מושן, 3D ואינטראקציה</h3>
+          <h3 class="service__name" data-weight-hover data-weight-from="first" data-i18n="service.4.name">מושן, 3D ואינטראקציה</h3>
           <p class="service__desc" data-i18n="service.4.desc">תנועה שמספרת סיפור, מושכת תשומת לב ומשאירה חותם רגשי.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
         <li class="service">
           <span class="service__no" dir="ltr">05</span>
-          <h3 class="service__name" data-i18n="service.5.name">השקה ואופטימיזציה</h3>
+          <h3 class="service__name" data-weight-hover data-weight-from="first" data-i18n="service.5.name">השקה ואופטימיזציה</h3>
           <p class="service__desc" data-i18n="service.5.desc">SEO, ביצועים ומדידה, שתמשיכו לעלות גם אחרי שעולים לאוויר.</p>
           <span class="service__cta" dir="ltr" aria-hidden="true">↗</span>
         </li>
@@ -359,22 +371,17 @@
       </ol>
     </section>
 
-    <!-- CTA gradient marquee -->
-    <section class="cta-band" aria-label="אתרים שהם הרבה מעבר לעיצוב" data-i18n-aria="cta.aria">
-      <div class="cta-band__track">
-        <span data-i18n="cta.1">אתרים שהם הרבה מעבר לעיצוב</span><i>✦</i><span data-i18n="cta.2">טכנולוגיה חדשנית</span><i>✦</i><span data-i18n="cta.3">חוויות משתמש בלתי נשכחות</span><i>✦</i><span data-i18n="cta.4">מניעים את העסק שלך קדימה</span><i>✦</i><span data-i18n="cta.1">אתרים שהם הרבה מעבר לעיצוב</span><i>✦</i><span data-i18n="cta.2">טכנולוגיה חדשנית</span><i>✦</i><span data-i18n="cta.3">חוויות משתמש בלתי נשכחות</span><i>✦</i><span data-i18n="cta.4">מניעים את העסק שלך קדימה</span><i>✦</i>
-      </div>
-    </section>
-
     <!-- CONTACT -->
     <section class="section contact" id="contact">
       <p class="mono-label" dir="ltr">(05) · LET'S TALK</p>
-      <h2 class="big blend">
+      <h2 class="big blend" data-elastic>
         <span class="line"><span data-i18n="contact.l1">מוכנים</span></span>
         <span class="line"><span data-i18n="contact.l2">לעלות שלב?</span></span>
       </h2>
+      <!-- the headline is draggable on pointer devices; CSS hides this hint on touch -->
+      <p class="elastic-hint" aria-hidden="true" data-i18n="elastic.hint">גררו את האותיות ✦ ושחררו</p>
       <p class="contact__sub" data-reveal data-i18n="contact.sub">ספרו לנו על העסק, ונחזיר לכם חזון דיגיטלי שמרים אתכם מעל כולם.</p>
-      <p class="contact__about" data-i18n="contact.about">מאחורי Elevate עומד אוראל, חייל משוחרר עם אהבה גדולה לעולם הדיגיטל והשיווק. הסטודיו קם כדי לבנות לעסקים נוכחות דיגיטלית שמרגישה יוקרתית, מדויקת ומבדלת. כל פרויקט מקבל יחס אישי, חשיבה אסטרטגית ועיצוב שמרים את המותג מעל המתחרים.</p>
+      <p class="contact__about" data-reading data-i18n="contact.about">מאחורי Elevate עומד אוראל, חייל משוחרר עם אהבה גדולה לעולם הדיגיטל והשיווק. הסטודיו קם כדי לבנות לעסקים נוכחות דיגיטלית שמרגישה יוקרתית, מדויקת ומבדלת. כל פרויקט מקבל יחס אישי, חשיבה אסטרטגית ועיצוב שמרים את המותג מעל המתחרים.</p>
       <div class="contact__cta">
         <a class="wa-btn" href="https://api.whatsapp.com/send?phone=972555191163" target="_blank" rel="noopener" data-magnetic>
           <span class="wa-btn__icon" aria-hidden="true">
@@ -405,16 +412,19 @@
       </div>
     </section>
 
+    <!-- Legal links first in the source so RTL space-between puts them on the right,
+         leaving the Latin brand block on the physical left where it belongs.
+         The Instagram icon lived here too — it is already in the contact block above,
+         so it was just a duplicate sitting in the middle of the row. -->
     <footer class="footer">
-      <span dir="ltr">ELEVATE Creative</span>
       <nav class="footer__legal" aria-label="מסמכים משפטיים" data-i18n-aria="footer.legal.aria">
         <a href="/elevate_creative_legal_documents.pdf" target="_blank" rel="noopener" data-i18n="footer.privacy">מדיניות פרטיות</a>
         <a href="/elevate_creative_legal_documents.pdf" target="_blank" rel="noopener" data-i18n="footer.terms">תנאי שימוש</a>
       </nav>
-      <nav class="footer__social" aria-label="רשתות חברתיות" data-i18n-aria="socials.aria">
-        <a href="https://www.instagram.com/elevatecreative.il" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38C1.35 2.68.93 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13A5.88 5.88 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0m0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84M12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4m6.4-11.85a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44"/></svg></a>
-      </nav>
-      <span dir="ltr">© 2026 · ALL RIGHTS RESERVED</span>
+      <div class="footer__brand" dir="ltr">
+        <span class="footer__name">ELEVATE Creative</span>
+        <span class="footer__rights">© 2026 · ALL RIGHTS RESERVED</span>
+      </div>
     </footer>
   </main>
 
