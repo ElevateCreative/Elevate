@@ -12,7 +12,9 @@ export function initAscent({ isMobile }) {
 
   let dpr = 1;
   const resize = () => {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // 1.5 on phones, not 2: the dust is sub-pixel-soft anyway, so nobody can tell the
+    // difference, while the backing store — and the per-frame fill cost — drop ~45%.
+    dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
     canvas.width = Math.round(window.innerWidth * dpr);
     canvas.height = Math.round(window.innerHeight * dpr);
   };
@@ -66,9 +68,16 @@ export function initAscent({ isMobile }) {
   let fade = 1; // eases out during the takeover finale
   let t = 0;
 
+  let rafId = 0;
+  const start = () => { if (!rafId) rafId = requestAnimationFrame(frame); };
+  const stop = () => { if (rafId) { cancelAnimationFrame(rafId); rafId = 0; } };
+
   const frame = (now) => {
-    requestAnimationFrame(frame);
-    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+    // Actually STOP while the tab is in the background. This used to keep asking for
+    // frames and merely skip the drawing, which pins a rAF loop (and the whole canvas)
+    // alive behind a backgrounded tab; visibilitychange starts us again.
+    if (document.hidden) { stop(); return; }
     const w = window.innerWidth, h = window.innerHeight;
 
     const y = window.scrollY;
@@ -138,5 +147,21 @@ export function initAscent({ isMobile }) {
       if (comet.y < -80 || comet.life <= 0) comet = null;
     }
   };
-  requestAnimationFrame(frame);
+  start();
+
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+  /* Hand the memory back when the page goes away.
+     iOS Safari keeps the outgoing document alive (page cache) while the next one boots,
+     so on a reload two full copies of this canvas existed at once. A full-screen backing
+     store is a few MB of GPU memory on its own, and it was the one resource here big
+     enough to matter — sizing the canvas to 0×0 drops it immediately rather than waiting
+     on a GC that may never come before the tab hits its memory ceiling.
+     pagehide, not unload: unload is unreliable on iOS and disables the page cache. */
+  window.addEventListener('pagehide', () => {
+    stop();
+    canvas.width = canvas.height = 0;
+  });
+  // came BACK via the page cache → the canvas above is 0×0, so rebuild it and resume
+  window.addEventListener('pageshow', (e) => { if (e.persisted) { resize(); start(); } });
 }

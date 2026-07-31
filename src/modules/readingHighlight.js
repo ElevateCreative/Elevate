@@ -9,7 +9,12 @@
    end offsets — same feel, no layout damage.
 
    Colours come from CSS custom properties so the dark theme, the light
-   theme and the bright takeover gradient can each set their own.
+   theme and the bright takeover gradient can each set their own. The tween
+   deliberately animates ONLY the progress variable --rh-p and never the
+   colour itself: a colour tween writes literal rgb() into each word's inline
+   style, which then outranks the theme's variables forever, so words kept
+   the colours of whichever theme was active when the page loaded. With the
+   mix left to CSS (see .rh-word), switching theme simply re-resolves it.
    ============================================================ */
 
 import { gsap } from 'gsap';
@@ -43,19 +48,14 @@ export function initReadingHighlight({ reduced } = {}) {
   if (!nodes.length) return;
 
   nodes.forEach((el) => {
-    const cs = getComputedStyle(el);
-    const dim = cs.getPropertyValue('--rh-dim').trim() || 'rgba(140,140,140,0.28)';
-    const lit = cs.getPropertyValue('--rh-lit').trim() || cs.color;
-
     const words = splitWords(el);
     if (!words.length) return;
 
     // reduced motion still gets the paragraph, just fully lit and static
-    if (reduced) { gsap.set(words, { color: lit }); return; }
+    if (reduced) { gsap.set(words, { '--rh-p': '100%' }); return; }
 
-    gsap.set(words, { color: dim });
     gsap.to(words, {
-      color: lit,
+      '--rh-p': '100%',
       ease: 'none',
       stagger: 0.1,
       scrollTrigger: {

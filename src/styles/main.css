@@ -149,6 +149,12 @@ body[data-scene="process"]  .mark__shape { --glow1: rgba(60, 210, 150, 0.5); --g
   from { transform: translate3d(-3%, -2%, 0) scale(1.05) rotate(0deg); }
   to   { transform: translate3d(4%, 3%, 0) scale(1.18) rotate(8deg); }
 }
+/* The drift is only ever seen once the takeover has bloomed open — which is the last
+   screen of the page, and never on a visit that stops earlier. Left running from load
+   it kept a blurred, screen-blended layer twice the size of the viewport recompositing
+   for the entire session, behind a clip-path that hid every pixel of it. */
+.takeover__flow { animation-play-state: paused; }
+body.is-takeover .takeover__flow { animation-play-state: running; }
 .orbits circle { fill: none; stroke: rgba(234, 230, 221, 0.06); stroke-width: 1; }
 /* inset:0, not -50% — the tile repeats anyway, and the old bleed made this
    blended full-screen layer four times the viewport area to composite. */
@@ -492,13 +498,31 @@ body.is-takeover .elastic-hint { color: var(--takeover-dim); }
 .wgt { display: inline; }
 
 /* ---------- reading highlight ---------- */
-.rh-word { display: inline-block; }
-[data-reading] { --rh-dim: rgba(217, 215, 209, 0.22); --rh-lit: var(--ink); }
-[data-theme="light"] [data-reading] { --rh-dim: rgba(28, 28, 30, 0.2); }
-/* the contact paragraph lands on the bright takeover field, which has its own ink */
-.contact__about { --rh-dim: rgba(241, 239, 233, 0.24); --rh-lit: var(--takeover-ink); }
-[data-theme="light"] .contact__about { --rh-dim: rgba(22, 22, 26, 0.2); }
-html.a11y-contrast [data-reading] { --rh-dim: rgba(255, 255, 255, 0.55); --rh-lit: #fff; }
+/* `inline`, for exactly the reason spelled out on .wgt above: as inline-block each word
+   is an atomic inline, which the bidi algorithm treats as a neutral object instead of
+   part of a run. In this RTL paragraph the Latin run was then laid out box by box in
+   RTL order — "Elevate Creative" rendered as "Creative Elevate". A plain inline span
+   leaves the run intact (and lets the line breaker work normally). */
+.rh-word { display: inline; --rh-p: 0%; color: var(--rh-lit); }
+/* The lit↔dim ramp is resolved HERE, not baked into inline styles by the tween. JS only
+   animates --rh-p (0% → 100%); the actual colours stay as var() references, so flipping
+   the theme (or the contrast toggle) re-resolves them and every word repaints in the new
+   theme — including the ones already scrolled past and left fully lit. The bare `color`
+   above is the no-color-mix() fallback: the paragraph just stays lit. */
+@supports (color: color-mix(in srgb, red, blue)) {
+  .rh-word { color: color-mix(in srgb, var(--rh-lit) var(--rh-p), var(--rh-dim)); }
+}
+/* The dim floor is a READABILITY floor, not a styling choice. At the 0.2-0.24 this
+   started with, un-highlighted text sat near 1.8:1 against the page and 1.9:1 against
+   the contact gradient — well under any usable threshold, and it read as muddy dark
+   grey rather than as quiet text. Around 0.5 it clears ~4:1 while the lift to full
+   ink is still perfectly legible as an effect. Never take these below 0.45. */
+[data-reading] { --rh-dim: rgba(217, 215, 209, 0.5); --rh-lit: var(--ink); }
+[data-theme="light"] [data-reading] { --rh-dim: rgba(28, 28, 30, 0.55); }
+/* the contact paragraph lands on the takeover field, which has its own ink */
+.contact__about { --rh-dim: rgba(241, 239, 233, 0.5); --rh-lit: var(--takeover-ink); }
+[data-theme="light"] .contact__about { --rh-dim: rgba(22, 22, 26, 0.55); }
+html.a11y-contrast [data-reading] { --rh-dim: rgba(255, 255, 255, 0.72); --rh-lit: #fff; }
 
 /* ---------- contact ---------- */
 .contact__sub { color: var(--ink-dim); font-size: clamp(1.05rem, 1.8vw, 1.4rem); max-width: 44ch; margin: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(1.2rem, 2.5vw, 1.8rem); }
@@ -725,6 +749,17 @@ body.is-takeover .theme-toggle__knob { background: #16161a; }
   .blob { filter: blur(13px); mix-blend-mode: normal; }
   .mark__shine { display: none; }
   .takeover__flow { filter: blur(4px); }
+  /* No permanently-promoted full-screen layers. `will-change` is not a free hint: it
+     pins the element onto its own GPU surface for the whole session, and at an iPhone's
+     DPR that is ~10MB per full-screen surface. The five aura tints (four of them at
+     opacity 0 at any given moment), the takeover field (clipped to nothing for all but
+     the last screen) and the arrow stack together held a few hundred MB that was never
+     released — enough that a second load, which overlaps with the previous document
+     still sitting in Safari's page cache, started the tab off already out of room.
+     Safari promotes these by itself while they actually animate, which is the only time
+     it needs to. Small elements keep their hints — it is the viewport-sized ones that
+     cost real memory. */
+  .aura__layer, .takeover, .mark__pos, .mark__shape, .mark__breathe, .blob { will-change: auto; }
   /* backdrop-filter is very costly on mobile → solid panels instead */
   .menu-fab, .dock__panel { backdrop-filter: none; }
   .menu-fab { background: rgba(20, 19, 22, 0.92); }

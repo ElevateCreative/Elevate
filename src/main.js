@@ -731,6 +731,17 @@ function boot() {
    once the faces land. */
 boot();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+/* ---------- give the page back when it is not on screen ----------
+   GSAP's ticker drives its own rAF loop for as long as the document lives, and on iOS
+   the outgoing document does NOT die on navigation — Safari parks it in the page cache
+   with every tween, ScrollTrigger and composited layer still attached. Reload twice and
+   the tab is holding several copies of all of it, which is what turned each fresh load
+   slower than the one before it. Sleeping the ticker stops the loop (and with it Lenis,
+   which rides the same ticker); wake() puts it all back if the visitor comes back via
+   the page cache. */
+window.addEventListener('pagehide', () => gsap.ticker.sleep());
+window.addEventListener('pageshow', (e) => { if (e.persisted) { gsap.ticker.wake(); ScrollTrigger.refresh(); } });
 // safety net: never leave the curtain (or loading lock) stuck
 setTimeout(() => {
   const p = document.getElementById('preloader');
