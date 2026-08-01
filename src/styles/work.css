@@ -1,0 +1,613 @@
+/* ============================================================
+   /work/ — CASE-STUDY GALLERY
+   ------------------------------------------------------------
+   Loaded on top of main.css, which supplies every token, both themes, the
+   accessibility layer and the shared chrome (nav, dock, cursor, footer). Only what
+   is new to this page lives here.
+
+   The page is an argument, so its layout is an argument: a numbered decision, three
+   labelled notes (problem / decision / marketing logic), then the thing itself. Where
+   a decision is about behaviour, the "thing itself" is a working rebuild rather than
+   a screenshot, and those rebuilds are the components at the bottom of this file.
+   ============================================================ */
+
+/* ---------- page shell ----------
+   The studio page centres each section in a full-height flex column, which is right
+   for six statements and wrong for eight arguments: these blocks are tall, and the
+   centring only pushed them around. `.section` is kept for its gutter and max-width. */
+.work-page .section { min-height: auto; display: block; }
+.work-page main { padding-top: clamp(4.5rem, 9vh, 7rem); }
+
+/* The studio page's nav floats over a hero and over huge display type, so it never
+   needed a surface. This page is dense text from top to bottom and the nav crosses a
+   paragraph every few hundred pixels, so here it earns one as soon as you leave the
+   opening screen. */
+.work-page .nav { transition: background 0.4s var(--ease), padding 0.4s var(--ease), border-color 0.4s var(--ease); border-bottom: 1px solid transparent; }
+.work-page .nav.is-scrolled {
+  background: rgba(18, 17, 20, 0.72); backdrop-filter: blur(16px) saturate(140%);
+  border-bottom-color: var(--line);
+  padding-block: clamp(0.7rem, 1.4vw, 1rem);
+}
+[data-theme="light"] .work-page .nav.is-scrolled { background: rgba(240, 238, 233, 0.8); }
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .work-page .nav.is-scrolled { backdrop-filter: none; background: rgba(18, 17, 20, 0.95); }
+  [data-theme="light"] .work-page .nav.is-scrolled { background: rgba(240, 238, 233, 0.96); }
+}
+/* a jumped-to anchor must clear the fixed bar rather than land under it */
+.work-page :target, .work-page .dec, .work-page .wcase, .work-page .wresult { scroll-margin-top: 5.5rem; }
+
+.aura__layer--work-page {
+  opacity: 1;
+  background:
+    radial-gradient(58% 50% at 78% 8%, rgba(120, 90, 255, 0.20), transparent 66%),
+    radial-gradient(52% 46% at 14% 42%, rgba(0, 136, 255, 0.14), transparent 66%);
+}
+
+/* The word curtain that joins this page to the studio page lives in main.css, because
+   BOTH documents have to be able to draw it — the studio page paints the first half. */
+
+/* ============================================================
+   OPENING
+   ============================================================ */
+.wintro {
+  min-height: 78svh;
+  display: flex; flex-direction: column; justify-content: center;
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+  padding: clamp(3rem, 8vh, 6rem) var(--gutter) clamp(4rem, 10vh, 7rem);
+  max-width: var(--maxw); margin-inline: auto;
+}
+.wintro__title {
+  font-weight: 500; font-size: clamp(2.5rem, 8.5vw, 8rem); line-height: 0.98;
+  letter-spacing: -0.03em; color: var(--ink); text-wrap: balance; max-width: 16ch;
+}
+.wintro__lead {
+  color: var(--ink-dim); font-size: clamp(1rem, 1.55vw, 1.28rem); line-height: 1.65;
+  max-width: 62ch;
+}
+.wintro__meta {
+  list-style: none; display: flex; flex-wrap: wrap; gap: clamp(1.4rem, 4vw, 3.2rem);
+  margin-top: clamp(0.6rem, 2vw, 1.4rem);
+}
+.wintro__meta li { display: flex; align-items: baseline; gap: 0.6rem; }
+.wintro__meta b { font-family: var(--f-mono); font-weight: 500; font-size: clamp(1.5rem, 3vw, 2.4rem); color: var(--blue); line-height: 1; }
+.wintro__meta span { font-size: 0.86rem; color: var(--ink-dim); }
+.wintro__cue {
+  margin-top: clamp(1.4rem, 4vh, 2.6rem);
+  font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--ink-dim);
+  display: inline-flex; align-items: center; gap: 0.5em; width: fit-content;
+}
+.wintro__cue i { font-style: normal; animation: bob 1.8s var(--ease) infinite; }
+
+/* words that pull into focus (focusReveal.js) */
+.fr-word { display: inline-block; }
+
+/* ============================================================
+   THE CASE HEADER
+   ============================================================ */
+.wcase { padding-block: clamp(3rem, 8vh, 6rem); border-top: 1px solid var(--line); }
+.wcase__title { display: grid; gap: 0.5rem; margin: 1rem 0 clamp(1.8rem, 4vw, 3rem); }
+.wcase__name { font-size: clamp(2.2rem, 6.5vw, 5.2rem); font-weight: 600; line-height: 1; letter-spacing: -0.03em; color: var(--ink); }
+.wcase__sub { font-size: clamp(0.92rem, 1.4vw, 1.1rem); color: var(--ink-dim); }
+
+.wcase__media {
+  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  border-radius: 20px; overflow: hidden; border: 1px solid var(--line);
+  background: linear-gradient(140deg, rgba(120, 90, 255, 0.1), rgba(10, 8, 22, 0.4));
+}
+.blobrev__svg, .blobrev__flat { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
+
+.wcase__grid { display: grid; gap: clamp(1.6rem, 4vw, 3rem); margin-top: clamp(1.6rem, 4vw, 2.6rem); }
+@media (min-width: 900px) { .wcase__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+
+.wcase__facts { display: grid; gap: 0.9rem; }
+.wcase__facts > div { display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.6rem 1rem; align-items: baseline; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line); }
+.wcase__facts dt { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
+:root[lang="he"] .wcase__facts dt { font-family: var(--f-sans); letter-spacing: 0.04em; font-size: 0.78rem; text-transform: none; }
+.wcase__facts dd { font-size: clamp(0.92rem, 1.3vw, 1.05rem); color: var(--ink); }
+.wcase__brief p:last-child { color: var(--ink-dim); font-size: clamp(0.95rem, 1.4vw, 1.12rem); line-height: 1.7; margin-top: 0.8rem; }
+
+/* ============================================================
+   A DECISION CARD
+   ============================================================ */
+.dec {
+  padding-block: clamp(3.5rem, 9vh, 6.5rem);
+  border-top: 1px solid var(--line);
+}
+.dec__head { display: grid; gap: 0.5rem; margin-bottom: clamp(1.4rem, 3vw, 2.2rem); }
+.dec__no {
+  font-family: var(--f-mono); font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 200;
+  line-height: 0.9; color: var(--line); letter-spacing: -0.04em;
+  /* a quiet index, not a headline — it orders the argument without competing with it */
+}
+.dec__kicker { font-family: var(--f-sans); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.06em; color: var(--blue); }
+.dec__title {
+  font-size: clamp(1.7rem, 4.4vw, 3.4rem); font-weight: 500; line-height: 1.06;
+  letter-spacing: -0.025em; color: var(--ink); text-wrap: balance; max-width: 20ch;
+}
+
+.dec__body { display: grid; gap: clamp(1.2rem, 2.6vw, 2rem); margin-bottom: clamp(2rem, 5vw, 3.4rem); }
+@media (min-width: 900px) { .dec__body { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); } }
+
+.dec__note { display: grid; gap: 0.6rem; align-content: start; padding-inline-start: 1rem; border-inline-start: 2px solid var(--line); }
+.dec__note p:last-child { color: var(--ink-dim); font-size: clamp(0.94rem, 1.3vw, 1.06rem); line-height: 1.72; }
+.dec__note--problem { border-inline-start-color: rgba(255, 122, 122, 0.45); }
+.dec__note--decision { border-inline-start-color: var(--blue); }
+.dec__note--why { border-inline-start-color: rgba(120, 220, 170, 0.5); }
+.dec__label { font-family: var(--f-sans); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.05em; color: var(--ink); text-transform: none; }
+.dec__note--problem .dec__label { color: #ff9a9a; }
+.dec__note--decision .dec__label { color: var(--blue); }
+.dec__note--why .dec__label { color: #7fdcae; }
+[data-theme="light"] .dec__note--problem .dec__label { color: #c4342f; }
+[data-theme="light"] .dec__note--why .dec__label { color: #157a52; }
+
+/* the technical footnote — deliberately set as a terminal, because that is what it is */
+.dec__deep {
+  margin-top: clamp(1.6rem, 4vw, 2.6rem);
+  padding: clamp(1rem, 2.4vw, 1.5rem);
+  border: 1px solid var(--line); border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  display: grid; gap: 0.7rem;
+}
+[data-theme="light"] .dec__deep { background: rgba(28, 28, 30, 0.03); }
+.dec__deep .dec__label { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.22em; color: var(--ink-dim); }
+.dec__deep p:last-child { font-size: clamp(0.86rem, 1.15vw, 0.96rem); line-height: 1.75; color: var(--ink-dim); }
+
+.dec__visual { display: grid; gap: 1rem; }
+.dec__visual figcaption { font-size: 0.84rem; color: var(--ink-dim); }
+@media (min-width: 1100px) { .dec__visual--wide { margin-inline: calc(var(--gutter) * -0.4); } }
+
+/* ============================================================
+   FLIP CARD — two states, two faces
+   ============================================================ */
+.flip { position: relative; perspective: 1400px; }
+.flip__tilt { transform-style: preserve-3d; will-change: transform; }
+.flip__inner { position: relative; transform-style: preserve-3d; will-change: transform; }
+.flip__face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: 18px; overflow: hidden; border: 1px solid var(--line);
+  background: var(--bg);
+}
+/* the first face is in flow so the card has a height; the second is stacked behind it */
+.flip__face--a { position: relative; }
+.flip__face--b { transform: rotateY(180deg); }
+.flip__face img { width: 100%; height: 100%; object-fit: cover; display: block; aspect-ratio: 16 / 10; }
+.flip__tag {
+  position: absolute; inset-block-start: 0.9rem; inset-inline-start: 0.9rem;
+  font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.16em;
+  padding: 0.4rem 0.75rem; border-radius: 999px;
+  background: rgba(8, 7, 14, 0.72); color: #f2effa; border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+}
+.flip__btn {
+  position: absolute; inset-block-end: 0.9rem; inset-inline-end: 0.9rem; z-index: 3;
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font: inherit; font-size: 0.84rem; font-weight: 500; cursor: none;
+  padding: 0.55rem 1.05rem; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(8, 7, 14, 0.66); color: #f2effa;
+  backdrop-filter: blur(10px);
+  transition: background 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.flip__btn i { font-style: normal; display: inline-block; transition: transform 0.5s var(--ease); }
+.flip__btn:hover { background: var(--blue); }
+.flip__btn:hover i { transform: rotate(180deg); }
+
+/* ============================================================
+   MAGNIFIER — go and look at the pixels
+   ============================================================ */
+.mag {
+  position: relative; width: 100%; aspect-ratio: 16 / 10;
+  border-radius: 18px; overflow: hidden; border: 1px solid var(--line);
+  background: rgba(10, 8, 22, 0.5);
+}
+.mag__canvas, .mag__flat { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
+.mag__hint {
+  position: absolute; inset-block-end: 1rem; inset-inline-start: 1rem; z-index: 2;
+  font-size: 0.78rem; padding: 0.45rem 0.9rem; border-radius: 999px;
+  background: rgba(8, 7, 14, 0.68); color: #f2effa; border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px); pointer-events: none;
+  transition: opacity 0.35s var(--ease);
+}
+.mag.is-lensing .mag__hint { opacity: 0; }
+@media (hover: none), (pointer: coarse) { .mag__hint { display: none; } }
+
+/* ============================================================
+   DEMO · the three-field hero
+   ------------------------------------------------------------
+   Four numbers, and everything else derives from them: --a-t / --a-b and --b-t /
+   --b-b are where each cut meets the top and the bottom edge. Registering them with
+   @property is what lets the cuts SLIDE when a side opens — an unregistered custom
+   property is an unanimatable token stream, and the panels would snap.
+   ============================================================ */
+@property --a-t { syntax: "<percentage>"; inherits: true; initial-value: 30%; }
+@property --a-b { syntax: "<percentage>"; inherits: true; initial-value: 22%; }
+@property --b-t { syntax: "<percentage>"; inherits: true; initial-value: 70%; }
+@property --b-b { syntax: "<percentage>"; inherits: true; initial-value: 78%; }
+
+.jpd {
+  --a-t: 30%; --a-b: 22%; --b-t: 70%; --b-b: 78%;
+  --clip-hire: polygon(0 0, var(--a-t) 0, var(--a-b) 100%, 0 100%);
+  --clip-brand: polygon(var(--a-t) 0, var(--b-t) 0, var(--b-b) 100%, var(--a-b) 100%);
+  --clip-seek: polygon(var(--b-t) 0, 100% 0, 100% 100%, var(--b-b) 100%);
+  transition: --a-t 0.7s var(--ease), --a-b 0.7s var(--ease), --b-t 0.7s var(--ease), --b-b 0.7s var(--ease);
+
+  position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 340px;
+  border-radius: 18px; overflow: hidden; border: 1px solid var(--line);
+  background: #06050d; isolation: isolate;
+}
+/* reaching for a side throws it open and folds the violet back to a strip */
+.jpd[data-open="hire"] { --a-t: 66%; --a-b: 58%; }
+.jpd[data-open="seek"] { --b-t: 34%; --b-b: 42%; }
+
+.jpd__field { position: absolute; inset: 0; }
+.jpd__field--hire {
+  clip-path: var(--clip-hire);
+  background:
+    radial-gradient(70% 90% at 90% 30%, rgba(96, 60, 220, 0.5), transparent 62%),
+    linear-gradient(200deg, #120c33, #1d1252 78%);
+}
+.jpd__field--brand {
+  clip-path: var(--clip-brand);
+  background:
+    radial-gradient(62% 74% at 50% 40%, #8a5cf8, #5a2ac6 58%, #331580 100%);
+}
+.jpd__field--seek {
+  clip-path: var(--clip-seek);
+  background:
+    radial-gradient(70% 90% at 10% 30%, rgba(180, 40, 150, 0.42), transparent 62%),
+    linear-gradient(160deg, #24082a, #501146 82%);
+}
+
+/* the light on each cut: the band is CLIPPED first and blurred after. Blurring a
+   clipped element the other way round gives a hard-edged smudge, not a bloom. */
+.jpd__seam { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; }
+.jpd__seam::before, .jpd__seam > span { content: ""; position: absolute; inset: 0; }
+.jpd__seam::before { background: linear-gradient(180deg, rgba(201, 184, 255, 0), rgba(201, 184, 255, 0.55) 45%, rgba(201, 184, 255, 0.08)); filter: blur(8px); }
+.jpd__seam > span { background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(238, 232, 255, 0.9) 42%, rgba(255, 255, 255, 0.12)); }
+.jpd__seam--a::before { clip-path: polygon(calc(var(--a-t) - 0.4%) 0, calc(var(--a-t) + 0.4%) 0, calc(var(--a-b) + 0.4%) 100%, calc(var(--a-b) - 0.4%) 100%); }
+.jpd__seam--a > span   { clip-path: polygon(calc(var(--a-t) - 0.06%) 0, calc(var(--a-t) + 0.06%) 0, calc(var(--a-b) + 0.06%) 100%, calc(var(--a-b) - 0.06%) 100%); }
+.jpd__seam--b::before { clip-path: polygon(calc(var(--b-t) - 0.4%) 0, calc(var(--b-t) + 0.4%) 0, calc(var(--b-b) + 0.4%) 100%, calc(var(--b-b) - 0.4%) 100%); }
+.jpd__seam--b > span   { clip-path: polygon(calc(var(--b-t) - 0.06%) 0, calc(var(--b-t) + 0.06%) 0, calc(var(--b-b) + 0.06%) 100%, calc(var(--b-b) - 0.06%) 100%); }
+
+/* The lockup is a SIBLING of the fields, never a child of one: as a child it lived
+   inside the centre panel, so every time a side opened and that panel narrowed it had
+   to shrink to stay inside its own clip edge — the brand appearing to retreat from its
+   own page. No clip can reach it here. */
+.jpd__lockup {
+  position: absolute; inset-block-start: 24%; inset-inline: 0; z-index: 3;
+  display: grid; justify-items: center; gap: 0.5rem; text-align: center; pointer-events: none;
+}
+.jpd__mark {
+  font-size: clamp(1.5rem, 4.2vw, 3.1rem); font-weight: 800; letter-spacing: -0.02em;
+  color: #fff; text-shadow: 0 0 42px rgba(180, 140, 255, 0.75);
+  background: linear-gradient(180deg, #ffffff, #cbb4ff);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.jpd__rule { width: clamp(70px, 12%, 140px); height: 1px; background: linear-gradient(90deg, transparent, rgba(226, 214, 255, 0.7), transparent); }
+.jpd__lockup-sub { font-family: var(--f-sans); font-size: clamp(0.6rem, 1.05vw, 0.8rem); letter-spacing: 0.1em; color: rgba(226, 214, 255, 0.78); }
+
+/* Each side's box is the WHOLE demo and only the clip makes it look narrow, so nothing
+   stops a sliver's copy running out under its neighbour. Two rules keep it in:
+
+   · The inline padding is derived from the CUT ITSELF, not from a guessed percentage,
+     so the text area grows exactly as the panel opens and can never cross the edge.
+   · The copy sits at the height where its own sliver is widest — hire high, seek low —
+     which is also what gives the composition its diagonal.
+
+   Everything is stated twice, once per document direction, because the cuts are physical
+   percentages: a logical property would send the left field's copy to the right in an
+   LTR build while its field stayed put. */
+.jpd__side {
+  position: absolute; inset: 0; z-index: 2; cursor: none;
+  display: grid; gap: 0.55rem;
+  --jpd-gut: clamp(0.8rem, 2vw, 1.7rem);
+}
+.jpd__side--hire {
+  clip-path: var(--clip-hire);
+  align-content: start; padding-block: 16% 1rem;
+  justify-items: start; text-align: start;
+  padding-inline: var(--jpd-gut) calc(100% - var(--a-t) + 2%);
+}
+.jpd__side--seek {
+  clip-path: var(--clip-seek);
+  align-content: end; padding-block: 1rem 16%;
+  justify-items: end; text-align: end;
+  padding-inline: calc(var(--b-b) + 2%) var(--jpd-gut);
+}
+:root[dir="rtl"] .jpd__side--hire {
+  justify-items: end; text-align: end;
+  padding-inline: calc(100% - var(--a-t) + 2%) var(--jpd-gut);
+}
+:root[dir="rtl"] .jpd__side--seek {
+  justify-items: start; text-align: start;
+  padding-inline: var(--jpd-gut) calc(var(--b-b) + 2%);
+}
+
+.jpd__kicker {
+  font-size: clamp(0.6rem, 1vw, 0.74rem); font-weight: 500; letter-spacing: 0.05em;
+  color: rgba(240, 236, 255, 0.9); padding: 0.3rem 0.8rem; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.jpd__head { font-size: clamp(0.95rem, 2vw, 1.6rem); font-weight: 700; line-height: 1.12; color: #fff; max-width: 12ch; }
+.jpd__reveal {
+  display: grid; gap: 0.7rem; max-width: 30ch;
+  opacity: 0; transform: translateY(10px); pointer-events: none;
+  transition: opacity 0.45s var(--ease), transform 0.55s var(--ease);
+}
+.jpd[data-open="hire"] .jpd__side--hire .jpd__reveal,
+.jpd[data-open="seek"] .jpd__side--seek .jpd__reveal { opacity: 1; transform: none; }
+.jpd__line { font-size: clamp(0.74rem, 1.15vw, 0.92rem); line-height: 1.6; color: rgba(255, 255, 255, 0.88); }
+.jpd__cta {
+  justify-self: inherit; width: fit-content;
+  font-size: clamp(0.72rem, 1.1vw, 0.88rem); font-weight: 600; color: #fff;
+  padding: 0.6rem 1.2rem; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.34); background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+}
+.jpd__hint {
+  position: absolute; inset-block-end: 0.9rem; inset-inline-start: 0.9rem; z-index: 4;
+  font-size: 0.74rem; color: rgba(255, 255, 255, 0.72); pointer-events: none;
+  transition: opacity 0.35s var(--ease);
+}
+.jpd[data-open]:not([data-open=""]) .jpd__hint { opacity: 0; }
+.jpd__hint--touch { display: none; }
+@media (hover: none), (pointer: coarse) {
+  .jpd__side { cursor: pointer; }
+  .jpd__hint--hover { display: none; }
+  .jpd__hint--touch { display: inline; }
+}
+
+/* ============================================================
+   DEMO · the match rails
+   ============================================================ */
+.mdemo {
+  position: relative; display: grid; gap: 0.55rem;
+  padding: clamp(1.2rem, 3vw, 2rem) 0;
+  border-radius: 18px; border: 1px solid var(--line); overflow: hidden;
+  background: linear-gradient(180deg, rgba(10, 8, 22, 0.55), rgba(10, 8, 22, 0.2));
+}
+[data-theme="light"] .mdemo { background: linear-gradient(180deg, rgba(28, 28, 30, 0.05), transparent); }
+.mdemo__cap {
+  font-family: var(--f-sans); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+  color: var(--ink-dim); padding-inline: clamp(1rem, 3vw, 2rem);
+}
+.mdemo__rail {
+  position: relative; overflow: hidden;
+  /* the edge mask is what makes a loop read as a stream rather than as a list that
+     happens to be sliding */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.mdemo__track { display: flex; gap: 10px; width: max-content; will-change: transform; }
+.mdemo__chip {
+  display: grid; gap: 0.15rem; flex: none;
+  min-width: clamp(9.5rem, 15vw, 13rem);
+  padding: 0.7rem 1.1rem; border-radius: 4px;
+  border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+  transition: border-color 0.25s var(--ease), background 0.25s var(--ease), color 0.25s var(--ease);
+}
+.mdemo__chip b { font-size: clamp(0.82rem, 1.15vw, 0.95rem); font-weight: 600; color: var(--ink-dim); }
+.mdemo__chip i { font-style: normal; font-size: 0.72rem; color: var(--ink-dim); opacity: 0.72; }
+.mdemo__chip.is-near { border-color: rgba(0, 136, 255, 0.4); background: rgba(0, 136, 255, 0.06); }
+.mdemo__chip.is-near b { color: var(--ink); }
+.mdemo__chip.is-locked { border-color: var(--blue); background: rgba(0, 136, 255, 0.16); box-shadow: 0 0 26px rgba(0, 136, 255, 0.28); }
+.mdemo__chip.is-locked i { color: var(--blue); opacity: 1; }
+
+.mdemo__line { position: absolute; inset-block: 0; inset-inline-start: 50%; width: 1px; display: grid; place-items: center; pointer-events: none; }
+.mdemo__seam { position: absolute; inset-block: 12%; width: 1px; background: var(--line); transition: background 0.2s linear, box-shadow 0.2s linear; }
+.mdemo__line.is-lit .mdemo__seam { background: var(--blue); box-shadow: 0 0 16px 2px rgba(0, 136, 255, 0.75); }
+.mdemo__badge {
+  position: relative; font-family: var(--f-sans); font-size: 0.66rem; font-weight: 600;
+  padding: 0.25rem 0.6rem; border-radius: 3px; white-space: nowrap;
+  border: 1px solid var(--line); background: var(--bg); color: var(--ink-dim);
+  transition: color 0.2s linear, border-color 0.2s linear;
+}
+.mdemo__line.is-lit .mdemo__badge { color: var(--blue); border-color: var(--blue); }
+
+/* ============================================================
+   DEMO · liquid glass buttons
+   ============================================================ */
+.glassdemo {
+  position: relative; display: flex; flex-wrap: wrap; gap: 1rem;
+  align-items: center; justify-content: center;
+  padding: clamp(2rem, 5.5vw, 3.4rem) clamp(1rem, 3vw, 2rem);
+  border-radius: 18px; overflow: hidden; border: 1px solid var(--line);
+  background: #0a0818;
+}
+/* The field behind the buttons has to actually MOVE and actually be bright: a material
+   is only legible as a material when something is passing under it. */
+.glassdemo__flow {
+  position: absolute; inset: -30%;
+  background:
+    radial-gradient(40% 48% at 26% 30%, rgba(150, 105, 255, 0.95), transparent 64%),
+    radial-gradient(36% 44% at 76% 58%, rgba(232, 70, 195, 0.75), transparent 64%),
+    radial-gradient(44% 50% at 52% 96%, rgba(88, 44, 210, 0.95), transparent 64%),
+    radial-gradient(30% 36% at 88% 12%, rgba(90, 200, 255, 0.35), transparent 64%);
+  filter: blur(6px);
+  animation: glassDrift 16s ease-in-out infinite alternate;
+}
+@keyframes glassDrift {
+  from { transform: translate3d(-4%, -3%, 0) scale(1.05) rotate(0deg); }
+  to   { transform: translate3d(5%, 4%, 0) scale(1.2) rotate(10deg); }
+}
+.gbtn {
+  position: relative; z-index: 1; font: inherit; font-weight: 600;
+  font-size: clamp(0.9rem, 1.3vw, 1.02rem); color: #fff; cursor: none;
+  padding: 0.9rem 1.7rem; border-radius: 999px; border: none;
+  transition: transform 0.35s var(--ease), box-shadow 0.4s var(--ease);
+}
+/* the material: a specular rim along the top edge, a lens highlight pulled from above,
+   and a dark far edge. The capsule radius is part of it — a 2px corner has no thickness
+   for light to bend through, which is why this is the one place the near-square
+   language gives way, and only for controls. */
+.gbtn::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.08) 45%, rgba(0, 0, 0, 0.4));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+.gbtn::after {
+  content: ""; position: absolute; inset: 1px; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.04) 52%, rgba(255, 255, 255, 0));
+}
+.gbtn--solid { background: linear-gradient(180deg, rgba(139, 92, 246, 0.95), rgba(84, 40, 200, 0.95)); box-shadow: 0 14px 34px rgba(80, 40, 200, 0.45); }
+/* the clear variant carries a dimming floor UNDER the tint, so a white label never
+   rides a bright frame of whatever is moving behind it */
+.gbtn--clear { background: linear-gradient(180deg, rgba(12, 8, 26, 0.45), rgba(12, 8, 26, 0.6)), rgba(255, 255, 255, 0.12); backdrop-filter: blur(14px) saturate(160%); }
+.gbtn:hover { transform: translateY(-2px); box-shadow: 0 20px 44px rgba(120, 70, 240, 0.5); }
+.gbtn:active { transform: translateY(0) scale(0.985); }
+@media (prefers-reduced-transparency: reduce) {
+  .gbtn--clear { background: #2a1a5c; backdrop-filter: none; }
+}
+
+/* ============================================================
+   DEMO · the phone, where scrolling is the pointer
+   ============================================================ */
+.phone { display: grid; justify-items: center; }
+.phone__frame {
+  position: relative; width: min(320px, 84vw); aspect-ratio: 9 / 17.5;
+  border-radius: 40px; padding: 10px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
+}
+[data-theme="light"] .phone__frame { box-shadow: 0 30px 70px rgba(28, 28, 30, 0.18); }
+.phone__scroll {
+  position: relative; height: 100%; overflow-y: auto; overscroll-behavior: contain;
+  border-radius: 32px; background: #06050d; padding: 1.1rem 0.9rem 4rem;
+  display: grid; gap: 0.7rem; align-content: start;
+  scrollbar-width: none;
+}
+.phone__scroll::-webkit-scrollbar { display: none; }
+.phone__lead { font-size: 0.92rem; font-weight: 600; color: #f5f2ff; padding: 0.6rem 0.2rem 0.4rem; }
+.phone__card {
+  display: grid; gap: 0.25rem; padding: 0.85rem 0.9rem; border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.35s var(--ease), background 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.phone__card b { font-size: 0.86rem; font-weight: 600; color: rgba(245, 242, 255, 0.6); transition: color 0.35s var(--ease); }
+.phone__card i { font-style: normal; font-size: 0.74rem; line-height: 1.5; color: rgba(150, 140, 186, 0.85); }
+.phone__card.is-lit {
+  border-color: rgba(167, 139, 250, 0.6); background: rgba(139, 92, 246, 0.14);
+  transform: translateX(-3px); box-shadow: 0 0 30px rgba(139, 92, 246, 0.24);
+}
+.phone__card.is-lit b { color: #fff; }
+/* the band itself, drawn — the point of the demo is that the rule is a position */
+.phone__band {
+  position: absolute; z-index: 2; inset-inline: 10px;
+  top: calc(10px + (100% - 20px) * 0.38); height: calc((100% - 20px) * 0.10);
+  border-block: 1px dashed rgba(0, 136, 255, 0.5);
+  background: rgba(0, 136, 255, 0.07); pointer-events: none;
+}
+.phone__band i {
+  position: absolute; inset-inline-end: 6px; top: 50%; transform: translateY(-50%);
+  font-family: var(--f-mono); font-style: normal; font-size: 0.56rem; letter-spacing: 0.1em;
+  color: rgba(120, 190, 255, 0.9);
+}
+
+/* ============================================================
+   The performance panel
+   ============================================================ */
+.perf { display: grid; gap: clamp(1.2rem, 3vw, 1.8rem); padding: clamp(1.2rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 18px; }
+.perf__row { display: grid; gap: 0.6rem; }
+.perf__k { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.14em; color: var(--ink-dim); text-transform: uppercase; }
+:root[lang="he"] .perf__k { font-family: var(--f-sans); letter-spacing: 0.04em; font-size: 0.8rem; text-transform: none; }
+.perf__bars { display: grid; gap: 0.4rem; }
+.perf__bar {
+  /* the label sits at the anchored edge, so the numbers stack in one column and the
+     comparison is read by length alone */
+  display: flex; align-items: center; justify-content: flex-start;
+  width: var(--w); min-width: fit-content; height: 2.1rem; padding-inline: 0.7rem;
+  border-radius: 4px; font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.04em;
+}
+.perf__bar b { font-weight: 500; }
+.perf__bar--before { background: rgba(255, 122, 122, 0.16); border: 1px solid rgba(255, 122, 122, 0.34); color: #ff9a9a; }
+.perf__bar--after { background: rgba(0, 136, 255, 0.16); border: 1px solid rgba(0, 136, 255, 0.4); color: #6fbcff; }
+.perf__bar--zero { color: #6fbcff; }
+[data-theme="light"] .perf__bar--before { color: #b52f2a; }
+[data-theme="light"] .perf__bar--after, [data-theme="light"] .perf__bar--zero { color: #0a63b8; }
+:root[lang="he"] .perf__bar--zero b { font-family: var(--f-sans); }
+.perf__total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem; padding-top: clamp(0.8rem, 2vw, 1.2rem); border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 0.95rem; }
+.perf__total-num { font-family: var(--f-mono); font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 300; color: var(--blue); line-height: 1; }
+.perf__total-num::before { content: "−"; }
+
+/* ---------- colour swatches ---------- */
+.swatches { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.swatch {
+  display: grid; gap: 0.15rem; padding: 0.6rem 0.85rem 0.7rem; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--c);
+  min-width: 6.6rem;
+}
+.swatch b { font-family: var(--f-mono); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; color: #fff; mix-blend-mode: difference; }
+.swatch i { font-family: var(--f-mono); font-style: normal; font-size: 0.6rem; color: #fff; opacity: 0.72; mix-blend-mode: difference; }
+
+/* ============================================================
+   RESULT + NEXT
+   ============================================================ */
+.wresult { padding-block: clamp(4rem, 10vh, 7rem); border-top: 1px solid var(--line); }
+.wresult__title { font-size: clamp(2rem, 6vw, 5rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.03em; color: var(--ink); margin: 1rem 0 clamp(1.2rem, 3vw, 2rem); text-wrap: balance; }
+.wresult__lead { color: var(--ink-dim); font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.7; max-width: 58ch; }
+.wresult__cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: clamp(1.6rem, 4vw, 2.6rem); }
+.pill--solid { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pill--solid:hover { background: var(--cream); border-color: var(--cream); color: #111; }
+[data-theme="light"] .pill--solid { color: #fff; }
+[data-theme="light"] .pill--solid:hover { color: #f2efe9; }
+
+.wnext { margin-top: clamp(3rem, 8vw, 5rem); display: grid; gap: 1rem; }
+.wnext__grid { display: grid; gap: 0.6rem; }
+.wnext__item {
+  display: grid; gap: 0.2rem 1rem; align-items: center;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "name arr" "sub arr";
+  padding: clamp(1rem, 2.4vw, 1.5rem) clamp(0.4rem, 1.5vw, 1rem);
+  border-top: 1px solid var(--line); cursor: none;
+  transition: padding-inline-start 0.45s var(--ease), background 0.4s var(--ease);
+}
+.wnext__item:last-child { border-bottom: 1px solid var(--line); }
+.wnext__name { grid-area: name; font-size: clamp(1.1rem, 2.4vw, 1.7rem); font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+.wnext__sub { grid-area: sub; font-size: 0.86rem; color: var(--ink-dim); }
+.wnext__arr { grid-area: arr; font-style: normal; font-size: 1.4rem; color: var(--blue); transition: transform 0.4s var(--ease); }
+@media (hover: hover) {
+  .wnext__item:hover { padding-inline-start: clamp(0.9rem, 2.4vw, 1.8rem); background: rgba(0, 136, 255, 0.05); }
+  .wnext__item:hover .wnext__arr { transform: translate(-6px, -6px); }
+  :root[dir="ltr"] .wnext__item:hover .wnext__arr { transform: translate(6px, -6px); }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 760px) {
+  .work-page .nav__links { display: none; }
+  .dec__note { padding-inline-start: 0.85rem; }
+  .wcase__facts > div { grid-template-columns: 1fr; gap: 0.25rem; }
+  /* On a phone the slivers start wider — the copy has to survive at 390px — and the
+     demo goes portrait so the diagonal still has height to travel through. The padding
+     stays derived from the cuts, so nothing else needs restating here. */
+  .jpd { aspect-ratio: 3 / 4; min-height: 430px; --a-t: 38%; --a-b: 30%; --b-t: 62%; --b-b: 70%; }
+  .jpd[data-open="hire"] { --a-t: 74%; --a-b: 66%; }
+  .jpd[data-open="seek"] { --b-t: 26%; --b-b: 34%; }
+  .jpd__lockup { inset-block-start: 14%; }
+  .jpd__side--hire { padding-block-start: 30%; }
+  .jpd__side--seek { padding-block-end: 22%; }
+  .mdemo__chip { min-width: 8.5rem; padding: 0.6rem 0.8rem; }
+  .xfade__word { font-size: clamp(1.6rem, 9vw, 3rem); }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .wintro__cue i, .glassdemo__flow { animation: none; }
+  .jpd { transition: none; }
+}
+html.a11y-no-motion .jpd { transition: none; }
+
+/* ============================================================
+   HIGH CONTRAST — the demos carry their own colour, so they are toned down rather
+   than left to fight a black-and-white page.
+   ============================================================ */
+html.a11y-contrast .jpd, html.a11y-contrast .glassdemo, html.a11y-contrast .mdemo { border-color: #fff; }
+html.a11y-contrast .dec__deep, html.a11y-contrast .perf { background: #000; border-color: #fff; }
+html.a11y-contrast .mdemo__chip b, html.a11y-contrast .mdemo__chip i { color: #fff; }

@@ -7,6 +7,7 @@ import { initCursor } from './modules/cursor.js';
 import { loadA11yPrefs } from './modules/a11y-prefs.js';
 import { applyI18n, initLangToggle } from './modules/i18n.js';
 import { initWeightHover } from './modules/weightHover.js';
+import { initPageTransition } from './modules/transition.js';
 
 // swap the copy to the saved language BEFORE anything measures or splits text
 applyI18n();
@@ -251,6 +252,8 @@ whenIdle(() => {
 // letters gain weight one by one under the pointer (needs the variable fonts).
 // Eager: the nav sits above the fold and must be interactive immediately.
 initWeightHover({ reduced });
+// "כל העבודות" leaves for /work/ behind the word curtain (see modules/transition.js)
+initPageTransition();
 
 /* ---------- altimeter: your altitude climbs as you scroll (the footer is the summit) ---------- */
 const altValue = document.getElementById('altimeterValue');

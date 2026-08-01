@@ -618,6 +618,34 @@ body.is-takeover .footer__legal a:hover { color: var(--takeover-ink); }
 }
 @media (hover: none) { .cursor { display: none; } body { cursor: auto; } }
 
+/* ============================================================
+   PAGE TRANSITION — the word curtain (studio page ↔ /work/)
+   ------------------------------------------------------------
+   The two pages are separate documents, so the join has to be built ACROSS a
+   navigation: this page paints the first half (the grid of one repeated word wiping
+   in over the fading page), the destination paints the second (the grid wiping back
+   out, leaving one word that lifts away). The rules live here rather than in work.css
+   because both documents draw the same curtain. See src/modules/transition.js.
+   ============================================================ */
+.xfade {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  background: var(--bg);
+  opacity: 0; visibility: hidden;
+  overflow: hidden; pointer-events: none;
+}
+.xfade__grid { display: flex; flex-direction: column; gap: clamp(0.4rem, 1.4vh, 1rem); will-change: transform; }
+.xfade__row { display: flex; gap: clamp(1rem, 3vw, 2.4rem); white-space: nowrap; will-change: transform; }
+.xfade__word {
+  display: inline-block;
+  font-weight: 600; font-size: clamp(1.6rem, 7vw, 5.5rem); line-height: 1;
+  letter-spacing: -0.03em; color: var(--ink);
+  clip-path: inset(0 0 0 0); will-change: clip-path;
+}
+/* the one word that survives the wipe and carries the eye across the navigation */
+.xfade__word.is-centre { color: var(--blue); }
+body.is-leaving { overflow: hidden; }
+
 /* ---------- preloader (curtain only; the arrow is the real #mark) ---------- */
 .preloader { position: fixed; inset: 0; z-index: 100; background: var(--bg); }
 .preloader__meta { position: absolute; inset-block-end: clamp(1.6rem, 5vh, 3rem); inset-inline: 0; display: flex; justify-content: center; gap: 0.8em; font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.22em; color: var(--ink-dim); }

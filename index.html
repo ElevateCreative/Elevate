@@ -299,7 +299,9 @@
       <h2 class="sr-only" data-i18n="work.h2">עבודות נבחרות · תיק עבודות</h2>
       <div class="work__head">
         <p class="mono-label" dir="ltr">(03) · FEATURED WORK</p>
-        <a href="#contact" class="pill" data-magnetic><span data-i18n="work.all">כל העבודות</span> <i dir="ltr">→</i></a>
+        <!-- the gallery is a real page, not an anchor: data-xfade hands the click to the
+             word curtain, which paints its first half here and its second half there -->
+        <a href="/work/" class="pill" data-magnetic data-xfade data-xfade-word="עבודות" data-i18n-attr="data-xfade-word:xfade.work"><span data-i18n="work.all">כל העבודות</span> <i dir="ltr">→</i></a>
       </div>
       <div class="bento">
         <a class="tile tile--feature" href="https://job-power.github.io/JobPower/" target="_blank" rel="noopener" data-reveal>
@@ -335,7 +337,7 @@
           <p class="tile__tags" dir="ltr">YOUR BRAND · NEXT</p>
         </a>
       </div>
-      <p class="work__note" data-i18n="work.note">* Job Power, אתר לקוח חי. VIGDER ו־UMBRAS, אתרי קונספט חיים שבנינו מאפס, היכנסו ותתרשמו. הכרטיס האחרון מחכה לפרויקט שלכם.</p>
+      <p class="work__note" data-i18n="work.note">* Job Power, אתר לקוח חי. VIGDER ו־UMBRAS, אתרי קונספט חיים שבנינו מאפס, היכנסו ותתרשמו. הכרטיס האחרון מחכה לפרויקט שלכם. ב"כל העבודות" תמצאו את מקרי הבוחן, עם ההחלטות שמאחורי כל אלמנט.</p>
     </section>
 
     <!-- PROCESS / HOW WE WORK -->
