@@ -90,7 +90,10 @@
 .wcase__sub { font-size: clamp(0.92rem, 1.4vw, 1.1rem); color: var(--ink-dim); }
 
 .wcase__media {
-  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  /* 16:10, matching the captures exactly. At 16:9 the cover crop took the client
+     site's nav off the top and its closing strip off the bottom, which on a page that
+     argues about what is in the frame is not a cosmetic loss. */
+  position: relative; width: 100%; aspect-ratio: 16 / 10;
   border-radius: 20px; overflow: hidden; border: 1px solid var(--line);
   background: linear-gradient(140deg, rgba(120, 90, 255, 0.1), rgba(10, 8, 22, 0.4));
 }

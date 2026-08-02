@@ -103,18 +103,18 @@ const EN = {
   'xfade.home': 'ELEVATE',
 
   /* ================= /work/ — the case-study gallery ================= */
-  'work.meta.title': 'Case Studies · The Elevate Creative Portfolio',
-  'work.meta.desc': 'Behind every site there is a process. Case studies from Elevate Creative: each element of a client site, the problem it solves, the decision we made and the marketing logic behind it. Starting with Job Power HR.',
+  'work.meta.title': 'Projects · The Elevate Creative Portfolio',
+  'work.meta.desc': 'Behind every site there is a process. Projects from Elevate Creative: each element of a client site, the problem it solves, the decision we made and the marketing logic behind it. Starting with Job Power HR.',
 
   'work.nav.studio': 'The studio',
   'work.dock.back': 'Back to the site',
-  'work.dock.case': 'The case',
+  'work.dock.case': 'The project',
   'work.dock.decisions': 'The decisions',
   'work.dock.result': 'The result',
 
   'work.intro.h1': 'Every pixel here is a decision',
   'work.intro.lead': 'This is not a gallery of pretty pictures. Each card takes one element out of a real site we built and shows the three things nobody sees from the outside: what the problem was, what we decided to do, and why it works commercially. A look inside our UI/UX process.',
-  'work.intro.m1': 'case study',
+  'work.intro.m1': 'project',
   'work.intro.m2': 'decisions taken apart',
   'work.intro.m3': 'hours on the details',
 
