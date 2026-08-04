@@ -22,8 +22,11 @@ const HE = {
   li2: 'תפריט נגישות: הגדלת טקסט, ניגודיות גבוהה, הדגשת קישורים, גופן קריא, סמן גדול ועצירת אנימציות.',
   li3: 'תמיכה אוטומטית בהעדפת "הפחתת תנועה" של מערכת ההפעלה.',
   li4: 'מבנה כותרות תקין, טקסט חלופי ותיוג ARIA לרכיבים אינטראקטיביים.',
-  issueTitle: 'נתקלתם בקושי?', issueBody: 'נשמח לשמוע ולתקן במהירות.',
-  date: 'עדכון אחרון: יולי 2026',
+  issueTitle: 'נתקלתם בקושי?',
+  issueBody: 'אם נתקלתם ברכיב באתר שאינו נגיש, או שיש משהו שלא הצלחתם לעשות דרכו, נשמח שתספרו לנו ונטפל בזה במהירות. אפשר לפנות אלינו באחת מהדרכים האלה:',
+  contactPhone: 'טלפון', contactWa: 'וואטסאפ', contactWaText: 'שליחת הודעה',
+  known: 'נכון להיום איננו מכירים רכיב באתר שאינו נגיש. אם תמצאו כזה, זו בדיוק הפנייה שאנחנו רוצים לקבל.',
+  date: 'עדכון אחרון: אוגוסט 2026',
 };
 const EN = {
   panel: 'Accessibility settings', fab: 'Accessibility menu',
@@ -38,8 +41,11 @@ const EN = {
   li2: 'Accessibility menu: text sizing, high contrast, underlined links, readable font, large cursor and stopping animations.',
   li3: 'Automatic support for the operating system\'s reduced-motion preference.',
   li4: 'Proper heading structure, alternative text and ARIA labelling for interactive elements.',
-  issueTitle: 'Ran into a difficulty?', issueBody: 'We would love to hear about it and fix it fast.',
-  date: 'Last updated: July 2026',
+  issueTitle: 'Ran into a difficulty?',
+  issueBody: 'If you came across anything on this site that is not accessible, or something you could not do through it, please tell us and we will fix it quickly. You can reach us in any of these ways:',
+  contactPhone: 'Phone', contactWa: 'WhatsApp', contactWaText: 'Send a message',
+  known: 'As of today we are not aware of any part of this site that is not accessible. If you find one, that is exactly the message we want to get.',
+  date: 'Last updated: August 2026',
 };
 
 export function initA11y() {
@@ -99,7 +105,12 @@ export function initA11y() {
           <li>${T.li3}</li>
           <li>${T.li4}</li>
         </ul>
+        <p>${T.known}</p>
         <p><strong>${T.issueTitle}</strong> ${T.issueBody}</p>
+        <ul class="a11y-modal__contact">
+          <li><strong>${T.contactPhone}:</strong> <a href="tel:+972546679080" dir="ltr">054-667-9080</a></li>
+          <li><strong>${T.contactWa}:</strong> <a href="https://wa.me/972546679080" target="_blank" rel="noopener">${T.contactWaText}</a></li>
+        </ul>
         <p class="a11y-modal__date">${T.date}</p>
       </div>
     </div>`;
@@ -122,10 +133,17 @@ export function initA11y() {
 
   /* ----- panel open/close (mirrors the dock) ----- */
   const setOpen = (open) => {
+    const wasInside = panel.contains(document.activeElement);
     wrap.classList.toggle('is-open', open);
     fab.setAttribute('aria-expanded', String(open));
     panel.setAttribute('aria-hidden', String(!open));
     panel.toggleAttribute('inert', !open);
+    /* The panel sits BEFORE the button in the DOM, so tabbing on from the
+       button leaves the widget rather than entering it. Opening therefore has
+       to hand focus over itself, and closing has to hand it back if it is
+       still in there — otherwise focus is left on an inert element. */
+    if (open) { const first = panel.querySelector('button'); if (first) first.focus(); }
+    else if (wasInside) fab.focus();
   };
   fab.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!wrap.classList.contains('is-open')); });
   document.addEventListener('click', (e) => { if (wrap.classList.contains('is-open') && !wrap.contains(e.target)) setOpen(false); });
@@ -150,6 +168,37 @@ export function initA11y() {
   wrap.querySelector('#a11yStatementBtn').addEventListener('click', openModal);
   modal.querySelectorAll('[data-a11y-close]').forEach((el) => el.addEventListener('click', closeModal));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setOpen(false); closeModal(); } });
+
+  /* The statement also has to be reachable from the page itself, not only from
+     inside this panel: the regulations want a plain, prominent link on every
+     page. The footer carries one pointing at #accessibility.
+
+     This module is lazy-loaded once the browser is idle, so the link can be
+     clicked before any of this exists. That is why it is a real href rather
+     than a JS-only button — the click lands in the address bar either way, and
+     whichever of the two happens second opens the window. */
+  document.querySelectorAll('[data-a11y-statement]').forEach((el) => {
+    el.addEventListener('click', (e) => { e.preventDefault(); history.replaceState(null, '', '#accessibility'); openModal(); });
+  });
+  if (location.hash === '#accessibility') openModal();
+  window.addEventListener('hashchange', () => { if (location.hash === '#accessibility') openModal(); });
+
+  /* Arrow keys walk the panel, and Tab is kept inside it while it is open, so
+     nobody tabs out into the page behind with the panel still hanging open. */
+  const stops = () => [...panel.querySelectorAll('button')].filter((el) => el.offsetParent !== null);
+  panel.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Tab') return;
+    const list = stops();
+    const i = list.indexOf(document.activeElement);
+    if (i < 0) return;
+    if (e.key === 'Tab') {
+      if (e.shiftKey && i === 0) { e.preventDefault(); list[list.length - 1].focus(); }
+      else if (!e.shiftKey && i === list.length - 1) { e.preventDefault(); list[0].focus(); }
+      return;
+    }
+    e.preventDefault();
+    list[(i + (e.key === 'ArrowDown' ? 1 : list.length - 1)) % list.length].focus();
+  });
 
   /* ----- controls ----- */
   opts.forEach((b) => b.addEventListener('click', () => {

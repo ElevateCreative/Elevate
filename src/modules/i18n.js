@@ -97,6 +97,7 @@ const EN = {
   'footer.legal.aria': 'Legal documents',
   'footer.privacy': 'Privacy Policy',
   'footer.terms': 'Terms of Use',
+  'footer.a11y': 'Accessibility Statement',
 
   /* ---------- the word carried across the page transition ---------- */
   'xfade.work': 'WORK',
