@@ -515,7 +515,7 @@ function boot() {
     }
   }
 
-  /* ── Elevate modal ──────────────────────────────────────── */
+  /* ── Concept archive disclosure ──────────────────────────────────────── */
   const modal = $('#modal');
   let lastFocus = null;
 
@@ -559,29 +559,4 @@ function boot() {
     }
   });
 
-  /* ── waitlist (concept, sends nothing) ──────────────────── */
-  const joinForm = $('#joinForm');
-  if (joinForm) {
-    joinForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const input = $('#joinEmail');
-      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(input.value.trim());
-      if (!ok) {
-        input.classList.add('is-err');
-        if (!reduced) gsap.fromTo(input, { x: 0 }, { x: 9, duration: 0.08, repeat: 5, yoyo: true, clearProps: 'x' });
-        setTimeout(() => input.classList.remove('is-err'), 1200);
-        return;
-      }
-      const done = $('#joinDone');
-      const num = $('#joinNum');
-      num.textContent = (4180 + Math.floor(Math.random() * 220)).toLocaleString('en-US');
-      joinForm.querySelector('button').disabled = true;
-      input.disabled = true;
-      done.hidden = false;
-      if (!reduced) {
-        gsap.from(done, { opacity: 0, y: 14, duration: 0.7, ease: 'power3.out' });
-        gsap.to(joinForm, { opacity: 0.45, duration: 0.5 });
-      }
-    });
-  }
 }
