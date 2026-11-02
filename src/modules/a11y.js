@@ -22,11 +22,8 @@ const HE = {
   li2: 'תפריט נגישות: הגדלת טקסט, ניגודיות גבוהה, הדגשת קישורים, גופן קריא, סמן גדול ועצירת אנימציות.',
   li3: 'תמיכה אוטומטית בהעדפת "הפחתת תנועה" של מערכת ההפעלה.',
   li4: 'מבנה כותרות תקין, טקסט חלופי ותיוג ARIA לרכיבים אינטראקטיביים.',
-  issueTitle: 'נתקלתם בקושי?',
-  issueBody: 'אם נתקלתם ברכיב באתר שאינו נגיש, או שיש משהו שלא הצלחתם לעשות דרכו, נשמח שתספרו לנו ונטפל בזה במהירות. אפשר לפנות אלינו באחת מהדרכים האלה:',
-  contactPhone: 'טלפון', contactWa: 'וואטסאפ', contactWaText: 'שליחת הודעה',
-  known: 'נכון להיום איננו מכירים רכיב באתר שאינו נגיש. אם תמצאו כזה, זו בדיוק הפנייה שאנחנו רוצים לקבל.',
-  date: 'עדכון אחרון: אוגוסט 2026',
+  archive: 'תפריט הנגישות נשאר זמין באתר גם לאחר סיום פעילות הסטודיו.',
+  date: 'עדכון אחרון: נובמבר 2026',
 };
 const EN = {
   panel: 'Accessibility settings', fab: 'Accessibility menu',
@@ -41,11 +38,8 @@ const EN = {
   li2: 'Accessibility menu: text sizing, high contrast, underlined links, readable font, large cursor and stopping animations.',
   li3: 'Automatic support for the operating system\'s reduced-motion preference.',
   li4: 'Proper heading structure, alternative text and ARIA labelling for interactive elements.',
-  issueTitle: 'Ran into a difficulty?',
-  issueBody: 'If you came across anything on this site that is not accessible, or something you could not do through it, please tell us and we will fix it quickly. You can reach us in any of these ways:',
-  contactPhone: 'Phone', contactWa: 'WhatsApp', contactWaText: 'Send a message',
-  known: 'As of today we are not aware of any part of this site that is not accessible. If you find one, that is exactly the message we want to get.',
-  date: 'Last updated: August 2026',
+  archive: 'The accessibility menu remains available on this site after the studio has closed.',
+  date: 'Last updated: November 2026',
 };
 
 export function initA11y() {
@@ -105,12 +99,7 @@ export function initA11y() {
           <li>${T.li3}</li>
           <li>${T.li4}</li>
         </ul>
-        <p>${T.known}</p>
-        <p><strong>${T.issueTitle}</strong> ${T.issueBody}</p>
-        <ul class="a11y-modal__contact">
-          <li><strong>${T.contactPhone}:</strong> <a href="tel:+972546679080" dir="ltr">054-667-9080</a></li>
-          <li><strong>${T.contactWa}:</strong> <a href="https://wa.me/972546679080" target="_blank" rel="noopener">${T.contactWaText}</a></li>
-        </ul>
+        <p>${T.archive}</p>
         <p class="a11y-modal__date">${T.date}</p>
       </div>
     </div>`;

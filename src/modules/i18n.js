@@ -8,90 +8,54 @@
 const KEY = 'elevate-lang';
 
 const EN = {
+  'dock.farewell': "A note of thanks",
+  'hero.status': "The business is closed. Thank you for your trust and for sharing the journey.",
+  'farewell.l1': "It was a joy",
+  'farewell.l2': "to create for you.",
+  'farewell.sub': "Thank you for letting us be part of your story.",
+  'farewell.about': "Behind every piece of work were people, dreams and trust. It was a pleasure to listen, think together and give your ideas a place in the world. We close this chapter with deep appreciation for everyone who chose us, and wish you continued growth, creativity and new horizons. Thank you for the journey, Orel and Elevate Creative.",
+
   /* meta */
-  'meta.title': 'Elevate Creative · Premium Web Design & Development Agency',
-  'meta.desc': 'Elevate Creative is a digital and creative agency building premium, high-performance websites. Web design, development, branding and SEO that lift your business above the competition.',
-  'meta.og.desc': 'Premium web design and development. Digital experiences that launch brands above the competition.',
+  'meta.title': "Elevate Creative · Thank you for the journey | Business closed",
+  'meta.desc': "Elevate Creative has closed. It was a pleasure to create, collaborate and serve our clients. Thank you for your trust and for sharing the journey. Our work remains here as an archive.",
+  'meta.og.desc': "Elevate Creative has closed. Thank you for your trust and for the journey we shared. Our work remains here as an archive.",
 
   /* chrome */
   'skip': 'Skip to content',
-  'nav.manifesto': 'Manifesto',
+  'nav.manifesto': "Our story",
   'nav.work': 'Work',
-  'nav.cta': 'Contact',
   'dock.home': 'Home',
-  'dock.manifesto': 'Manifesto',
-  'dock.services': 'Services',
+  'dock.manifesto': "Our story",
   'dock.work': 'Work',
-  'dock.process': 'Process',
-  'dock.contact': 'Contact',
   'dock.theme': 'Theme',
   'dock.lang': 'Language',
   'aria.menu': 'Navigation menu',
   'aria.theme': 'Dark or light mode',
 
   /* hero */
-  'hero.seo': 'Elevate Creative · premium web design, development and creative agency',
+  'hero.seo': "Elevate Creative · The business is closed. Thank you for the journey.",
   'hero.scroll': 'SCROLL',
-  'pw.1': 'Premium websites',
-  'pw.2': 'Unforgettable design',
-  'pw.3': 'A presence that lifts',
+  'pw.1': "We created together",
+  'pw.2': "We left a mark",
+  'pw.3': "Thank you for the journey",
 
   /* manifesto */
-  'about.l1': 'Through emotion, strategy',
-  'about.l2': 'and design, we push the',
-  'about.l3': 'boundaries of digital craft.',
-  'about.upper': 'A digital and creative agency crafting premium websites and unforgettable experiences.',
-  'about.link': 'About us',
-  'about.lead': 'Elevate Creative was born to take businesses, lift them and launch them to the next level. We distil the identity of every brand and tailor it a stunning premium website, one that speaks its exact language and pushes it above the competition.',
-
-  /* services */
-  'services.h2': 'Web design, development and creative services',
-  'services.intro': 'From strategy to launch, everything you need to build a digital presence that leads, all under one roof.',
-  'service.1.name': 'Strategy & Branding',
-  'service.1.desc': 'Distilling the story, the voice and the edge that make you unforgettable.',
-  'service.2.name': 'Experience Design · UX/UI',
-  'service.2.desc': 'Beautiful interfaces that feel natural, guide the eye and turn visitors into clients.',
-  'service.3.name': 'Premium Web Development',
-  'service.3.desc': 'Clean, fast, precise code, with living animations that feel expensive.',
-  'service.4.name': 'Motion, 3D & Interaction',
-  'service.4.desc': 'Movement that tells a story, draws attention and leaves an emotional mark.',
-  'service.5.name': 'Launch & Optimisation',
-  'service.5.desc': 'SEO, performance and analytics, so you keep climbing after going live.',
+  'about.l1': "A chapter closes.",
+  'about.l2': "The work lives on.",
+  'about.l3': "Thank you for it all.",
+  'about.upper': "Elevate Creative has closed. The business is no longer operating or accepting new projects.",
+  'about.lead': "Elevate Creative began with a love for design, digital craft and the stories behind businesses. Along the way, we had the privilege of turning ideas into experiences with character, alongside people who believed in our work. It was a pleasure to serve you and be part of your journey. This site remains as a keepsake of the work and the moments we created together.",
 
   /* work */
-  'work.h2': 'Featured work · website portfolio',
+  'work.h2': "Work from our journey · creative archive",
   'work.all': 'All work',
   'work.jp.sub': 'Recruitment agency',
   'work.vg.sub': 'Tech couture · concept site',
   'work.um.sub': 'Smart sun window · concept site',
-  'work.next.h': 'The next one',
-  'work.next.sub': 'could be yours?',
-  'work.next.aria': 'The next project could be yours. Talk to us',
-  'work.note': '* Job Power, a live client site. VIGDER and UMBRAS, live concept sites we built from scratch, step in and explore. The last tile is waiting for your project.',
+  'work.note': "Job Power and the VIGDER and UMBRAS concept sites remain here as part of our creative archive. Explore the project gallery for a closer look at the work and the decisions behind it.",
 
-  /* process */
-  'process.l1': 'A precise process,',
-  'process.l2': 'a result that lifts.',
-  'step.1.name': 'Discovery',
-  'step.1.desc': 'We dive deep into the business, the audience and the goals, and find what truly sets you apart.',
-  'step.2.name': 'Strategy',
-  'step.2.desc': 'We shape a direction, a message and an experience architecture that speak your exact language.',
-  'step.3.name': 'Design & Build',
-  'step.3.desc': 'We craft a visual language and code a fast, living site, animated down to the last pixel.',
-  'step.4.name': 'Launch & Rise',
-  'step.4.desc': 'We go live, measure, refine, and keep launching you forward.',
-
-  /* contact */
-  'contact.l1': 'Ready to',
-  'contact.l2': 'level up?',
-  'contact.sub': 'Tell us about your business, and we will return a digital vision that lifts you above everyone else.',
+  /* closing note */
   'elastic.hint': 'Drag the letters ✦ then let go',
-  'contact.about': 'Elevate Creative is led by Orel, driven by a deep passion for digital excellence and cutting-edge design. The studio was founded to help businesses transcend their digital boundaries with premium, high-performance websites. We combine strategic thinking with meticulous craftsmanship to ensure your brand stands out, performs flawlessly, and stays ahead of the competition.',
-  'wa.title': 'Talk to us on WhatsApp',
-  'wa.sub': 'Click to send a message and we will get back to you fast',
-  'wa.arrow': '→',
-  'phones.label': 'Or give us a call',
-  'socials.aria': 'Social media',
 
   /* footer */
   'footer.legal.aria': 'Legal documents',
@@ -104,18 +68,17 @@ const EN = {
   'xfade.home': 'ELEVATE',
 
   /* ================= /work/ — the case-study gallery ================= */
-  'work.meta.title': 'Projects · The Elevate Creative Portfolio',
-  'work.meta.desc': 'Behind every site there is a process. Projects from Elevate Creative: each element of a client site, the problem it solves, the decision we made and the marketing logic behind it. Starting with Job Power HR.',
+  'work.meta.title': "Work Archive \u00b7 Elevate Creative",
+  'work.meta.desc': "Elevate Creative has closed. This archive preserves our work and the decisions behind the site we built for Job Power HR, with gratitude for the journey we shared.",
 
-  'work.nav.studio': 'The studio',
+  'work.nav.studio': "Main site",
   'work.dock.back': 'Back to the site',
   'work.dock.case': 'The project',
   'work.dock.decisions': 'The decisions',
   'work.dock.result': 'The result',
 
   'work.intro.h1': 'Every pixel here is a decision',
-  'work.intro.lead': 'This is not a gallery of pretty pictures. Each card takes one element out of a real site we built and shows the three things nobody sees from the outside: what the problem was, what we decided to do, and why it works commercially. A look inside our UI/UX process.',
-  'work.intro.m1': 'project',
+  'work.intro.lead': "Elevate Creative has closed. This page remains as an archive of our work: each card explores an element of a site we built, the challenge behind it, the decision we made and the thinking that shaped it. A look back at work we were glad to be part of.",
   'work.intro.m2': 'decisions taken apart',
   'work.intro.m3': 'hours on the details',
 
@@ -242,9 +205,8 @@ const EN = {
   'work.d8.deep': 'The language file is the one script on the page that is not deferred. It sets lang and dir from local storage before the parser reaches the body, so a returning Russian visitor never watches the page lay itself out right to left and then flip. Almost the whole stylesheet is written in logical properties and mirrors on its own. What needed doing by hand was the hero, which is carved by physical clip percentages: its copy is pinned physically too, or the Russian build would have sent the seekers\' text to one side while its field stayed on the other.',
 
   'work.result.h2': 'This is what a process looks like',
-  'work.result.lead': 'Each of the decisions above looks small on its own. Together they are the difference between a site that looks good and a site that works: one that says who you are in the first second, leads each audience to its own place, loads fast on a phone in the street, and speaks the client\'s language. This is what we do on every project.',
+  'work.result.lead': 'Each of the decisions above looks small on its own. Together they are the difference between a site that looks good and a site that works: one that says who you are in the first second, leads each audience to its own place, loads fast on a phone in the street, and speaks the client\'s language. This was how we approached each project, and a lasting memory of our work at Elevate Creative.',
   'work.result.live': 'Visit the live Job Power site',
-  'work.result.talk': 'Want one? Talk to us',
 };
 
 export function currentLang() {
@@ -264,6 +226,10 @@ export function applyI18n() {
   document.querySelector('meta[name="description"]')?.setAttribute('content', EN[descKey]);
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', EN[titleKey]);
   document.querySelector('meta[property="og:description"]')?.setAttribute('content', EN[onWork ? descKey : 'meta.og.desc']);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', EN[titleKey]);
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', EN[descKey]);
+  document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', EN[titleKey]);
+  document.querySelector('meta[name="twitter:image:alt"]')?.setAttribute('content', EN[titleKey]);
   document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'en_US');
 
   document.querySelectorAll('[data-i18n]').forEach((el) => {
