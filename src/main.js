@@ -68,7 +68,7 @@ if (markShape && !reduced && !isMobile) {
   const rotX = gsap.quickTo(markShape, 'rotationX', { duration: 0.8, ease: 'power3' });
   const shX = gsap.quickTo(shine, 'x', { duration: 0.7, ease: 'power3' });
   const shY = gsap.quickTo(shine, 'y', { duration: 0.7, ease: 'power3' });
-  // in the SERVICES scene only, the arrow swings to point its tip at the cursor
+  // Shared rotation controller for the per-scene arrow poses
   const aimRot = gsap.quickTo(markShape, 'rotation', { duration: 0.5, ease: 'power3' });
   // every bit of markShape's per-scene motion runs through these controllers (one owner per property)
   // so the scene resting-poses and the work corner-framing never fight each other
@@ -82,7 +82,6 @@ if (markShape && !reduced && !isMobile) {
     'tile--feature': { c1: '#9a6cff', c2: '#5a2bd0', c3: '#1e1040', g1: '154, 108, 255', g2: '90, 43, 208' },
     'tile--vg':      { c1: '#6a9be0', c2: '#24457e', c3: '#0b1830', g1: '106, 155, 224', g2: '36, 69, 126' },
     'tile--um':      { c1: '#f2b555', c2: '#c07f2c', c3: '#3a2410', g1: '242, 181, 85',  g2: '192, 127, 44' },
-    'tile--next':    { c1: '#59dcae', c2: '#1f9a72', c3: '#0a2a22', g1: '89, 220, 174',  g2: '31, 154, 114' },
   };
   const setArrowSkin = (tile) => {
     const key = tile && Object.keys(ARROW_SKIN).find((c) => tile.classList.contains(c));
@@ -140,7 +139,7 @@ if (markShape && !reduced && !isMobile) {
   window.__placeArrowWork = () => placeArrowInWork(lastPX, lastPY);
   // setArrowPose() drives the shape through the SAME controllers, so leaving work eases cleanly (no fight)
   window.__poseArrow = (x, y, scale, rot) => { mShapeX(x); mShapeY(y); mShapeSX(scale); mShapeSY(scale); if (rot !== null) aimRot(rot); };
-  // contact → process: the arrow rises into frame from BELOW the screen (a dedicated y-tween so it
+  // Leaving the farewell: the arrow rises into frame from BELOW the screen (a dedicated y-tween so it
   // truly starts from below; x/scale/rotation still ride the shared controllers)
   window.__riseFromBelow = (x, scale, rot) => {
     gsap.killTweensOf(markShape, 'y');
@@ -166,11 +165,7 @@ if (markShape && !reduced && !isMobile) {
     shX(e.clientX - window.innerWidth / 2);
     shY(e.clientY - window.innerHeight / 2);
     if (oX) { oX(nx * 42); oY(ny * 42); }
-    if (scene === 'services') {
-      const r = markShape.getBoundingClientRect();
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      aimRot(Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180 / Math.PI);
-    } else if (scene === 'work') {
+    if (scene === 'work') {
       placeArrowInWork(e.clientX, e.clientY);
     }
   }, { passive: true });
@@ -431,9 +426,9 @@ function animateText() {
   });
 
   // PARAGRAPHS — words cascade up out of masks.
-  // .manifesto__lead and .contact__about are deliberately absent: they are now driven
+  // .manifesto__lead and .farewell__about are deliberately absent: they are now driven
   // by the scroll reading-highlight instead, and splitting them twice would fight it.
-  document.querySelectorAll('.contact__sub, .upper').forEach((el) => {
+  document.querySelectorAll('.farewell__sub, .upper').forEach((el) => {
     const words = splitWords(el);
     gsap.set(words, { yPercent: 115 });
     ScrollTrigger.create({
@@ -444,7 +439,7 @@ function animateText() {
   });
 
   // LABELS · LINKS · CARDS · FOOTER — bold slide + fade as units
-  const sel = '.mono-label, .textlink, .pill, .tile, .work__note, .wa-btn, .phones, .services__intro, .service, .step';
+  const sel = '.mono-label, .textlink, .pill, .tile, .work__note';
   gsap.set(sel, { y: 50, autoAlpha: 0 });
   ScrollTrigger.batch(sel, {
     start: 'top 86%',
@@ -515,16 +510,14 @@ function animateText() {
 }
 
 /* ---------- scene system: each section is its own "world" ---------- */
-const SCENES = ['hero', 'about', 'services', 'work', 'process', 'contact'];
+const SCENES = ['hero', 'about', 'work', 'farewell'];
 
 // The arrow's RESTING pose per scene (desktop). Interactive behaviour (cursor drift on the
-// container, aim in services, corner-framing in work) composes on top in the pointermove handler.
+// container and corner-framing in work) composes on top in the pointermove handler.
 //  · hero      → left to the intro (the "A" in ELEVATE); not touched here
 //  · about     → offset right, calm
-//  · services  → offset left, points at the hovered row (aim owns rotation)
 //  · work      → hand-placed at the hovered tile's corner (pointermove owns it)
-//  · process   → centred, full size
-//  · contact   → flies straight up and off the top of the screen
+//  · farewell   → flies straight up and off the top of the screen
 function setArrowPose(name, prev) {
   if (isMobile || reduced || !markShape || !window.__poseArrow) return;
   if (name !== 'work') window.__setArrowSkin?.(null); // chameleon skin only lives in the work scene
@@ -536,12 +529,11 @@ function setArrowPose(name, prev) {
     if (!prev) return;                                      // first call at boot → the intro owns the "A"
     x = 0; y = 0; scale = 1; rot = 0;                       // scrolled back up → recentre so the "A" is correct
   }
-  else if (name === 'contact')  { x = 0;               y = -1.5 * vh; scale = 1;    rot = 0; }
+  else if (name === 'farewell')  { x = 0;               y = -1.5 * vh; scale = 1;    rot = 0; }
   else if (name === 'about')    { x = XD * vw * 0.15;  y = 0;         scale = 0.82; rot = 0; }
-  else if (name === 'services') { x = XD * -vw * 0.15; y = 0;         scale = 0.72; rot = 0; }    // resets tilt; aim takes over on move
-  else                          { x = 0;          y = 0;         scale = 1;    rot = 0; }    // process
+  else                          { x = 0;          y = 0;         scale = 1;    rot = 0; }
 
-  if (prev === 'contact') { window.__riseFromBelow(x, scale, rot); return; } // rise in from below the screen
+  if (prev === 'farewell') { window.__riseFromBelow(x, scale, rot); return; } // rise in from below the screen
   window.__poseArrow(x, y, scale, rot);
 }
 
@@ -558,7 +550,7 @@ function setScene(name) {
   // the arrow reaches out harder in the busier scenes
   if (window.__setArrowFollow) {
     // work drives the arrow itself (per-tile corner framing), so followScale is irrelevant there
-    window.__setArrowFollow(name === 'services' ? 1.55 : name === 'about' ? 1.15 : 1);
+    window.__setArrowFollow(name === 'about' ? 1.15 : 1);
   }
   // give the arrow this scene's resting pose (a clean, deterministic tween — no scroll scrub)
   setArrowPose(name, prev);
@@ -631,46 +623,13 @@ function story() {
 
   setupScenes();
 
-  // process steps: the blue rule draws across each card as it enters
-  ScrollTrigger.batch('.step', {
-    start: 'top 84%',
-    onEnter: (els) => els.forEach((el, i) => gsap.delayedCall(i * 0.12, () => el.classList.add('is-in'))),
-    onLeaveBack: (els) => els.forEach((el) => el.classList.remove('is-in')),
-  });
-
-  // mobile: exactly ONE service row lights up — the single row nearest the viewport
-  // centre (no hover on touch). Picking the nearest guarantees we never light two at once.
-  if (isMobile) {
-    const services = gsap.utils.toArray('.service');
-    if (services.length) {
-      let ticking = false;
-      const pick = () => {
-        ticking = false;
-        const mid = window.innerHeight * 0.5;
-        let best = null, bd = Infinity;
-        services.forEach((el) => {
-          const r = el.getBoundingClientRect();
-          if (r.bottom < 0 || r.top > window.innerHeight) return; // off-screen
-          const d = Math.abs((r.top + r.height / 2) - mid);
-          if (d < bd) { bd = d; best = el; }
-        });
-        const within = best && bd < window.innerHeight * 0.3; // comfortable centre band, else none
-        services.forEach((el) => el.classList.toggle('is-active', within && el === best));
-      };
-      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(pick); } };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-      pick();
-    }
-  }
-
   // bottom takeover: a timed WASH (not scroll-scrubbed → smooth on mobile). The gradient
   // sweeps the screen open and the UI ink flips. On desktop the arrow flies up and off the
-  // screen via setArrowPose('contact'); on mobile it just fades out.
-  // Anchored to #contact — it used to hang off the CTA marquee, which no longer exists.
+  // screen via setArrowPose('farewell'); on mobile it just fades out.
+  // Anchored to #farewell — it used to hang off the CTA marquee, which no longer exists.
   const markRest = isMobile ? 0.13 : 1;
   ScrollTrigger.create({
-    trigger: '#contact', start: 'top 88%',
+    trigger: '#farewell', start: 'top 88%',
     onEnter: () => {
       gsap.to('.takeover', { clipPath: 'circle(155% at 50% 78%)', duration: 1.1, ease: 'power2.inOut' });
       if (isMobile) gsap.to('#mark', { autoAlpha: 0, duration: 0.7, ease: 'power2.in' });
